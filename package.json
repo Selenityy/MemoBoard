@@ -1,0 +1,11 @@
+{
+  "name": "memoboard",
+  "version": "1.0.0",
+  "description": "A work management platform designed to help users keep track and manage their memos, to-dos and workflow.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
