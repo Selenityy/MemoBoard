@@ -4,6 +4,7 @@ const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 const User = require("../models/userModel");
 
@@ -56,5 +57,22 @@ passport.use(
         return done(err, false);
       }
     })
+  )
+);
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "http://www.localhost:3000/auth/google/callback",
+    },
+    function (accessToken, refreshToken, profile, cb) {
+      // create a user or find one in the database
+      // access token and refresh token for them to use other google services, not needed here
+      User.findOrCreate({ googleId: profile.id }, function (err, user) {
+        return cb(err, user);
+      });
+    }
   )
 );
