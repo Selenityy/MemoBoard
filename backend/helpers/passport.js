@@ -65,14 +65,40 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://www.localhost:3000/auth/google/callback",
+      callbackURL: "http://localhost:3000/auth/google/callback",
     },
-    function (accessToken, refreshToken, profile, cb) {
-      // create a user or find one in the database
+    async function (accessToken, refreshToken, profile, cb) {
+      try {
+        let user = await User.findOne({ googleId: profile.id });
+
+        if (!user) {
+          const emailUser = await User.findOne({
+            email: profile.emails[0].value,
+          });
+          // If no user if found by Google Id, check if the email exists
+          if (emailUser) {
+            // If a user with the email exists, link the google Id to the existing account
+            emailUser.googleId = profile.id;
+            await emailUser.save();
+            return cb(null, emailUser);
+          } else {
+            // If no user exists with the same email, create a new user
+            user = await new User({
+              googleId: profile.id,
+              email: profile.emails[0].value,
+              username: profile.displayName,
+              firstName: profile.name.givenName,
+              lastName: profile.name.familyName,
+            });
+            await user.save();
+          }
+        }
+
+        return cb(null, user); // user found or created successfully
+      } catch (err) {
+        return cb(err, null);
+      }
       // access token and refresh token for them to use other google services, not needed here
-      User.findOrCreate({ googleId: profile.id }, function (err, user) {
-        return cb(err, user);
-      });
     }
   )
 );
