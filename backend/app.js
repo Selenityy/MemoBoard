@@ -17,6 +17,7 @@ const Schema = mongoose.Schema;
 
 const memoRouter = require("./routes/memoRoutes");
 const tagRouter = require("./routes/tagRoutes");
+const userRouter = require("./routes/userRoutes");
 
 const dev_db_url = "";
 mongoose.set("strictQuery", false);
@@ -47,6 +48,7 @@ require("./helpers/passport");
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use("/user", userRouter);
 app.use("/memo", memoRouter);
 app.use("/tags", tagRouter);
 
