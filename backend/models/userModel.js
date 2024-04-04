@@ -10,7 +10,7 @@ const UserSchema = new Schema({
     required: true,
     minLength: 2,
     maxLength: 20,
-    unique: true,
+    unique: false,
   },
   email: {
     type: String,
@@ -25,7 +25,8 @@ const UserSchema = new Schema({
       message: "Please provide a valid email address",
     },
   },
-  password: { type: String, required: true },
+  password: { type: String, required: false }, // google auths dont use password, make sure you check for password in your login
+  googleId: { type: String },
 });
 
 module.exports = mongoose.model("User", UserSchema);
