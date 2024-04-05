@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 
 const MemoSchema = new Schema({
   body: { type: String, required: true, maxLength: 100 },
+  user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   dueDateTime: { type: Date },
   progress: {
     type: String,
