@@ -15,9 +15,9 @@ const Schema = mongoose.Schema;
 // compression
 // helmet
 
-const memoRouter = require("./routes/memoRoutes");
-const tagRouter = require("./routes/tagRoutes");
-const userRouter = require("./routes/userRoutes");
+const memoRoutes = require("./routes/memoRoutes");
+const tagRoutes = require("./routes/tagRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const dev_db_url = "";
 mongoose.set("strictQuery", false);
@@ -48,9 +48,9 @@ require("./helpers/passport");
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/user", userRouter);
-app.use("/memo", memoRouter);
-app.use("/tags", tagRouter);
+app.use("/user", userRoutes);
+app.use("/memos", memoRoutes);
+app.use("/tags", tagRoutes);
 
 app.use((req, res, next) => {
   next(createError(404));
