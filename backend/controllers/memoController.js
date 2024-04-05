@@ -15,7 +15,7 @@ exports.getAllParentMemos = asyncHandler(async (req, res, next) => {
     );
     res.json({
       message: "Successfully retrieved all parent memos",
-      parentMemos: [parentMemosObject],
+      parentMemos: parentMemosObject,
     });
   } catch (error) {
     console.error(error);
@@ -41,7 +41,7 @@ exports.getAllChildrenMemosOfAParentMemo = asyncHandler(
       );
       res.json({
         message: "Successfully retrieved all children memos",
-        childMemos: [childMemosObject],
+        childMemos: childMemosObject,
       });
     } catch (error) {
       console.error(error);
