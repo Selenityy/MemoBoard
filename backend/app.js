@@ -49,8 +49,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/user", userRoutes);
-app.use("/memos", memoRoutes);
-app.use("/tags", tagRoutes);
+// app.use("/memos", memoRoutes);
+// app.use("/tags", tagRoutes);
 
 app.use((req, res, next) => {
   next(createError(404));
