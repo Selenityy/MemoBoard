@@ -1,9 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Memo = require("../models/memoModel");
-const Tag = require("../models/tagModel");
-const User = require("../models/userModel");
 const { body, validationResult } = require("express-validator");
-const { mongoose } = require("mongoose");
 
 // Display all parent memos
 exports.getAllParentMemos = asyncHandler(async (req, res, next) => {
