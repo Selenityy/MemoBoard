@@ -176,7 +176,7 @@ exports.updateMemo = asyncHandler(async (req, res, next) => {
       virtuals: true,
     });
     res.json({
-      message: "Successfully retrieved a specific parent memo",
+      message: "Successfully updated a specific parent memo",
       updatedMemo: updatedMemoObject,
     });
   } catch (error) {
