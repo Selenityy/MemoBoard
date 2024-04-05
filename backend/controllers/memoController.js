@@ -84,7 +84,7 @@ exports.getSpecifictParentMemo = asyncHandler(async (req, res, next) => {
 
 // Create a memo
 exports.createMemo = [
-  // validation middleware
+  // Validation middleware
   body("body")
     .trim()
     .isLength({ min: 1, max: 100 })
@@ -100,7 +100,7 @@ exports.createMemo = [
   body("priority")
     .optional({ checkFalsy: true })
     .isIn(["Low", "Medium", "High"])
-    .withMessage("Invalid priority value"),
+    .withMessage("Invalid priority value."),
   body("notes")
     .optional()
     .isLength({ max: 300 })
@@ -108,14 +108,14 @@ exports.createMemo = [
   body("tags")
     .optional({ checkFalsy: true })
     .isArray()
-    .withMessage("Tags must be an array"),
+    .withMessage("Tags must be an array."),
   body("tags.*")
     .isMongoId()
-    .withMessage("Each tag must be a valid MongoDB ObjectId"),
+    .withMessage("Each tag must be a valid MongoDB ObjectId."),
   body("parentId")
     .optional()
     .isMongoId()
-    .withMessage("ParentId must be a valid MongoDB ObjectId"),
+    .withMessage("ParentId must be a valid MongoDB ObjectId."),
 
   // Controller logic
   asyncHandler(async (req, res, next) => {
