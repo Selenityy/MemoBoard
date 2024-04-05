@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-import { DateTime } from "luxon";
+const { DateTime } = require("luxon");
 
 const Schema = mongoose.Schema;
 
@@ -20,7 +20,7 @@ const MemoSchema = new Schema({
     default: null,
   },
   notes: { type: String, maxLength: 300 },
-  memo: [{ type: Schema.Types.ObjectId, ref: "Memo" }],
+  parentId: { type: Schema.Types.ObjectId, ref: "Memo", default: null },
 });
 
 MemoSchema.virtual("url").get(function () {
