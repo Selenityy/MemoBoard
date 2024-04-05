@@ -86,33 +86,77 @@ exports.getSpecifictParentMemo = asyncHandler(async (req, res, next) => {
 });
 
 // Create a memo
-exports.createMemo = asyncHandler(async (req, res, next) => {
-  const { body, dueDateTime, progress, tags, priority, notes, parentId } =
-    req.body;
-  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
+exports.createMemo = [
+  // validation middleware
+  body("body")
+    .trim()
+    .isLength({ min: 1, max: 100 })
+    .withMessage("The memo body must be between 1 and 100 characters long."),
+  body("dueDateTime")
+    .optional({ checkFalsy: true })
+    .isISO8601()
+    .toDate()
+    .withMessage("The due date must be a valid date."),
+  body("progress")
+    .isIn(["Not Started", "Active", "Pending", "Completed", "Cancelled"])
+    .withMessage("Invalid progress status."),
+  body("priority")
+    .optional({ checkFalsy: true })
+    .isIn(["Low", "Medium", "High"])
+    .withMessage("Invalid priority value"),
+  body("notes")
+    .optional()
+    .isLength({ max: 300 })
+    .withMessage("Notes must be 300 characters or less."),
+  body("tags")
+    .optional({ checkFalsy: true })
+    .isArray()
+    .withMessage("Tags must be an array"),
+  body("tags.*")
+    .isMongoId()
+    .withMessage("Each tag must be a valid MongoDB ObjectId"),
+  body("parentId")
+    .optional()
+    .isMongoId()
+    .withMessage("ParentId must be a valid MongoDB ObjectId"),
 
-  try {
-    const newMemo = new Memo({
-      body,
-      user: userId,
-      dueDateTime,
-      progress,
-      tags,
-      priority,
-      notes,
-      parentId,
-    });
-    await newMemo.save();
-    return res
-      .status(201)
-      .json({ message: "Memo created successfully", newMemo: newMemo });
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ message: "Server error, cannot create a memo" });
-  }
-});
+  // Controller logic
+  asyncHandler(async (req, res, next) => {
+    const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        message: "Errors with validation result",
+        errors: errors.array(),
+      });
+    }
+
+    const { body, dueDateTime, progress, tags, priority, notes, parentId } =
+      req.body;
+    try {
+      const newMemo = new Memo({
+        body,
+        user: userId,
+        dueDateTime,
+        progress,
+        tags,
+        priority,
+        notes,
+        parentId,
+      });
+      await newMemo.save();
+      return res
+        .status(201)
+        .json({ message: "Memo created successfully", newMemo: newMemo });
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(500)
+        .json({ message: "Server error, cannot create a memo" });
+    }
+  }),
+];
 
 // Update a memo
 exports.updateMemo = asyncHandler(async (req, res, next) => {
