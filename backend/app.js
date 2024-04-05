@@ -8,10 +8,7 @@ const logger = require("morgan");
 const cors = require("cors");
 const session = require("express-session");
 const passport = require("passport");
-const bcrypt = require("bcryptjs");
-const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 // compression
 // helmet
 
@@ -49,8 +46,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/user", userRoutes);
-// app.use("/memos", memoRoutes);
-// app.use("/tags", tagRoutes);
 
 app.use((req, res, next) => {
   next(createError(404));
