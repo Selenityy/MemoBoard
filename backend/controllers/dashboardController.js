@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
+const Memo = require("../models/memoModel");
+const Tag = require("../models/tagModel");
 
 exports.userData = asyncHandler(async (req, res, next) => {
   // go to the home page
@@ -13,7 +15,7 @@ exports.timezone = asyncHandler(async (req, res, next) => {
 
 exports.updateProfileGoogleAuth = asyncHandler(async (req, res, next) => {
   const { username, timezone } = req.body;
-  const userId = req.user._id;
+  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
 
   try {
     await User.findByIdAndUpdate(
@@ -31,7 +33,7 @@ exports.updateProfileGoogleAuth = asyncHandler(async (req, res, next) => {
 
 exports.updateEmail = asyncHandler(async (req, res, next) => {
   const { newEmail } = req.body;
-  const userId = req.user._id;
+  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   if (!newEmail) {
     return res.status(400).json({ message: "Email is required" });
   }
@@ -61,7 +63,7 @@ exports.updateEmail = asyncHandler(async (req, res, next) => {
 
 exports.updateName = asyncHandler(async (req, res, next) => {
   const { newFirstName, newLastName } = req.body;
-  const userId = req.user._id;
+  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   if (!newFirstName || !newLastName) {
     return res.status(400).json({ message: "First and last name is required" });
   }
@@ -94,7 +96,7 @@ exports.updateName = asyncHandler(async (req, res, next) => {
 
 exports.updateUsername = asyncHandler(async (req, res, next) => {
   const { newUsername } = req.body;
-  const userId = req.user._id;
+  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   if (!newUsername) {
     return res.status(400).json({ message: "Username is required" });
   }
@@ -124,7 +126,7 @@ exports.updateUsername = asyncHandler(async (req, res, next) => {
 
 exports.updateTimezone = asyncHandler(async (req, res, next) => {
   const { newTimezone } = req.body;
-  const userId = req.user._id;
+  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   if (!newTimezone) {
     return res.status(400).json({ message: "Timezone is required" });
   }
@@ -153,6 +155,25 @@ exports.updateTimezone = asyncHandler(async (req, res, next) => {
 });
 
 exports.deleteAccount = asyncHandler(async (req, res, next) => {
-  // confirm deletion
-  // delete the account
+  const userId = req.user_id; // Assuming req.user is populated by Passport's JWT strategy
+  try {
+    await Memo.deleteMany({ user: userId });
+    await Tag.deleteMany({ user: userId });
+
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      return res.status(404).jsaon({ message: "User not found" });
+    }
+
+    res
+      .status(200)
+      .json({
+        message:
+          "User account and all related memos and tags have been successfully deleted",
+      });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error, cannot delete account" });
+  }
 });
