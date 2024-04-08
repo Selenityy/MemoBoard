@@ -5,7 +5,23 @@ const Tag = require("../models/tagModel");
 
 exports.userData = asyncHandler(async (req, res, next) => {
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
-  
+  try {
+    const userData = await User.findById(userId);
+
+    if (!userData) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({
+      message: "Successfully retrieved user profile data.",
+      user: userData,
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Server error, cannot retrieve user data." });
+  }
 });
 
 exports.timezone = asyncHandler(async (req, res, next) => {
