@@ -5,6 +5,9 @@ const jwt = require("jsonwebtoken");
 const JwtStrategy = require("passport-jwt").Strategy;
 const mongoose = require("mongoose");
 
+// Apply JWT authentication middleware to all routes in this router
+router.use(passport.authenticate("jwt", { session: false }));
+
 // GET
 router.get(
   "/dashboard",
