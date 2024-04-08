@@ -2,25 +2,13 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const userController = require("../controllers/userController");
+const memoRoutes = require("./memoRoutes");
+const tagRoutes = require("./tagRoutes");
 
 // check if user is logged in
-function isLoggedIn(req, res, next) {
-  req.user ? next() : res.sendStatus(401);
-}
-
-router.get("/failure", (req, res) => {
-  res.send("Something went wrong.");
-});
-
-router.get("/protected", isLoggedIn, (req, res) => {
-  res.send;
-  ("Hello protected!");
-});
-
-// POST
-router.post("/signup", userController.signup);
-
-router.post("/login", userController.login);
+// function isLoggedIn(req, res, next) {
+//   req.user ? next() : res.sendStatus(401);
+// }
 
 // GET
 router.get("/auth/google", userController.google);
@@ -29,23 +17,11 @@ router.get("/auth/google/callback", userController.googleCB);
 
 router.get("/auth/failure", userController.failedLogin);
 
-router.get("/protected", userController.succesfulLogin);
-
-router.get("/data", userController.userData);
-
-router.get("/timezone", userController.timezone);
-
 router.get("/logout", userController.logout);
 
-// PUT
-router.put("/:userId/updateEmail", userController.updateEmail);
+// POST
+router.post("/signup", userController.signup);
 
-router.put("/:userId/updateName", userController.updateName);
+router.post("/login", userController.login);
 
-router.put("/:userId/updateUsername", userController.updateUsername);
-
-router.put("/:userId/updateTimezone", userController.updateTimezone);
-
-// DELETE
-
-router.delete("/:userId/account", userController.deleteAccount);
+module.exports = router;
