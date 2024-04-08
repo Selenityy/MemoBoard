@@ -14,7 +14,7 @@ const mongoose = require("mongoose");
 
 const memoRoutes = require("./routes/memoRoutes");
 const tagRoutes = require("./routes/tagRoutes");
-const userRoutes = require("./routes/userRoutes");
+const authRoutes = require("./routes/authRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const dev_db_url = "";
@@ -46,7 +46,7 @@ require("./helpers/passport");
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/user", userRoutes);
+app.use("/auth", authRoutes);
 app.use("/dashboard", dashboardRoutes);
 
 app.use((req, res, next) => {

@@ -3,10 +3,6 @@ const { hashPassword } = require("../helpers/bcrypt");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const JwtStrategy = require("passport-jwt").Strategy;
-const mongoose = require("mongoose");
 
 // Sign up
 exports.signup = asyncHandler(async (req, res, next) => {

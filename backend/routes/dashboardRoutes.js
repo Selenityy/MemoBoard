@@ -4,6 +4,7 @@ const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const JwtStrategy = require("passport-jwt").Strategy;
 const mongoose = require("mongoose");
+const dashboardController = require("../controllers/dashboardController");
 
 // Apply JWT authentication middleware to all routes in this router
 router.use(passport.authenticate("jwt", { session: false }));
@@ -17,21 +18,21 @@ router.get(
   }
 );
 
-router.get("/data", userController.userData);
+router.get("/data", dashboardController.userData);
 
-router.get("/timezone", userController.timezone);
+router.get("/timezone", dashboardController.timezone);
 
 // PUT
-router.put("/:userId/updateEmail", userController.updateEmail);
+router.put("/:userId/updateEmail", dashboardController.updateEmail);
 
-router.put("/:userId/updateName", userController.updateName);
+router.put("/:userId/updateName", dashboardController.updateName);
 
-router.put("/:userId/updateUsername", userController.updateUsername);
+router.put("/:userId/updateUsername", dashboardController.updateUsername);
 
-router.put("/:userId/updateTimezone", userController.updateTimezone);
+router.put("/:userId/updateTimezone", dashboardController.updateTimezone);
 
 // DELETE
-router.delete("/:userId/account", userController.deleteAccount);
+router.delete("/:userId/account", dashboardController.deleteAccount);
 
 router.use(
   "/memos",
