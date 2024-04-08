@@ -4,13 +4,37 @@ const Memo = require("../models/memoModel");
 const Tag = require("../models/tagModel");
 
 exports.userData = asyncHandler(async (req, res, next) => {
-  // go to the home page
-  // display all memos
-  // display username
+  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
+  
 });
 
 exports.timezone = asyncHandler(async (req, res, next) => {
-  // set the timezone
+  const { updatedTimezone } = req.body;
+  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
+
+  if (!updatedTimezone) {
+    return res.status(400).json({ message: "Timezone is required." });
+  }
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { timezone: updatedTimezone },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    res.json({
+      message: "Successfully updated timezone.",
+      timezone: updatedUser.timezone,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error, cannot update timezone." });
+  }
 });
 
 exports.updateProfileGoogleAuth = asyncHandler(async (req, res, next) => {
@@ -35,7 +59,7 @@ exports.updateEmail = asyncHandler(async (req, res, next) => {
   const { newEmail } = req.body;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   if (!newEmail) {
-    return res.status(400).json({ message: "Email is required" });
+    return res.status(400).json({ message: "Email is required." });
   }
 
   try {
@@ -46,18 +70,18 @@ exports.updateEmail = asyncHandler(async (req, res, next) => {
     );
 
     if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found." });
     }
 
     res.json({
-      message: "Successfully updated email",
+      message: "Successfully updated email.",
       email: updatedUser.email,
     });
   } catch (error) {
     console.error(error);
     return res
       .status(500)
-      .json({ message: "Server error, cannot update email" });
+      .json({ message: "Server error, cannot update email." });
   }
 });
 
@@ -65,7 +89,9 @@ exports.updateName = asyncHandler(async (req, res, next) => {
   const { newFirstName, newLastName } = req.body;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   if (!newFirstName || !newLastName) {
-    return res.status(400).json({ message: "First and last name is required" });
+    return res
+      .status(400)
+      .json({ message: "First and last name is required." });
   }
 
   try {
@@ -76,11 +102,11 @@ exports.updateName = asyncHandler(async (req, res, next) => {
     );
 
     if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found." });
     }
 
     res.json({
-      message: "Successfully updated full name",
+      message: "Successfully updated full name.",
       user: {
         firstName: updatedUser.firstName,
         lastName: updatedUser.lastName,
@@ -90,7 +116,7 @@ exports.updateName = asyncHandler(async (req, res, next) => {
     console.error(error);
     return res
       .status(500)
-      .json({ message: "Server error, cannot update full name" });
+      .json({ message: "Server error, cannot update full name." });
   }
 });
 
@@ -113,14 +139,14 @@ exports.updateUsername = asyncHandler(async (req, res, next) => {
     }
 
     res.json({
-      message: "Successfully updated username",
+      message: "Successfully updated username.",
       username: updatedUser.username,
     });
   } catch (error) {
     console.error(error);
     return res
       .status(500)
-      .json({ message: "Server error, cannot update username" });
+      .json({ message: "Server error, cannot update username." });
   }
 });
 
@@ -128,7 +154,7 @@ exports.updateTimezone = asyncHandler(async (req, res, next) => {
   const { newTimezone } = req.body;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   if (!newTimezone) {
-    return res.status(400).json({ message: "Timezone is required" });
+    return res.status(400).json({ message: "Timezone is required." });
   }
 
   try {
@@ -143,14 +169,14 @@ exports.updateTimezone = asyncHandler(async (req, res, next) => {
     }
 
     res.json({
-      message: "Successfully updated timezone",
+      message: "Successfully updated timezone.",
       timezone: updatedUser.timezone,
     });
   } catch (error) {
     console.error(error);
     return res
       .status(500)
-      .json({ message: "Server error, cannot update timezone" });
+      .json({ message: "Server error, cannot update timezone." });
   }
 });
 
@@ -163,17 +189,15 @@ exports.deleteAccount = asyncHandler(async (req, res, next) => {
     const user = await User.findByIdAndDelete(userId);
 
     if (!user) {
-      return res.status(404).jsaon({ message: "User not found" });
+      return res.status(404).jsaon({ message: "User not found." });
     }
 
-    res
-      .status(200)
-      .json({
-        message:
-          "User account and all related memos and tags have been successfully deleted",
-      });
+    res.status(200).json({
+      message:
+        "User account and all related memos and tags have been successfully deleted.",
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error, cannot delete account" });
+    res.status(500).json({ message: "Server error, cannot delete account." });
   }
 });
