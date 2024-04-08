@@ -31,6 +31,12 @@ router.put("/:userId/updateUsername", dashboardController.updateUsername);
 
 router.put("/:userId/updateTimezone", dashboardController.updateTimezone);
 
+router.put(
+  "/profile",
+  passport.authenticate("jwt", { session: false }),
+  dashboardController.updateProfileGoogleAuth
+);
+
 // DELETE
 router.delete("/:userId/account", dashboardController.deleteAccount);
 

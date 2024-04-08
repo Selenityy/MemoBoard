@@ -26,6 +26,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
     email,
     firstName,
     lastName,
+    timezone,
   });
   await newUser.save();
 
@@ -89,7 +90,8 @@ exports.googleCB = (req, res, next) => {
         const token = jwt.sign({ id: user._id }, process.env.SESSION_SECRET, {
           expiresIn: "1d",
         });
-        res.status(200).json({ user, token });
+        res.redirect(`/complete-profile?token=${token}`); // change this in front end to not need the token in url. Use Intl.DateTimeFormat().resolvedOptions().timeZone on front end to detect the timezone shift
+        // res.status(200).json({ user, token });
       } catch (error) {
         next(error);
       }
