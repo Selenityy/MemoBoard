@@ -105,3 +105,7 @@ exports.googleCB = (req, res, next) => {
 exports.logout = asyncHandler(async (req, res, next) => {
   res.json({ message: "Logged out" });
 });
+
+exports.failedLogin = asyncHandler(async (req, res, next) => {
+  res.json({ message: "Something went wrong." });
+});
