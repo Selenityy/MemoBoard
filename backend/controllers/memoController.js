@@ -166,6 +166,7 @@ exports.updateMemo = asyncHandler(async (req, res, next) => {
       req.body,
       {
         new: true,
+        runValidators: true,
       }
     );
     if (!updatedMemo) {
