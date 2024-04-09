@@ -6,7 +6,7 @@ const passport = require("passport");
 
 // Sign up
 exports.signup = asyncHandler(async (req, res, next) => {
-  const { username, email, password, firstName, lastName } = req.body;
+  const { username, email, password, firstName, lastName, timezone } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ message: "Email and password are requried" });
@@ -61,7 +61,9 @@ exports.login = asyncHandler(async (req, res, next) => {
           }
         );
 
-        res.status(200).json({ user: populatedUser, token });
+        res
+          .status(200)
+          .json({ message: "Login successful.", user: populatedUser, token });
       } catch (error) {
         next(error);
       }
