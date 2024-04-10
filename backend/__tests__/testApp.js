@@ -36,19 +36,19 @@ app.use(passport.session());
 app.use("/auth", authRoutes);
 app.use("/dashboard", dashboardRoutes);
 
-app.use((req, res, next) => {
-  next(createError(404));
-});
+// app.use((req, res, next) => {
+//   next(createError(404));
+// });
 
-app.use((err, req, res, next) => {
-  res.status(err.status || 500).json({ error: err.message });
-});
+// app.use((err, req, res, next) => {
+//   res.status(err.status || 500).json({ error: err.message });
+// });
 
-//   app.use((err, req, res, next) => {
-//     res.status(err.status || 500).json({
-//       message: err.message || "An error occurred",
-//       error: req.app.get("env") === "development" ? err : {},
-//     });
-//   });
+  app.use((err, req, res, next) => {
+    res.status(err.status || 500).json({
+      message: err.message || "An error occurred",
+      error: req.app.get("env") === "development" ? err : {},
+    });
+  });
 
 module.exports = app;
