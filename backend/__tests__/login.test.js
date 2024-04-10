@@ -27,6 +27,6 @@ test("should login an existing user", async () => {
     username: "jestTest",
     password: "jest",
   });
-  console.log(res);
   expect(res.statusCode).toEqual(200);
+  expect(res.body.message).toEqual("Login successful.");
 });
