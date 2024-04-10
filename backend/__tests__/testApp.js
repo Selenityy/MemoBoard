@@ -10,49 +10,45 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("../routes/authRoutes");
 const dashboardRoutes = require("../routes/dashboardRoutes");
 
-const createTestApp = () => {
-  const app = express();
-  app.use(express.json());
+const app = express();
+app.use(express.json());
 
-  //   app.use(cors());
-  //   app.use(logger("dev"));
-  //   app.use(express.json());
-  //   app.use(express.urlencoded({ extended: false }));
-  //   app.use(cookieParser());
+app.use(cors());
+app.use(logger("dev"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
-  //   app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 
-  //   app.use(
-  //     session({
-  //       secret: process.env.SESSION_SECRET,
-  //       resave: false,
-  //       saveUninitialized: false,
-  //     })
-  //   );
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
-  //   require("../helpers/passport");
-  //   app.use(passport.initialize());
-  //   app.use(passport.session());
+require("../helpers/passport");
+app.use(passport.initialize());
+app.use(passport.session());
 
-  app.use("/auth", authRoutes);
-  app.use("/dashboard", dashboardRoutes);
+app.use("/auth", authRoutes);
+app.use("/dashboard", dashboardRoutes);
 
-  //   app.use((req, res, next) => {
-  //     next(createError(404));
-  //   });
+app.use((req, res, next) => {
+  next(createError(404));
+});
 
-  app.use((err, req, res, next) => {
-    res.status(err.status || 500).json({ error: err.message });
-  });
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).json({ error: err.message });
+});
 
-  //   app.use((err, req, res, next) => {
-  //     res.status(err.status || 500).json({
-  //       message: err.message || "An error occurred",
-  //       error: req.app.get("env") === "development" ? err : {},
-  //     });
-  //   });
+//   app.use((err, req, res, next) => {
+//     res.status(err.status || 500).json({
+//       message: err.message || "An error occurred",
+//       error: req.app.get("env") === "development" ? err : {},
+//     });
+//   });
 
-  return app;
-};
-
-module.exports = createTestApp;
+module.exports = app;
