@@ -159,6 +159,7 @@ exports.createMemo = [
 exports.updateMemo = asyncHandler(async (req, res, next) => {
   const memoId = req.params.memoId;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
+  console.log("userId:", userId);
 
   try {
     const updatedMemo = await Memo.findOneAndUpdate(
@@ -192,12 +193,12 @@ exports.updateMemo = asyncHandler(async (req, res, next) => {
 exports.deleteMemo = asyncHandler(async (req, res, next) => {
   const memoId = req.params.memoId;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
-
   try {
     const deleteMemo = await Memo.findOneAndDelete({
       _id: memoId,
       user: userId,
     });
+
     if (!deleteMemo) {
       return res.status(404).json({ message: "Delete memo not found" });
     }
