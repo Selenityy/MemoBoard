@@ -1,5 +1,5 @@
 const request = require("supertest");
-const createTestApp = require("./testApp");
+const app = require("./testApp");
 const db = require("./mongoConfigTesting");
 
 beforeAll(async () => {
@@ -15,7 +15,6 @@ afterAll(async () => {
 });
 
 test("should sign up a new user successfully", async () => {
-  const app = await createTestApp();
   const res = await request(app).post("/auth/signup").send({
     username: "jestTest",
     password: "jest",
@@ -29,7 +28,6 @@ test("should sign up a new user successfully", async () => {
 });
 
 test("should reject username for already existing", async () => {
-  const app = await createTestApp();
   const res = await request(app).post("/auth/signup").send({
     username: "jestTest",
     password: "jest",
@@ -51,7 +49,6 @@ test("should reject username for already existing", async () => {
 });
 
 test("should error with email and password required", async () => {
-  const app = await createTestApp();
   const res = await request(app).post("/auth/signup").send({
     username: "jestTest",
     password: "",
