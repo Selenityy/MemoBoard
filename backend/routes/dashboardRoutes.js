@@ -11,13 +11,9 @@ const tagRoutes = require("../routes/tagRoutes");
 // Apply JWT authentication middleware to all routes in this router
 router.use(passport.authenticate("jwt", { session: false }));
 
-router.get(
-  "/dashboard",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    res.json({ message: "Successful login to protected routes" });
-  }
-);
+router.get("/", (req, res) => {
+  res.json({ message: "Successful login to protected routes" });
+});
 router.get("/data", dashboardController.userData);
 router.get("/timezone", dashboardController.timezone);
 router.put("/:userId/updateEmail", dashboardController.updateEmail);
