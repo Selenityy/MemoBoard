@@ -1,6 +1,6 @@
 const request = require("supertest");
-const app = require("./testApp");
-const db = require("./mongoConfigTesting");
+const app = require("../helpers/testApp");
+const db = require("../helpers/mongoConfigTesting");
 
 beforeAll(async () => {
   await db.startMongoServer();
