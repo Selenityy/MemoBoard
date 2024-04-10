@@ -201,12 +201,11 @@ exports.deleteAccount = asyncHandler(async (req, res, next) => {
   try {
     await Memo.deleteMany({ user: userId });
     await Tag.deleteMany({ user: userId });
+    await User.findByIdAndDelete(userId);
 
-    const user = await User.findByIdAndDelete(userId);
-
-    if (!user) {
-      return res.status(404).jsaon({ message: "User not found." });
-    }
+    // if (!user) {
+    //   return res.status(404).json({ message: "User not found." });
+    // }
 
     res.status(200).json({
       message:
