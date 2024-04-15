@@ -14,6 +14,7 @@ function LoginForm() {
     identifier: "",
     password: "",
   });
+  const [validated, setValidated] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,16 +22,20 @@ function LoginForm() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(credentials);
-    // Implement login logic here
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    setValidated(true);
   };
 
   return (
-    <Container className="form-container my-5 py-5">
+    <Container className="form-container">
       <Row className="justify-content-center">
         <Col xs={12} sm={10} md={8} lg={6}>
-          <Form onSubmit={handleSubmit}>
+          <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <FloatingLabel
               controlId="floatingInput"
               label="Email address or Username"
@@ -44,6 +49,9 @@ function LoginForm() {
                 onChange={handleChange}
                 required
               />
+              <Form.Control.Feedback type="invalid">
+                Please provide a valid email or username.
+              </Form.Control.Feedback>
             </FloatingLabel>
             <FloatingLabel
               controlId="floatingPassword"
@@ -58,6 +66,9 @@ function LoginForm() {
                 onChange={handleChange}
                 required
               />
+              <Form.Control.Feedback type="invalid">
+                Please provide a password.
+              </Form.Control.Feedback>
             </FloatingLabel>
             <Button variant="primary" type="submit" className="w-100">
               Log In
