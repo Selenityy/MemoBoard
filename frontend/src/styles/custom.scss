@@ -1,40 +1,72 @@
 @import "~bootstrap/scss/bootstrap";
 @import url("https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap");
 
+// Base HTML and Body Styles
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: "Architects Daughter", cursive;
+  font-size: 16px;
+
+  @media (max-width: 1200px) {
+    font-size: 15px;
+  }
+
+  @media (max-width: 992px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
+
+  @media (max-width: 576px) {
+    font-size: 12px;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 11px;
+  }
+
+  background: #f8f9fa;
+  color: #333;
+  height: 100%;
+  min-height: 100vh;
+}
+
 .logo-title {
   font-family: "Architects Daughter", cursive;
   font-weight: 400;
   font-style: normal;
   padding-top: 20px;
-  font-size: 2.5rem; // Default size
+  font-size: 2.5rem;
 
   @media (max-width: 1200px) {
     font-size: 2rem;
   }
 
   @media (max-width: 768px) {
-    // Tablets and below
-    font-size: 2rem; // Smaller font size on tablets
+    font-size: 2rem;
   }
 
   @media (max-width: 576px) {
-    // Mobile devices
-    font-size: 1.75rem; // Even smaller font size on mobile devices
+    font-size: 1.75rem;
   }
 }
 
 .logo-container {
   img {
-    width: 100%; // Make width responsive to the container
-    max-width: 50px; // Maximum width of the image
+    width: 100%;
+    max-width: 50px;
 
     // Media query nested within
     @media (max-width: 768px) {
-      max-width: 50px; // Smaller logo on smaller screens
+      max-width: 50px;
     }
 
     @media (max-width: 576px) {
-      max-width: 40px; // Even smaller logo on phone screens
+      max-width: 40px;
     }
   }
 }
@@ -52,19 +84,16 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 576px) {
-    // Mobile devices
     padding: 16px;
     max-width: 100%;
   }
 
   @media (min-width: 768px) {
-    // Tablets
     padding: 20px;
     max-width: 80%;
   }
 
   @media (min-width: 1024px) {
-    // Dekstop
     padding: 30px;
     max-width: 70%;
   }
