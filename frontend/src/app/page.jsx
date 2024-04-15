@@ -10,10 +10,14 @@ const Auth = () => {
       <Container className="my-5 py-5">
         <Row className="mb-4">
           <Col xs={12}>
-            <h2 className="text-center">Welcome to MemoBoard</h2>
+            <h2 className="text-center" style={{ fontSize: "1.75rem" }}>
+              Welcome to MemoBoard
+            </h2>
           </Col>
           <Col xs={12}>
-            <h3 className="text-center">To get started, please sign in</h3>
+            <h3 className="text-center" style={{ fontSize: "1.25rem" }}>
+              To get started, please sign in
+            </h3>
           </Col>
         </Row>
         <Row>
