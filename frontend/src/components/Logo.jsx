@@ -6,13 +6,13 @@ const Logo = () => {
   return (
     <Row className="align-items-center gx-1 gx-sm-2">
       <Col xs="auto">
-        <div className="logo-container">
+        <div className="logo-container" style={{ opacity: 0.9 }}>
           <Image
             src="/images/logo2.png"
             width={50}
             height={50}
             alt="Logo of MemoBoard"
-            className="img-fluid"
+            className="img-fluid "
           />
         </div>
       </Col>
