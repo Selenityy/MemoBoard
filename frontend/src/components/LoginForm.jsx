@@ -45,6 +45,7 @@ function LoginForm() {
                 type="text"
                 name="identifier"
                 placeholder="name@example.com or Username"
+                className="input-floating"
                 value={credentials.identifier}
                 onChange={handleChange}
                 required
@@ -62,6 +63,7 @@ function LoginForm() {
                 type="password"
                 name="password"
                 placeholder="Password"
+                className="input-floating"
                 value={credentials.password}
                 onChange={handleChange}
                 required
