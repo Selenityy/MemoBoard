@@ -1,13 +1,23 @@
 import React from "react";
 import Logo from "./Logo";
-import { Container } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import "../styles/custom.scss";
+import LightDarkModeToggle from "./LightDarkModeToggle";
 
 const Header = () => {
   return (
     <Container fluid>
-      <Logo />
-      <hr className="header-hr"></hr>
+      <Row className="align-items-center justify-content-between">
+        <Col xs={8} md="fluid">
+          <Logo />
+        </Col>
+        <Col xs="auto">
+          <LightDarkModeToggle />
+        </Col>
+      </Row>
+      <Row>
+        <hr className="header-hr"></hr>
+      </Row>
     </Container>
   );
 };
