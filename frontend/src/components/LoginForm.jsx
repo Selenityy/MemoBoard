@@ -38,7 +38,7 @@ function LoginForm() {
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <FloatingLabel
               controlId="floatingInput"
-              label="Email address or Username"
+              label="Email or Username"
               className="mb-3"
             >
               <Form.Control
@@ -49,7 +49,7 @@ function LoginForm() {
                 onChange={handleChange}
                 required
               />
-              <Form.Control.Feedback type="invalid">
+              <Form.Control.Feedback type="invalid" className="input-feedback">
                 Please provide a valid email or username.
               </Form.Control.Feedback>
             </FloatingLabel>
@@ -66,7 +66,7 @@ function LoginForm() {
                 onChange={handleChange}
                 required
               />
-              <Form.Control.Feedback type="invalid">
+              <Form.Control.Feedback type="invalid" className="input-feedback">
                 Please provide a password.
               </Form.Control.Feedback>
             </FloatingLabel>
