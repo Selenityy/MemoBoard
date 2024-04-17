@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./features/userSlice";
 import memoReducer from "./features/memoSlice";
-import tagReducer from "./features/tagSlice";
+import tagReducer from "./features/tagsSlice";
 
 const store = configureStore({
   reducer: {
