@@ -4,7 +4,7 @@ export const loginUser = createAsyncThunk(
   "/user/login",
   async (formData, thunkAPI) => {
     try {
-      const response = await fetch("http://localhost:3000/auth/login", {
+      const response = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,18 +34,6 @@ const initialState = {
     googleId: "",
     timezone: "",
   },
-  // memo: {
-  //   _id: "",
-  //   body: "",
-  //   user: "", // reference to user id
-  //   dueDateTime: null,
-  //   progress: "Not Started",
-  //   tags: [], // array of tag ids
-  //   priority: null,
-  //   notes: "",
-  //   parentId: null, // if parent id, then not null and use id
-  // },
-  // tags: [],
   isLoggedIn: false,
   status: "idle",
   error: null,
