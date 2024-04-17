@@ -42,7 +42,6 @@ const tagsSlice = createSlice({
         state.status = "loading";
       })
       .addCase(fetchTags.fulfilled, (state, action) => {
-        // state.tags = action.payload;
         action.payload.forEach((tag) => {
           state.byId[tag._id] = tag;
           if (!state.allIds.includes(tag._id)) {
