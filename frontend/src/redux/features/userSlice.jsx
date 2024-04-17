@@ -13,7 +13,7 @@ export const loginUser = createAsyncThunk(
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message);
+        throw new Error(data.message || "Failed fetch to login user");
       }
       localStorage.setItem("token", data.token);
       return data.user;
