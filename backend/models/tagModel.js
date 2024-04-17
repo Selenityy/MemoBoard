@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const TagSchema = new Schema({
-  name: { type: String, minLength: 2, maxLenght: 20 },
+const TagsSchema = new Schema({
+  name: { type: String, minLength: 2, maxLength: 20 },
   user: { type: Schema.Types.ObjectId, ref: "User", required: true },
 });
 
@@ -12,4 +12,4 @@ TagSchema.virtual("url").get(function () {
   return `/tags/${this._id}`;
 });
 
-module.exports = mongoose.model("Tags", TagSchema);
+module.exports = mongoose.model("Tags", TagsSchema);
