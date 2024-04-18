@@ -2,14 +2,14 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 export const loginUser = createAsyncThunk(
   "/user/login",
-  async (formData, thunkAPI) => {
+  async (credentials, thunkAPI) => {
     try {
       const response = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(credentials),
       });
       const data = await response.json();
       if (!response.ok) {
