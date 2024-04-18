@@ -8,7 +8,7 @@ const TagsSchema = new Schema({
 });
 
 // virtual url to add more tags
-TagSchema.virtual("url").get(function () {
+TagsSchema.virtual("url").get(function () {
   return `/tags/${this._id}`;
 });
 
