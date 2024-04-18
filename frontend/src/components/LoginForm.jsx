@@ -8,20 +8,27 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import { loginUser } from "@/redux/features/userSlice";
 
 function LoginForm() {
+  const dispatch = useDispatch();
+  const router = useRouter();
+
   const [credentials, setCredentials] = useState({
     identifier: "",
     password: "",
   });
   const [validated, setValidated] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCredentials((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
       e.preventDefault();
@@ -29,6 +36,21 @@ function LoginForm() {
     }
 
     setValidated(true);
+    try {
+      const res = await dispatch(loginUser(credentials));
+      const userId = res.payload._id;
+      if (userId) {
+        setCredentials({
+          identifier: "",
+          password: "",
+        });
+      }
+      router.push("/dashboard");
+      console.log("successful login!");
+    } catch (error) {
+      setErrorMessage("Server error when attempting to log in");
+      console.error("Server error failed to log in:", error);
+    }
   };
 
   return (
@@ -75,6 +97,7 @@ function LoginForm() {
             <Button variant="primary" type="submit" className="w-100">
               Log In
             </Button>
+            <div>{errorMessage}</div>
           </Form>
         </Col>
       </Row>
