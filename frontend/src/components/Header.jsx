@@ -7,7 +7,7 @@ import LightDarkModeToggle from "./LightDarkModeToggle";
 const Header = () => {
   return (
     <Container fluid>
-      <Row className="align-items-center justify-content-between">
+      <Row className="header align-items-center justify-content-between">
         <Col xs={8} md="fluid">
           <Logo />
         </Col>
@@ -15,7 +15,7 @@ const Header = () => {
           <LightDarkModeToggle />
         </Col>
       </Row>
-      <Row>
+      <Row style={{ backgroundColor: "#1f1f1f" }}>
         <hr className="header-hr"></hr>
       </Row>
     </Container>
