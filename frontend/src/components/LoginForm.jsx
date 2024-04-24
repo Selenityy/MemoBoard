@@ -37,8 +37,8 @@ function LoginForm() {
 
     setValidated(true);
     try {
-      const res = await dispatch(loginUser(credentials));
-      const userId = res.payload._id;
+      const res = await dispatch(loginUser(credentials)).unwrap();
+      const userId = res._id;
       if (userId) {
         setCredentials({
           identifier: "",
