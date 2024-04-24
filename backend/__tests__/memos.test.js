@@ -22,7 +22,7 @@ beforeEach(async () => {
   });
 
   const loginRes = await request(app).post("/auth/login").send({
-    username: "jestTest",
+    identifier: "jestTest",
     password: "jest",
   });
   token = loginRes.body.token;

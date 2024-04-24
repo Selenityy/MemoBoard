@@ -24,7 +24,7 @@ afterAll(async () => {
 
 test("should login an existing user", async () => {
   const res = await request(app).post("/auth/login").send({
-    username: "jestTest",
+    identifier: "jestTest",
     password: "jest",
   });
   expect(res.statusCode).toEqual(200);

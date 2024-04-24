@@ -20,7 +20,7 @@ beforeEach(async () => {
     timezone: "CT",
   });
   const res = await request(app).post("/auth/login").send({
-    username: "jestTest",
+    identifier: "jestTest",
     password: "jest",
   });
   token = res.body.token;
