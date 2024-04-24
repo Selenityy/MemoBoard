@@ -40,11 +40,12 @@ function LoginForm() {
       const res = await dispatch(loginUser(credentials)).unwrap();
       const userId = res._id;
       if (userId) {
+        router.push("/dashboard");
         setCredentials({
           identifier: "",
           password: "",
         });
-        router.push("/dashboard");
+        setValidated(false);
         console.log("successful login!");
       } else {
         setErrorMessage("Username/Email or Passowrd is incorrect");
