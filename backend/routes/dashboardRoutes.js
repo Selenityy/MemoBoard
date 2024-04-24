@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const dashboardController = require("../controllers/dashboardController");
 const memoRoutes = require("../routes/memoRoutes");
 const tagRoutes = require("../routes/tagRoutes");
+const projectRoutes = require("../routes/projectRoutes");
 
 // Apply JWT authentication middleware to all routes in this router
 router.use(passport.authenticate("jwt", { session: false }));
@@ -36,6 +37,11 @@ router.use(
   "/tags",
   passport.authenticate("jwt", { session: false }),
   tagRoutes
+);
+router.use(
+  "/projects",
+  passport.authenticate("jwt", { session: false }),
+  projectRoutes
 );
 
 module.exports = router;
