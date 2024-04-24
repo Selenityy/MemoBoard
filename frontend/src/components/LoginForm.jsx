@@ -44,9 +44,11 @@ function LoginForm() {
           identifier: "",
           password: "",
         });
+        router.push("/dashboard");
+        console.log("successful login!");
+      } else {
+        setErrorMessage("Username/Email or Passowrd is incorrect");
       }
-      router.push("/dashboard");
-      console.log("successful login!");
     } catch (error) {
       setErrorMessage("Server error when attempting to log in");
       console.error("Server error failed to log in:", error);
