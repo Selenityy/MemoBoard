@@ -9,21 +9,26 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/userModel");
 
 passport.use(
-  new LocalStrategy(async (username, password, done) => {
-    try {
-      const user = await User.findOne({ username: username });
-      if (!user) {
-        return done(null, false, { message: "Incorrect username" });
+  new LocalStrategy(
+    { usernameField: "identifier" },
+    async (identifier, password, done) => {
+      try {
+        const user = await User.findOne({
+          $or: [{ username: identifier }, { email: identifier }],
+        });
+        if (!user) {
+          return done(null, false, { message: "Incorrect username" });
+        }
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+          return done(null, false, { message: "Incorrect password" });
+        }
+        return done(null, user, { message: "Logged in successfully" });
+      } catch (err) {
+        return done(err);
       }
-      const passwordMatch = await bcrypt.compare(password, user.password);
-      if (!passwordMatch) {
-        return done(null, false, { message: "Incorrect password" });
-      }
-      return done(null, user, { message: "Logged in successfully" });
-    } catch (err) {
-      return done(err);
     }
-  })
+  )
 );
 
 passport.serializeUser((user, done) => {
