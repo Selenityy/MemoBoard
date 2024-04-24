@@ -22,6 +22,7 @@ const MemoSchema = new Schema({
   },
   notes: { type: String, maxLength: 300 },
   parentId: { type: Schema.Types.ObjectId, ref: "Memo", default: null },
+  project: { type: Schema.Types.ObjectId, ref: "Project", default: null },
 });
 
 MemoSchema.virtual("url").get(function () {
