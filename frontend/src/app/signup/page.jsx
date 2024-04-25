@@ -8,8 +8,8 @@ const SignupPage = () => {
   return (
     <div className="login-page">
       <HeaderNoHR />
-      <Container>
-        <Row>
+      <Container className="my-5 py-5">
+        <Row className="mb-4">
           <Col xs={12}>
             <h2 className="text-center welcome-text">Welcome to MemoBoard</h2>
           </Col>
