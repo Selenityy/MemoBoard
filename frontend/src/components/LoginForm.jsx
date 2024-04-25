@@ -64,7 +64,7 @@ function LoginForm() {
             <FloatingLabel
               controlId="floatingInput"
               label="Email or Username"
-              className="mb-3"
+              className="mb-3 input-label"
             >
               <Form.Control
                 type="text"
@@ -82,7 +82,7 @@ function LoginForm() {
             <FloatingLabel
               controlId="floatingPassword"
               label="Password"
-              className="mb-3"
+              className="mb-3 input-label"
             >
               <Form.Control
                 type="password"
@@ -98,7 +98,7 @@ function LoginForm() {
               </Form.Control.Feedback>
             </FloatingLabel>
             <Button variant="primary" type="submit" className="w-100">
-              Log In
+              Login
             </Button>
             <div>{errorMessage}</div>
           </Form>
