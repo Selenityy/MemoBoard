@@ -22,6 +22,10 @@ const SignupForm = () => {
     password: "",
     timezone: "",
   });
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
+  const [emailInvalid, setEmailInvalid] = useState(false);
+  const [usernameInvalid, setUsernameInvalid] = useState(false);
   const [validated, setValidated] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [userCreated, setUserCreated] = useState(false);
@@ -33,14 +37,23 @@ const SignupForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.password !== confirmPassword) {
+      setPasswordMismatch(true);
+      e.stopPropagation();
+      return;
+    }
+
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
       e.stopPropagation();
     }
 
+    setPasswordMismatch(false);
     setValidated(true);
     try {
       const res = await dispatch(signupUser(formData));
+      console.log("res:", res);
       if (signupUser.fulfilled.match(res)) {
         setUserCreated(true);
         setFormData({
@@ -51,13 +64,19 @@ const SignupForm = () => {
           password: "",
           timezone: "",
         });
+        setConfirmPassword("");
         setValidated(false);
+        setErrorMessage("");
         console.log("successful signup");
+      } else {
+        setValidated(false);
+        setErrorMessage(res.payload);
+        setEmailInvalid(true);
+        setUsernameInvalid(true);
       }
     } catch (error) {
-      setErrorMessage(
-        "Error occured when attempting to signup. Please check your information above and try again."
-      );
+      setErrorMessage(error);
+      setUserCreated(false);
       console.error("Server error failed to signup", error);
     }
   };
@@ -68,7 +87,7 @@ const SignupForm = () => {
         <Col xs={12} sm={10} md={8} lg={6}>
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <FloatingLabel
-              controlId="floatingInput"
+              controlId="floatingFirstName"
               label="First Name"
               className="mb-3 input-floating"
             >
@@ -86,7 +105,7 @@ const SignupForm = () => {
               </Form.Control.Feedback>
             </FloatingLabel>
             <FloatingLabel
-              controlId="floatingInput"
+              controlId="floatingLastName"
               label="Last Name"
               className="mb-3 input-floating"
             >
@@ -104,7 +123,7 @@ const SignupForm = () => {
               </Form.Control.Feedback>
             </FloatingLabel>
             <FloatingLabel
-              controlId="floatingInput"
+              controlId="floatingEmail"
               label="Email"
               className="mb-3 input-floating"
             >
@@ -118,11 +137,11 @@ const SignupForm = () => {
                 required
               />
               <Form.Control.Feedback type="invalid" className="input-feedback">
-                Please provide a email
+                Please provide an email
               </Form.Control.Feedback>
             </FloatingLabel>
             <FloatingLabel
-              controlId="floatingInput"
+              controlId="floatingUsername"
               label="Username"
               className="mb-3 input-floating"
             >
@@ -140,7 +159,7 @@ const SignupForm = () => {
               </Form.Control.Feedback>
             </FloatingLabel>
             <FloatingLabel
-              controlId="floatingInput"
+              controlId="floatingPassword"
               label="Password"
               className="mb-3 input-floating"
             >
@@ -157,10 +176,35 @@ const SignupForm = () => {
                 Please provide a password
               </Form.Control.Feedback>
             </FloatingLabel>
+            <FloatingLabel
+              controlId="floatingConfirmPassword"
+              label="Confirm Password"
+              className="mb-3 input-floating"
+            >
+              <Form.Control
+                type="password"
+                name="confirmPassword"
+                placeholder=""
+                className="input-label"
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  setPasswordMismatch(false);
+                  setUserCreated(false);
+                }}
+                required
+                isInvalid={passwordMismatch}
+              />
+              <Form.Control.Feedback type="invalid" className="input-feedback">
+                {passwordMismatch
+                  ? "Passwords do not match"
+                  : "Please confirm your password"}
+              </Form.Control.Feedback>
+            </FloatingLabel>
             <Button variant="primary" type="submit" className="w-100">
               Signup
             </Button>
-            <div>{errorMessage}</div>
+            <div style={{ color: "red" }}>{errorMessage}</div>
           </Form>
         </Col>
       </Row>
