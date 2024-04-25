@@ -1,10 +1,28 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import "../styles/custom.scss";
-
 import { Button, Col, Container, Row, Stack } from "react-bootstrap";
 import LogoutBtn from "./LogoutBtn";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchProjects } from "@/redux/features/projectSlice";
+import { selectProjects } from "@/helpers/projectSelectors";
 
 const NavBar = () => {
+  const dispatch = useDispatch();
+
+  const projects = useSelector(selectProjects);
+
+  const [refreshDataTrigger, setRefreshDataTrigger] = useState(false);
+
+  useEffect(() => {
+    const updateProjects = async () => {
+      try {
+        await dispatch(fetchProjects());
+      } catch (error) {
+        console.error("Failed to get the projects:", error);
+      }
+    };
+    updateProjects();
+  }, [dispatch, refreshDataTrigger]);
 
   return (
     <>
@@ -35,8 +53,8 @@ const NavBar = () => {
             <hr></hr>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row style={{ height: "100%" }}>
+          <Col xs={12}>
             <Row className="align-items-center">
               <Col xs={8}>
                 <span>Projects</span>
@@ -45,23 +63,25 @@ const NavBar = () => {
                 <Button size="sm">+</Button>
               </Col>
             </Row>
+            {/* </Col> */}
+            {/* </Row> */}
+            {projects.map((project) => (
+              <Row key={project._id}>
+                <Col>
+                  <ul>
+                    <li>{project.name}</li>
+                  </ul>
+                </Col>
+              </Row>
+            ))}
           </Col>
-        </Row>
-        {/* {projects.map((project) => {
-          <Row key={project.id}>
-            <Col>
-              <span>{project.name}</span>
-            </Col>
-          </Row>;
-        })} */}
-      </Stack>
-      <div className="mt-auto">
-        <Row>
-          <Col>
+          {/* </Row> */}
+          {/* <Row className="row-gap-3"> */}
+          {/* <Col>
             <LogoutBtn />
-          </Col>
+          </Col> */}
         </Row>
-      </div>
+      </Stack>
       {/* </Container> */}
     </>
   );
