@@ -92,9 +92,16 @@ body {
   background-color: #1f1f1f;
 }
 
+.login-page {
+  //   background: #e1e1e1;
+  background: white;
+  height: 100vh;
+}
+
 .welcome-text {
   font-family: "Architects Daughter";
-  font-size: 3rem;
+  font-size: 2.5rem;
+  color: #1f1f1f;
 
   @media (max-width: 567px) {
     font-size: 2.3rem;
@@ -102,8 +109,9 @@ body {
 }
 
 .sign-in-text {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 300;
+  color: #1f1f1f;
 
   @media (max-width: 576px) {
     font-size: 1.5rem;
@@ -111,12 +119,19 @@ body {
   }
 }
 
+.div-hr-border {
+  width: 100%;
+  height: 0.5px;
+  background-color: #1f1f1f;
+}
+
 // Custom styles for the form
 .form-container {
   max-width: 800px;
   margin: auto;
   padding: 2rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  //   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  //   background: #e1e1e1;
 
   @media (max-width: 576px) {
     padding: 16px;
@@ -130,8 +145,12 @@ body {
 
   @media (min-width: 1024px) {
     padding: 30px;
-    max-width: 70%;
+    max-width: 80%;
   }
+}
+
+.input-label {
+  color: #1f1f1f;
 }
 
 .login-container {
