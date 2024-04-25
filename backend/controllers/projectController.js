@@ -36,7 +36,7 @@ exports.getProject = asyncHandler(async (req, res, next) => {
       return res.status(404).json({ message: "Specific project not found" });
     }
     res.json({
-      message: "Successfullt retrieved a specific project",
+      message: "Successfully retrieved a specific project",
       project: project,
     });
   } catch (error) {
