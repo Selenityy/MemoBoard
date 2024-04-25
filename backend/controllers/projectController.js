@@ -31,7 +31,9 @@ exports.getProject = asyncHandler(async (req, res, next) => {
     const project = await Project.findOne({
       _id: projectId,
       user: userId,
-    }).populate("memos");
+    })
+      .populate("memos")
+      .exec();
     if (!project) {
       return res.status(404).json({ message: "Specific project not found" });
     }
