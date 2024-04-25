@@ -127,7 +127,7 @@ body {
 
 // Custom styles for the form
 .form-container {
-  max-width: 800px;
+  max-width: 80%;
   margin: auto;
   padding: 2rem;
   //   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -147,18 +147,24 @@ body {
     padding: 30px;
     max-width: 80%;
   }
+
+  @media (min-width: 1200px) {
+    padding: 30px;
+    max-width: 60%;
+  }
 }
 
-.input-label {
-  color: #1f1f1f;
+.input-floating {
+  color: #575757;
+  font-size: 1rem;
 }
 
 .login-container {
   max-width: 800px;
 }
 
-.input-floating {
-  font-size: 1.25rem;
+.input-label {
+  font-size: 1rem;
 
   @media (max-width: 768px) {
     font-size: 1.2rem;

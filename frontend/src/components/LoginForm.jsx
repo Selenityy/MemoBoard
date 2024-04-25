@@ -64,13 +64,13 @@ function LoginForm() {
             <FloatingLabel
               controlId="floatingInput"
               label="Email or Username"
-              className="mb-3 input-label"
+              className="mb-3 input-floating"
             >
               <Form.Control
                 type="text"
                 name="identifier"
                 placeholder="name@example.com or Username"
-                className="input-floating"
+                className="input-label"
                 value={credentials.identifier}
                 onChange={handleChange}
                 required
@@ -82,13 +82,13 @@ function LoginForm() {
             <FloatingLabel
               controlId="floatingPassword"
               label="Password"
-              className="mb-3 input-label"
+              className="mb-3 input-floating"
             >
               <Form.Control
                 type="password"
                 name="password"
                 placeholder="Password"
-                className="input-floating"
+                className="input-label"
                 value={credentials.password}
                 onChange={handleChange}
                 required
