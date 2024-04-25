@@ -40,7 +40,7 @@ const SignupForm = () => {
 
     setValidated(true);
     try {
-      const res = await dispatch(signupUser(formData)).unwrap();
+      const res = await dispatch(signupUser(formData));
       if (signupUser.fulfilled.match(res)) {
         setUserCreated(true);
         setFormData({
@@ -165,9 +165,9 @@ const SignupForm = () => {
         </Col>
       </Row>
       {userCreated && (
-        <Row>
-          <Col>
-            <span>Account creation successful!</span>
+        <Row className="justify-content-center">
+          <Col xs="auto" className="pt-2">
+            <span style={{ color: "green" }}>Account creation successful!</span>
           </Col>
         </Row>
       )}
