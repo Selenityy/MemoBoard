@@ -23,6 +23,28 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const signupUser = createAsyncThunk(
+  "/user/signup",
+  async (formData, thunkAPI) => {
+    try {
+      const response = await fetch("http://localhost:3000/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      if (!response.ok) {
+        throw new Error(data.message || "Failed fetch to signup user");
+      }
+      const data = await response.json();
+      return data.newUser;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 const initialState = {
   user: {
     _id: "",
@@ -53,6 +75,7 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // LOGIN
       .addCase(loginUser.pending, (state) => {
         state.status = "loading";
       })
@@ -65,7 +88,22 @@ export const userSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
-      });
+      })
+
+      // SIGNUP
+      .addCase(signupUser.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(signupUser.fulfilled, (state, action) => {
+        state.user = { ...state.user, ...action.payload };
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(signupUser.rejected),
+      (state) => {
+        state.status = "failed";
+        state.error = action.payload;
+      };
   },
 });
 
