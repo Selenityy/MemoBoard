@@ -40,18 +40,20 @@ function LoginForm() {
       const res = await dispatch(loginUser(credentials)).unwrap();
       const userId = res._id;
       if (userId) {
-        router.push("/dashboard");
+        await router.push("/dashboard");
         setCredentials({
           identifier: "",
           password: "",
         });
         setValidated(false);
+        setErrorMessage("");
         console.log("successful login!");
       } else {
         setErrorMessage("Username/Email or Passowrd is incorrect");
       }
     } catch (error) {
-      setErrorMessage("Server error when attempting to log in");
+      setErrorMessage(error);
+      setValidated(false);
       console.error("Server error failed to log in:", error);
     }
   };
@@ -69,7 +71,7 @@ function LoginForm() {
               <Form.Control
                 type="text"
                 name="identifier"
-                placeholder="name@example.com or Username"
+                placeholder=""
                 className="input-label"
                 value={credentials.identifier}
                 onChange={handleChange}
@@ -100,7 +102,7 @@ function LoginForm() {
             <Button variant="primary" type="submit" className="w-100">
               Login
             </Button>
-            <div>{errorMessage}</div>
+            <div style={{ color: "red" }}>{errorMessage}</div>
           </Form>
         </Col>
       </Row>
