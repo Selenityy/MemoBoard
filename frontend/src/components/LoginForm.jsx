@@ -62,7 +62,7 @@ function LoginForm() {
         <Col xs={12} sm={10} md={8} lg={6}>
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <FloatingLabel
-              controlId="floatingInput"
+              controlId="floatingIdentifier"
               label="Email or Username"
               className="mb-3 input-floating"
             >
