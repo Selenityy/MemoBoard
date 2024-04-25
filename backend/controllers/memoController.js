@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Memo = require("../models/memoModel");
+const Project = require("../models/projectModel");
 const { body, validationResult } = require("express-validator");
 
 // Display all parent memos
@@ -129,8 +130,16 @@ exports.createMemo = [
       });
     }
 
-    const { body, dueDateTime, progress, tags, priority, notes, parentId } =
-      req.body;
+    const {
+      body,
+      dueDateTime,
+      progress,
+      tags,
+      priority,
+      notes,
+      parentId,
+      project,
+    } = req.body;
     try {
       const newMemo = new Memo({
         body,
@@ -141,8 +150,12 @@ exports.createMemo = [
         priority,
         notes,
         parentId,
+        project,
       });
       await newMemo.save();
+      await Project.findByIdAndUpdate(project, {
+        $push: { memos: newMemo._id },
+      });
       return res
         .status(201)
         .json({ message: "Memo created successfully", newMemo: newMemo });
