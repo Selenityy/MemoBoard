@@ -34,11 +34,16 @@ export const signupUser = createAsyncThunk(
         },
         body: JSON.stringify(formData),
       });
+      const data = await response.json();
+      console.log("data:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed fetch to signup user");
       }
-      const data = await response.json();
-      return data.newUser;
+      if (data.newUser) {
+        return data.newUser;
+      } else {
+        return thunkAPI.rejectWithValue(data.message);
+      }
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
