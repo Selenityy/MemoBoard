@@ -2,6 +2,7 @@ import React from "react";
 import "../styles/custom.scss";
 
 import { Button, Col, Container, Row } from "react-bootstrap";
+import LogoutBtn from "./LogoutBtn";
 
 const NavBar = () => {
   return (
@@ -9,17 +10,22 @@ const NavBar = () => {
       {/* <Container className="nav-bar-contatiner"> */}
       <Row>
         <Col>
-          <span>All Memos</span>
+          <span>Home</span>
         </Col>
       </Row>
       <Row>
         <Col>
-          <span>Today Memos</span>
+          <span>My Memos</span>
         </Col>
       </Row>
       <Row>
         <Col>
-          <span>This Week Memos</span>
+          <span>Today</span>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <span>This Week</span>
         </Col>
       </Row>
       <Row>
@@ -31,12 +37,17 @@ const NavBar = () => {
         <Col>
           <Row className="align-items-center">
             <Col xs={8}>
-              <span>All Memos</span>
+              <span>Projects</span>
             </Col>
             <Col xs="auto">
               <Button size="sm">+</Button>
             </Col>
           </Row>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <LogoutBtn />
         </Col>
       </Row>
       {/* </Container> */}
