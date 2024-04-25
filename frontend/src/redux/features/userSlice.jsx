@@ -108,11 +108,10 @@ export const userSlice = createSlice({
         state.status = "succeeded";
         state.error = null;
       })
-      .addCase(signupUser.rejected),
-      (state) => {
+      .addCase(signupUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
-      };
+      });
   },
 });
 
