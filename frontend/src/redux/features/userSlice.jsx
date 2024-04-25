@@ -15,8 +15,12 @@ export const loginUser = createAsyncThunk(
       if (!response.ok) {
         throw new Error(data.message || "Failed fetch to login user");
       }
-      localStorage.setItem("token", data.token);
-      return data.user;
+      if (data.user) {
+        localStorage.setItem("token", data.token);
+        return data.user;
+      } else {
+        return thunkAPI.rejectWithValue(data.message);
+      }
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
