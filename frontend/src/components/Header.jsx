@@ -49,7 +49,7 @@ const Header = () => {
             <Dropdown.Toggle as={CustomToggle}>
               <MdMenu size={30} />
             </Dropdown.Toggle>
-            <DropdownMenu>
+            <DropdownMenu className="mt-1">
               {theme === "dark" ? (
                 <Dropdown.Item onClick={toggleTheme}>Light Mode</Dropdown.Item>
               ) : (
