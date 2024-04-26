@@ -54,6 +54,7 @@ exports.createProject = [
     .trim()
     .isLength({ max: 100 })
     .withMessage("The project name must 100 characters or less"),
+  body("color").trim(),
   body("description")
     .trim()
     .optional()
@@ -76,6 +77,7 @@ exports.createProject = [
       const newProject = new Project({
         name,
         description,
+        color,
         user: userId,
       });
       await newProject.save();
