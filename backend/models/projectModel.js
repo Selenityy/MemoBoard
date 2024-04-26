@@ -7,7 +7,7 @@ const ProjectSchema = new Schema({
   description: { type: String, maxLength: 300 },
   user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   memos: [{ type: Schema.Types.ObjectId, ref: "Memo" }],
-  color: { type: String, required: true, default: "#563d7c" },
+  color: { type: String, required: true },
 });
 
 module.exports = mongoose.model("Project", ProjectSchema);
