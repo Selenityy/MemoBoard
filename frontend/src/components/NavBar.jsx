@@ -5,6 +5,7 @@ import LogoutBtn from "./LogoutBtn";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchProjects } from "@/redux/features/projectSlice";
 import { selectProjects } from "@/helpers/projectSelectors";
+import { IoMdAdd } from "react-icons/io";
 
 const NavBar = () => {
   const dispatch = useDispatch();
@@ -55,12 +56,14 @@ const NavBar = () => {
         </Row>
         <Row style={{ height: "100%" }}>
           <Col xs={12}>
-            <Row className="align-items-center">
+            <Row className="align-items-center justify-content-between">
               <Col xs={8}>
                 <span>Projects</span>
               </Col>
               <Col xs="auto">
-                <Button size="sm">+</Button>
+                {/* <Button size="sm" className="btn-custom"> */}
+                <IoMdAdd size={20} className="me-2" />
+                {/* </Button> */}
               </Col>
             </Row>
             {/* </Col> */}
