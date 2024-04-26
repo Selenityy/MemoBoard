@@ -1,18 +1,17 @@
 import { useState, useEffect } from "react";
 import "../styles/custom.scss";
 import { Button, Col, Container, Row, Stack } from "react-bootstrap";
-import LogoutBtn from "./LogoutBtn";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchProjects } from "@/redux/features/projectSlice";
 import { selectProjects } from "@/helpers/projectSelectors";
 import { IoMdAdd } from "react-icons/io";
+import ProjectModal from "./ProjectModal";
 
 const NavBar = () => {
   const dispatch = useDispatch();
-
   const projects = useSelector(selectProjects);
-
   const [refreshDataTrigger, setRefreshDataTrigger] = useState(false);
+  const [modalShow, setModalShow] = useState(false);
 
   useEffect(() => {
     const updateProjects = async () => {
@@ -56,35 +55,47 @@ const NavBar = () => {
         </Row>
         <Row style={{ height: "100%" }}>
           <Col xs={12}>
-            <Row className="align-items-center justify-content-between">
+            <Row className="align-items-center justify-content-between mb-2">
               <Col xs={8}>
                 <span>Projects</span>
               </Col>
               <Col xs="auto">
-                {/* <Button size="sm" className="btn-custom"> */}
-                <IoMdAdd size={20} className="me-2" />
-                {/* </Button> */}
+                <Button variant="primary" onClick={() => setModalShow(true)}>
+                  <IoMdAdd size={20} className="me-2" />
+                </Button>
               </Col>
             </Row>
-            {/* </Col> */}
-            {/* </Row> */}
             {projects.map((project) => (
               <Row key={project._id}>
                 <Col>
-                  <ul>
-                    <li>{project.name}</li>
+                  <ul className="ps-3 mb-3">
+                    <li className="p-0">
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            borderRadius: "7px",
+                            backgroundColor: project.color,
+                            marginRight: "10px",
+                          }}
+                        ></div>
+                        <span>{project.name}</span>
+                      </div>
+                    </li>
                   </ul>
                 </Col>
               </Row>
             ))}
           </Col>
-          {/* </Row> */}
-          {/* <Row className="row-gap-3"> */}
-          {/* <Col>
-            <LogoutBtn />
-          </Col> */}
         </Row>
       </Stack>
+      <ProjectModal show={modalShow} onHide={() => setModalShow(false)} />
       {/* </Container> */}
     </>
   );
