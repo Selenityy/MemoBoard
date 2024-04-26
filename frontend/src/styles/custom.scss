@@ -36,6 +36,10 @@ body {
   }
 }
 
+ul {
+  list-style-type: none;
+}
+
 .body-dark {
   background: #000000;
   color: #e1e1e1;
@@ -44,6 +48,40 @@ body {
 .body-light {
   background: #e1e1e1;
   color: #000000;
+}
+
+.modal-dark {
+  background: #1f1f1f;
+  color: #e1e1e1;
+}
+
+.modal-light {
+  background: #e1e1e1;
+  color: #1f1f1f;
+}
+
+.custom-modal-width {
+  max-width: 450px;
+}
+
+.project-form-styling-dark {
+  background: #1f1f1f;
+  color: #e1e1e1;
+}
+
+.project-form-styling-dark:focus {
+  background: #1f1f1f;
+  color: #e1e1e1;
+}
+
+.project-form-styling-light {
+  background: #e1e1e1;
+  color: #1f1f1f;
+}
+
+.project-form-styling-light:focus {
+  background: #e1e1e1;
+  color: #1f1f1f;
 }
 
 .logo-title {
