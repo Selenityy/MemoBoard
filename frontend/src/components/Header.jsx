@@ -60,9 +60,9 @@ const Header = () => {
           </Dropdown>
         </Col>
       </Row>
-      <Row style={{ backgroundColor: "#1f1f1f" }}>
+      {/* <Row style={{ backgroundColor: "#1f1f1f" }}>
         <hr className="header-hr"></hr>
-      </Row>
+      </Row> */}
     </Container>
   );
 };
