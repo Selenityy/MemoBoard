@@ -6,6 +6,10 @@ import { fetchProjects } from "@/redux/features/projectSlice";
 import { selectProjects } from "@/helpers/projectSelectors";
 import { IoMdAdd } from "react-icons/io";
 import ProjectModal from "./ProjectModal";
+import { RiHome2Line } from "react-icons/ri";
+import { FaRegCheckCircle } from "react-icons/fa";
+import { MdToday } from "react-icons/md";
+import { BsCalendarWeek } from "react-icons/bs";
 
 const NavBar = () => {
   const dispatch = useDispatch();
@@ -29,22 +33,26 @@ const NavBar = () => {
       {/* <Container className="nav-bar-contatiner"> */}
       <Stack gap={2}>
         <Row>
-          <Col>
+          <Col className="nav-icon-cols">
+            <RiHome2Line className="nav-icon-home" />
             <span>Home</span>
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col className="nav-icon-cols">
+            <FaRegCheckCircle className="nav-icon-memos" />
             <span>My Memos</span>
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col className="nav-icon-cols">
+            <MdToday className="nav-icon-today" />
             <span>Today</span>
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col className="nav-icon-cols">
+            <BsCalendarWeek className="nav-icon-week" />
             <span>This Week</span>
           </Col>
         </Row>
@@ -53,6 +61,7 @@ const NavBar = () => {
             <hr></hr>
           </Col>
         </Row>
+        {/* PROJECTS */}
         <Row style={{ height: "100%" }}>
           <Col xs={12}>
             <Row className="align-items-center justify-content-between mb-2">
