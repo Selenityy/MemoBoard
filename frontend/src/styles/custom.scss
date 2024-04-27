@@ -58,6 +58,7 @@ ul {
 .modal-light {
   background: #e1e1e1;
   color: #1f1f1f;
+  border: 1px solid rgba(31, 31, 31, 0.25);
 }
 
 .custom-modal-width {
@@ -77,6 +78,7 @@ ul {
 .project-form-styling-light {
   background: #e1e1e1;
   color: #1f1f1f;
+  border: 2px solid rgba(31, 31, 31, 0.25);
 }
 
 .project-form-styling-light:focus {
@@ -89,7 +91,7 @@ ul {
   font-weight: 400;
   font-style: normal;
   padding-top: 20px;
-  font-size: 2.5rem;
+  font-size: 2rem;
 
   @media (max-width: 1400px) {
     font-size: 2rem;
@@ -107,7 +109,7 @@ ul {
 .logo-container {
   img {
     width: 100%;
-    max-width: 50px;
+    max-width: 40px;
 
     @media (max-width: 1200px) {
       max-width: 40px;
@@ -234,4 +236,16 @@ ul {
   padding-top: 1rem;
   padding-left: 1.5rem;
   background-color: #1f1f1f;
+}
+
+.add-project-btn,
+.add-project-btn:hover,
+.add-project-btn:focus,
+.add-project-btn:active {
+  padding: 0;
+  border: none;
+  background: none;
+  outline: none;
+  box-shadow: none;
+  color: white;
 }
