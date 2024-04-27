@@ -60,9 +60,12 @@ const NavBar = () => {
                 <span>Projects</span>
               </Col>
               <Col xs="auto">
-                <Button variant="primary" onClick={() => setModalShow(true)}>
+                <button
+                  className="add-project-btn"
+                  onClick={() => setModalShow(true)}
+                >
                   <IoMdAdd size={20} className="me-2" />
-                </Button>
+                </button>
               </Col>
             </Row>
             {projects.map((project) => (
