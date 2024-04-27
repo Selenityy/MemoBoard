@@ -39,7 +39,7 @@ const Header = () => {
 
   return (
     <Container fluid>
-      <Row className="header align-items-center justify-content-between">
+      <Row className="header align-items-center justify-content-between ps-1 pe-1">
         <Col xs={8} md="fluid">
           <Logo />
         </Col>
