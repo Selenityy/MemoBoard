@@ -38,6 +38,10 @@ body {
 
 ul {
   list-style-type: none;
+  margin: 0px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 0px;
 }
 
 .body-dark {
@@ -232,9 +236,9 @@ ul {
 }
 
 .nav-bar-contatiner {
-  max-width: 100%;
+  width: 14%;
   height: 100vh;
-  margin: auto;
+  margin: 0px;
   padding-top: 0.75rem;
   padding-left: 1.5rem;
   background-color: #1f1f1f;
@@ -259,21 +263,73 @@ ul {
 }
 
 .nav-icon-home {
-  width: 20px;
+  width: 18px;
   height: auto;
 }
 
 .nav-icon-memos {
-  width: 20px;
+  width: 18px;
   height: auto;
 }
 
 .nav-icon-today {
-  width: 22px;
+  width: 18px;
   height: auto;
 }
 
 .nav-icon-week {
   width: 18px;
   height: auto;
+}
+
+.nav-bar-titles {
+  padding: 0px;
+  font-size: 0.85rem;
+}
+
+.nav-icon-row {
+  padding-bottom: 4px;
+  padding-top: 4px;
+  padding-left: 2px;
+}
+
+.nav-icon-row:hover,
+.nav-icon-row:active {
+  cursor: pointer;
+  background-color: rgba(225, 225, 225, 0.25);
+  border-radius: 8px;
+  width: 100%;
+}
+
+.full-width-hr {
+  margin-left: -10px;
+  margin-right: -40px;
+  width: calc(100% + 40px);
+}
+
+.dropdown-titles {
+  font-size: 0.75rem;
+}
+
+.project-span {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.project-names {
+  font-size: 0.9rem;
+}
+
+.project-rows {
+  padding-bottom: 3px;
+  padding-top: 3px;
+}
+
+.project-rows:hover,
+.project-rows:active {
+  cursor: pointer;
+  background-color: rgba(225, 225, 225, 0.25);
+  border-radius: 8px;
+  width: 100%;
+  height: fit-content;
 }
