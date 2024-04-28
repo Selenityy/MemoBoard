@@ -47,15 +47,27 @@ const Header = () => {
           {/* <LightDarkModeToggle /> */}
           <Dropdown>
             <Dropdown.Toggle as={CustomToggle}>
-              <MdMenu size={30} />
+              <MdMenu size={25} />
             </Dropdown.Toggle>
             <DropdownMenu className="mt-1">
               {theme === "dark" ? (
-                <Dropdown.Item onClick={toggleTheme}>Light Mode</Dropdown.Item>
+                <Dropdown.Item
+                  onClick={toggleTheme}
+                  className="dropdown-titles"
+                >
+                  Light Mode
+                </Dropdown.Item>
               ) : (
-                <Dropdown.Item onClick={toggleTheme}>Dark Mode</Dropdown.Item>
+                <Dropdown.Item
+                  onClick={toggleTheme}
+                  className="dropdown-titles"
+                >
+                  Dark Mode
+                </Dropdown.Item>
               )}
-              <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+              <Dropdown.Item onClick={handleLogout} className="dropdown-titles">
+                Logout
+              </Dropdown.Item>
             </DropdownMenu>
           </Dropdown>
         </Col>
