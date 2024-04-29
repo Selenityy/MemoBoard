@@ -9,3 +9,52 @@
     color: inherit;
   }
 }
+
+.form-container {
+  max-width: 80%;
+  margin: auto;
+  padding: 2rem;
+  @include responsive-form-settings(
+    2rem,
+    80%,
+    16px,
+    100%,
+    20px,
+    80%,
+    30px,
+    80%,
+    30px,
+    60%
+  );
+}
+
+.input-floating {
+  color: #575757;
+  font-size: 1rem;
+}
+
+.input-label {
+  font-size: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+
+  @media (max-width: 576px) {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
+
+.input-feedback {
+  font-weight: 400;
+
+  @media (max-width: 768px) {
+    font-weight: 500;
+  }
+
+  @media (max-width: 576px) {
+    font-weight: 600;
+  }
+}
