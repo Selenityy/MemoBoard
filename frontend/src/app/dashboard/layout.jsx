@@ -10,7 +10,7 @@ const DashboardLayout = ({ children }) => {
           <Header />
         </Col>
       </Row>
-      <Row>
+      <Row className="w-100%">
         <Col>{children}</Col>
       </Row>
     </Container>
