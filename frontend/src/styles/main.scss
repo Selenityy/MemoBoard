@@ -1,6 +1,14 @@
 @import "~bootstrap/scss/bootstrap";
 @import url("https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+@import "utilities/variables";
+@import "utilities/mixins";
+@import "utilities/helpers";
+@import "components/buttons";
+@import "components/forms";
+@import "components/modals";
+@import "base/base";
+@import "base/typography";
 
 // Base HTML and Body Styles
 html,
@@ -67,6 +75,10 @@ ul {
 
 .custom-modal-width {
   max-width: 450px;
+}
+
+.modal-header {
+  padding: 0.5rem;
 }
 
 .project-form-styling-dark {
@@ -287,6 +299,12 @@ ul {
   font-size: 0.85rem;
 }
 
+.nav-bar-titles:hover,
+.nav-bar-titles:active,
+.nav-bar-titles:focus {
+  font-weight: 600;
+}
+
 .nav-icon-row {
   padding-bottom: 4px;
   padding-top: 4px;
@@ -294,7 +312,8 @@ ul {
 }
 
 .nav-icon-row:hover,
-.nav-icon-row:active {
+.nav-icon-row:active,
+.nav-icon-row:focus {
   cursor: pointer;
   background-color: rgba(225, 225, 225, 0.25);
   border-radius: 8px;
