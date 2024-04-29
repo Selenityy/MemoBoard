@@ -62,7 +62,11 @@ const ProjectModal = (props) => {
       centered
       dialogClassName="custom-modal-width"
     >
-      <Modal.Header className={theme === "dark" ? "modal-dark" : "modal-light"}>
+      <Modal.Header
+        className={`${
+          theme === "dark" ? "modal-dark" : "modal-light"
+        } modal-header`}
+      >
         <Modal.Title id="project-modal-title-vcenter">Add Project</Modal.Title>
       </Modal.Header>
       <Modal.Body className={theme === "dark" ? "modal-dark" : "modal-light"}>
@@ -134,10 +138,10 @@ const ProjectModal = (props) => {
         </Container>
       </Modal.Body>
       <Modal.Footer className={theme === "dark" ? "modal-dark" : "modal-light"}>
-        <Button variant="secondary" onClick={closeModal}>
+        <Button variant="secondary" onClick={closeModal} size="sm">
           Close
         </Button>
-        <Button onClick={addProjectSubmit} variant="primary">
+        <Button onClick={addProjectSubmit} variant="primary" size="sm">
           Save Changes
         </Button>
       </Modal.Footer>
