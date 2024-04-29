@@ -5,16 +5,17 @@
   font-family: $font-secondary;
   font-weight: 400;
   font-style: normal;
-  padding-top: 20px;
-  @include responsive-font-size(2rem, 1.75rem);
+  font-size: 1.5rem;
+  margin: 0;
+  padding-top: 4px;
 }
 
 .welcome-text {
   font-family: $font-secondary;
   color: $text-color-dark;
-  @include responsive-font-size(2.5rem);
+  font-size: 2.5rem;
   @media (max-width: 567px) {
-    @include responsive-font-size(2.3rem);
+    font-size: 2.3rem;
   }
 }
 
@@ -22,9 +23,9 @@
   font-family: $font-secondary;
   color: $text-color-dark;
   font-weight: 300;
-  @include responsive-font-size(1.5rem);
+  font-size: 1.5rem;
   @media (max-width: 567px) {
-    @include responsive-font-size(1.5rem);
+    font-size: 1.5rem;
     font-weight: 350;
   }
 }
