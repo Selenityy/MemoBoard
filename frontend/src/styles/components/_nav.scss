@@ -1,0 +1,68 @@
+@import "../utilities/helpers";
+@import "../utilities/variables";
+
+// .nav-bar-contatiner {
+//   width: 14%;
+//   height: 100vh;
+//   margin: 0px;
+//   padding-top: 0.75rem;
+//   padding-left: 1.5rem;
+//   background-color: $background-color-dark;
+//   color: $text-color-light;
+// }
+
+// .nav-icon-row {
+//   padding-bottom: 4px;
+//   padding-top: 4px;
+//   padding-left: 2px;
+// }
+
+.nav-bar-contatiner,
+.nav-icon-row {
+  @extend %flex-center;
+  gap: 8px;
+  background-color: $background-color-dark;
+  color: $text-color-light;
+
+  &:hover,
+  &:active,
+  &:focus {
+    cursor: pointer;
+    background-color: rgba(225, 225, 225, 0.25);
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  //   &.nav-icon-home,
+  //   &.nav-icon-memo,
+  //   &.nav-icon-today,
+  //   &.nav-icon-week {
+  //     width: 18px;
+  //     height: auto;
+  //   }
+}
+
+.nav-bar-titles {
+  padding: 0px;
+  @include responsive-font-size(0.85rem);
+
+  &:hover,
+  &:active,
+  &:focus {
+    font-weight: 600;
+  }
+}
+
+.nav-icon-home,
+.nav-icon-memo,
+.nav-icon-today,
+.nav-icon-week {
+  width: 18px;
+  height: auto;
+}
+
+.full-width-hr {
+  margin: -10px -40px 0;
+  width: calc(100% + 40px);
+  background-color: $border-color-light;
+}
