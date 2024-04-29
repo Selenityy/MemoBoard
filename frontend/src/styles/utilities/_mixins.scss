@@ -1,0 +1,33 @@
+@mixin responsive-font-size($sizes) {
+  font-size: nth($sizes, 1);
+
+  @media (max-width: 1200px) {
+    font-size: nth($sizes, 2);
+  }
+
+  @media (max-width: 992px) {
+    font-size: nth($sizes, 3);
+  }
+
+  @media (max-width: 768px) {
+    font-size: nth($sizes, 4);
+  }
+
+  @media (max-width: 576px) {
+    font-size: nth($sizes, 5);
+  }
+
+  @media (max-width: 360px) {
+    font-size: nth($sizes, 6);
+  }
+}
+
+@mixin theme-background($theme) {
+  background-color: if(
+    $theme == "dark",
+    $background-color-dark,
+    $background-color-light
+  );
+
+  color: if($theme == "dark", $text-color-dark, $text-color-light);
+}
