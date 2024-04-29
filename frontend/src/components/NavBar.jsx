@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "../styles/custom.scss";
+import "../styles/main.scss";
 import { Button, Col, Container, Row, Stack } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchProjects } from "@/redux/features/projectSlice";

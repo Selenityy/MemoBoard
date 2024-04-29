@@ -1,5 +1,5 @@
 import HeaderNoHR from "@/components/HeaderNoHR";
-import "../styles/custom.scss";
+import "../styles/main.scss";
 import LoginForm from "@/components/LoginForm";
 import { Col, Container, Row } from "react-bootstrap";
 import SignUpBtn from "@/components/SignUpBtn";

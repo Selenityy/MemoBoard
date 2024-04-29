@@ -3,7 +3,7 @@
 import React from "react";
 import Logo from "./Logo";
 import { Col, Container, Dropdown, DropdownMenu, Row } from "react-bootstrap";
-import "../styles/custom.scss";
+import "../styles/main.scss";
 import LightDarkModeToggle from "./LightDarkModeToggle";
 import { MdMenu } from "react-icons/md";
 import { useTheme } from "@/context/ThemeContext";

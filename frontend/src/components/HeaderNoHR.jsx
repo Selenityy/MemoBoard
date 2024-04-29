@@ -1,7 +1,7 @@
 import React from "react";
 import Logo from "./Logo";
 import { Col, Container, Row } from "react-bootstrap";
-import "../styles/custom.scss";
+import "../styles/main.scss";
 import LightDarkModeToggle from "./LightDarkModeToggle";
 
 const Header = () => {

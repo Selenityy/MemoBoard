@@ -5,7 +5,7 @@ import Form from "react-bootstrap/Form";
 import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md";
 import { Col, Container, Row } from "react-bootstrap";
 import { useTheme } from "@/context/ThemeContext";
-import "../styles/custom.scss";
+import "../styles/main.scss";
 
 const LightDarkModeToggle = () => {
   const { theme, toggleTheme } = useTheme();

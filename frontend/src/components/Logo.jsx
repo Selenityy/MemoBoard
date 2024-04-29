@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Row, Col } from "react-bootstrap";
-import "../styles/custom.scss";
+import "../styles/main.scss";
 
 const Logo = () => {
   return (
