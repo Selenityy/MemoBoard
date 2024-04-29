@@ -1,0 +1,11 @@
+@import "../utilities/helpers";
+@import "../utilities/variables";
+@import "../utilities/mixins";
+
+.project-form-styling {
+  @include theme-background($theme);
+  &:focus {
+    background: inherit;
+    color: inherit;
+  }
+}
