@@ -31,3 +31,39 @@
 
   color: if($theme == "dark", $text-color-dark, $text-color-light);
 }
+
+@mixin responsive-form-settings(
+  $default-padding,
+  $default-max-width,
+  $xs-padding: $default-padding,
+  $xs-max-width: $default-max-width,
+  $sm-padding: $default-padding,
+  $sm-max-width: $default-max-width,
+  $md-padding: $default-padding,
+  $md-max-width: $default-max-width,
+  $lg-padding: $default-padding,
+  $lg-max-width: $default-max-width
+) {
+  padding: $default-padding;
+  max-width: $default-max-width;
+
+  @media (max-width: 576px) {
+    padding: $xs-padding;
+    max-width: $xs-max-width;
+  }
+
+  @media (min-width: 768px) {
+    padding: $sm-padding;
+    max-width: $sm-max-width;
+  }
+
+  @media (min-width: 1024px) {
+    padding: $md-padding;
+    max-width: $md-max-width;
+  }
+
+  @media (min-width: 1200px) {
+    padding: $lg-padding;
+    max-width: $lg-max-width;
+  }
+}
