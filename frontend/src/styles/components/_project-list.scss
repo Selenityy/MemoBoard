@@ -1,0 +1,38 @@
+@import "../utilities/mixins";
+@import "../utilities/variables";
+@import "../utilities/helpers";
+
+.project-rows {
+  padding: 3px 0;
+  @include theme-background($theme);
+
+  &:hover,
+  &:active {
+    cursor: pointer;
+    background-color: rgba($text-color-light, 0.25);
+    border-radius: 8px;
+    width: 100%;
+    height: fit-content;
+  }
+}
+
+.project-names {
+  font-size: 0.9rem;
+}
+
+.project-span {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.add-project-btn,
+.add-project-btn:hover,
+.add-project-btn:focus,
+.add-project-btn:active {
+  padding: 0;
+  border: none;
+  background: none;
+  outline: none;
+  box-shadow: none;
+  color: $text-color-light;
+}
