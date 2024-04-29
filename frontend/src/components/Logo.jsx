@@ -6,7 +6,7 @@ const Logo = () => {
   return (
     <Row className="align-items-center gx-1 gx-sm-2">
       <Col xs="auto">
-        <div className="logo-container" style={{ opacity: 0.9 }}>
+        <div className="logo-container">
           <Image
             src="/images/logo2.png"
             width={50}
