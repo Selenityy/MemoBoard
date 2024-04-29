@@ -1,0 +1,25 @@
+.header {
+  //   background-color: $background-color-dark;
+  background-color: $background-color-header-nav-dark;
+  border-bottom: 0.5px solid rgba($background-color-header-nav-light, 0.2);
+  height: min-content;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.logo-container {
+  opacity: 0.9;
+  img {
+    width: 100%;
+    max-width: 35px;
+    height: min-content;
+
+    @media (max-width: 1200px) {
+      max-width: 40px;
+    }
+
+    @media (max-width: 576px) {
+      max-width: 30px;
+    }
+  }
+}
