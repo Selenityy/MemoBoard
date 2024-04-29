@@ -1,0 +1,26 @@
+@import "../utilities/variables";
+@import "../utilities/mixins";
+@import "../utilities/helpers";
+
+.modal-light {
+  @extend %flex-center;
+  padding: 1rem;
+  border: 1px solid $border-color-light;
+  background: $background-color-light;
+  color: $text-color-dark;
+}
+
+.modal-dark {
+  @extend %flex-center;
+  padding: 1rem;
+  background: $background-color-dark;
+  color: $text-color-light;
+}
+
+.custom-modal-width {
+  max-width: 450px;
+}
+
+.modal-header {
+  padding: 0.5rem;
+}
