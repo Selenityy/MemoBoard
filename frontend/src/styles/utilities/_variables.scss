@@ -1,12 +1,19 @@
 // COLORS
-// light mode
-$background-color-light: #e1e1e1;
-$text-color-light: #1f1f1f;
-$border-color-light: rgba(31, 31, 31, 0.25);
+$theme: "dark"; //default
 
-// dark mode
-$background-color-dark: #1f1f1f;
-$text-color-dark: #e1e1e1;
+$background-color-header-nav-light: #f9f8f8;
+$background-color-header-nav-dark: #2a2b2d;
+
+$background-color-light: #ffffff;
+$background-color-dark: #1e1f21;
+
+$text-color-light: #f5f4f3;
+$text-color-dark: #000000;
+
+$text-color-header-nav-light: #f5f4f3;
+$text-color-header-nav-dark: #5a5b5c;
+
+$border-color-light: rgba(31, 31, 31, 0.25);
 
 // FONTS
 $font-primary: "Raleway", sans-serif;
