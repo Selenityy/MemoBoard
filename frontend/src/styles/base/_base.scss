@@ -6,22 +6,24 @@ body {
   padding: 0;
   margin: 0;
   font-family: $font-primary;
-  @include responsive-font-size(16px, 15px, 14px, 13px, 12px, 11px);
+  @include responsive-font-size((16px, 15px, 14px, 13px, 12px, 11px));
   background: $background-color-dark;
-  color: $text-color-dark;
+  color: $text-color-light;
   height: 100%;
   width: 100vw;
   min-height: 100vh;
+}
+
+.body-dark {
+  @include theme-background("dark");
+}
+
+.body-light {
+  @include theme-background("light");
 }
 
 ul {
   list-style: none;
   margin: 0;
   padding: 0 0 2px 0;
-}
-
-.header {
-  background-color: $background-color-dark;
-  border-bottom: 1px solid rgba($text-color-light, 0.5);
-  height: min-content;
 }
