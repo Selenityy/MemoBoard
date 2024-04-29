@@ -1,0 +1,13 @@
+@import "../utilities/mixins";
+@import "../utilities/variables";
+@import "../utilities/helpers";
+
+.login-page {
+  background-color: $background-color-light;
+  height: 100vh;
+  @extend %flex-center;
+}
+
+.login-container {
+  max-width: 800px;
+}
