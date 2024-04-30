@@ -1,7 +1,8 @@
 @import "../utilities/helpers";
 @import "../utilities/variables";
+@import "../utilities/mixins";
 
-.nav-bar-contatiner {
+.nav-bar-contatiner-dark {
   width: 14%;
   height: 100vh;
   margin: 0px;
@@ -9,10 +10,21 @@
   padding-left: 1.5rem;
   background-color: $background-color-header-nav-dark;
   color: $text-color-header-nav-light;
-  border-right: 1px solid rgba($background-color-header-nav-light, 0.2);
+  border-right: 0.5px solid rgba($background-color-header-nav-light, 0.2);
 }
 
-.nav-icon-row {
+.nav-bar-contatiner-light {
+  width: 14%;
+  height: 100vh;
+  margin: 0px;
+  padding-top: 0.75rem;
+  padding-left: 1.5rem;
+  background-color: $background-color-header-nav-light;
+  color: $text-color-header-nav-dark;
+  border-right: 0.5px solid rgba($background-color-header-nav-dark, 0.2);
+}
+
+.nav-icon-row-dark {
   padding-bottom: 4px;
   padding-top: 4px;
   padding-left: 2px;
@@ -35,9 +47,34 @@
   }
 }
 
-.nav-bar-titles {
+.nav-icon-row-light {
+  padding-bottom: 4px;
+  padding-top: 4px;
+  padding-left: 2px;
+  background-color: $background-color-header-nav-light;
+  color: $text-color-header-nav-dark;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(245, 244, 243);
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  &:active,
+  &:focus {
+    cursor: pointer;
+    background-color: rgba(148, 148, 148, 0.25);
+    color: $text-color-header-nav-dark;
+    border-radius: 8px;
+    width: 100%;
+  }
+}
+
+.nav-bar-titles-dark {
   padding: 0px;
   font-size: 0.85rem;
+  color: $text-color-light;
 
   &:active,
   &:focus {
@@ -45,12 +82,33 @@
   }
 }
 
-.nav-icon-home,
-.nav-icon-memo,
-.nav-icon-today,
-.nav-icon-week {
+.nav-bar-titles-light {
+  padding: 0px;
+  font-size: 0.85rem;
+  color: $text-color-dark;
+
+  &:active,
+  &:focus {
+    font-weight: 600;
+  }
+}
+
+.nav-icon-home-dark,
+.nav-icon-memo-dark,
+.nav-icon-today-dark,
+.nav-icon-week-dark {
   width: 18px;
   height: auto;
+  color: $text-color-light;
+}
+
+.nav-icon-home-light,
+.nav-icon-memo-light,
+.nav-icon-today-light,
+.nav-icon-week-light {
+  width: 18px;
+  height: auto;
+  color: $text-color-dark;
 }
 
 .full-width-hr {
