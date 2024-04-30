@@ -39,7 +39,11 @@ const Header = () => {
 
   return (
     <Container fluid>
-      <Row className="header align-items-center justify-content-between ps-1 pe-1">
+      <Row
+        className={`${
+          theme === "dark" ? "header-dark" : "header-light"
+        } align-items-center justify-content-between ps-1 pe-1`}
+      >
         <Col xs={8} md="fluid">
           <Logo />
         </Col>
@@ -47,7 +51,10 @@ const Header = () => {
           {/* <LightDarkModeToggle /> */}
           <Dropdown>
             <Dropdown.Toggle as={CustomToggle}>
-              <MdMenu size={25} />
+              <MdMenu
+                size={25}
+                className={theme === "dark" ? "icon-dark" : "icon-light"}
+              />
             </Dropdown.Toggle>
             <DropdownMenu
               className={`mt-1 ${

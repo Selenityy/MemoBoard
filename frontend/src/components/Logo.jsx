@@ -1,8 +1,11 @@
 import Image from "next/image";
 import { Row, Col } from "react-bootstrap";
+import { useTheme } from "@/context/ThemeContext";
 import "../styles/main.scss";
 
 const Logo = () => {
+  const { theme } = useTheme();
+
   return (
     <Row className="align-items-center gx-1 gx-sm-2">
       <Col xs="auto">
@@ -17,7 +20,11 @@ const Logo = () => {
         </div>
       </Col>
       <Col>
-        <h1 className="logo-title">MemoBoard</h1>
+        <h1
+          className={theme === "dark" ? "logo-title-dark" : "logo-title-light"}
+        >
+          MemoBoard
+        </h1>
       </Col>
     </Row>
   );

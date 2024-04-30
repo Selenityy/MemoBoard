@@ -7,6 +7,22 @@
   padding-top: 10px;
 }
 
+.header-dark {
+  background-color: $background-color-header-nav-dark;
+  border-bottom: 0.5px solid rgba($background-color-header-nav-light, 0.2);
+  height: min-content;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.header-light {
+  background-color: $background-color-header-nav-light;
+  border-bottom: 0.5px solid rgba($background-color-header-nav-dark, 0.2);
+  height: min-content;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
 .logo-container {
   opacity: 0.9;
   img {
@@ -22,4 +38,14 @@
       max-width: 30px;
     }
   }
+}
+
+.icon-dark {
+  //   color: #333333;
+  color: $background-color-header-nav-light;
+}
+
+.icon-light {
+  //   color: #dddddd;
+  color: $background-color-header-nav-dark;
 }
