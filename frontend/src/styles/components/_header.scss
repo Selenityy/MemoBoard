@@ -1,11 +1,6 @@
-.header {
-  //   background-color: $background-color-dark;
-  background-color: $background-color-header-nav-dark;
-  border-bottom: 0.5px solid rgba($background-color-header-nav-light, 0.2);
-  height: min-content;
-  padding-bottom: 10px;
-  padding-top: 10px;
-}
+@import "../utilities/helpers";
+@import "../utilities/variables";
+@import "../utilities/mixins";
 
 .header-dark {
   background-color: $background-color-header-nav-dark;
