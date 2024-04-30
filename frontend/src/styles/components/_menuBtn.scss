@@ -1,0 +1,97 @@
+@import "../utilities/mixins";
+@import "../utilities/variables";
+@import "../utilities/helpers";
+
+.dropdown-menu-dark {
+  background-color: $background-color-dark;
+  color: $text-color-light;
+}
+
+.dropdown-menu-light {
+  background-color: $background-color-light;
+  color: $text-color-dark;
+}
+
+.dropdown-titles-dark {
+  font-size: 12px;
+  padding-left: 10px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(69, 69, 71, 0.5);
+    color: $text-color-header-nav-light;
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  &:active,
+  &:focus {
+    cursor: pointer;
+    background-color: rgba(148, 148, 148, 0.25);
+    border-radius: 8px;
+    width: 100%;
+  }
+}
+
+.dropdown-titles-light {
+  font-size: 12px;
+  padding-left: 10px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(245, 244, 243);
+    color: $text-color-header-nav-dark;
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  &:active,
+  &:focus {
+    cursor: pointer;
+    background-color: rgba(148, 148, 148, 0.25);
+    border-radius: 8px;
+    width: 100%;
+  }
+}
+
+.dropdown-logout-dark {
+  font-size: 12px;
+  padding-left: 10px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(69, 69, 71, 0.5);
+    color: $text-color-header-nav-light;
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  &:active,
+  &:focus {
+    cursor: pointer;
+    background-color: rgba(148, 148, 148, 0.25);
+    border-radius: 8px;
+    width: 100%;
+  }
+}
+
+.dropdown-logout-light {
+  font-size: 12px;
+  padding-left: 10px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(245, 244, 243);
+    color: $text-color-header-nav-dark;
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  &:active,
+  &:focus {
+    cursor: pointer;
+    background-color: rgba(148, 148, 148, 0.25);
+    border-radius: 8px;
+    width: 100%;
+  }
+}
