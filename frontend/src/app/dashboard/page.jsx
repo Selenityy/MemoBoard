@@ -10,7 +10,14 @@ const DashboardPage = () => {
   const { theme } = useTheme();
   return (
     <Row>
-      <Col xs={2} className="nav-bar-contatiner">
+      <Col
+        xs={2}
+        className={`${
+          theme === "dark"
+            ? "nav-bar-contatiner-dark"
+            : "nav-bar-contatiner-light"
+        }`}
+      >
         <NavBar />
       </Col>
       <Col className={theme === "dark" ? "body-dark" : "body-light"}>
