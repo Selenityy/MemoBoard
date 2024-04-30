@@ -1,7 +1,10 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import "../styles/main.scss";
 import { Button, Col, Container, Row, Stack } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
+import { useTheme } from "@/context/ThemeContext";
 import { fetchProjects } from "@/redux/features/projectSlice";
 import { selectProjects } from "@/helpers/projectSelectors";
 import { IoMdAdd } from "react-icons/io";
@@ -18,6 +21,7 @@ const NavBar = () => {
   const projects = useSelector(selectProjects);
   const [refreshDataTrigger, setRefreshDataTrigger] = useState(false);
   const [modalShow, setModalShow] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const updateProjects = async () => {
@@ -32,35 +36,83 @@ const NavBar = () => {
 
   return (
     <Container fluid style={{ padding: "0px" }}>
-      <Row className="align-items-center nav-icon-row">
+      <Row
+        className={`${
+          theme === "dark" ? "nav-icon-row-dark" : "nav-icon-row-light"
+        } align-items-center nav-icon-row`}
+      >
         <Col xs="auto">
-          <RiHome2Line className="nav-icon-home" />
+          <RiHome2Line
+            className={
+              theme === "dark" ? "nav-icon-home-dark" : "nav-icon-home-light"
+            }
+          />
         </Col>
-        <Col className="nav-bar-titles">
+        <Col
+          className={
+            theme === "dark" ? "nav-bar-titles-dark" : "nav-bar-titles-light"
+          }
+        >
           <span>Home</span>
         </Col>
       </Row>
-      <Row className="align-items-center nav-icon-row">
+      <Row
+        className={`${
+          theme === "dark" ? "nav-icon-row-dark" : "nav-icon-row-light"
+        } align-items-center nav-icon-row`}
+      >
         <Col xs="auto">
-          <FaRegCheckCircle className="nav-icon-memos" />
+          <FaRegCheckCircle
+            className={
+              theme === "dark" ? "nav-icon-memo-dark" : "nav-icon-memo-light"
+            }
+          />
         </Col>
-        <Col className="nav-bar-titles">
+        <Col
+          className={
+            theme === "dark" ? "nav-bar-titles-dark" : "nav-bar-titles-light"
+          }
+        >
           <span>My Memos</span>
         </Col>
       </Row>
-      <Row className="align-items-center nav-icon-row">
+      <Row
+        className={`${
+          theme === "dark" ? "nav-icon-row-dark" : "nav-icon-row-light"
+        } align-items-center nav-icon-row`}
+      >
         <Col xs="auto">
-          <IoTodayOutline className="nav-icon-today" />
+          <IoTodayOutline
+            className={
+              theme === "dark" ? "nav-icon-today-dark" : "nav-icon-today-light"
+            }
+          />
         </Col>
-        <Col className="nav-bar-titles">
+        <Col
+          className={
+            theme === "dark" ? "nav-bar-titles-dark" : "nav-bar-titles-light"
+          }
+        >
           <span>Today</span>
         </Col>
       </Row>
-      <Row className="align-items-center nav-icon-row">
+      <Row
+        className={`${
+          theme === "dark" ? "nav-icon-row-dark" : "nav-icon-row-light"
+        } align-items-center nav-icon-row`}
+      >
         <Col xs="auto">
-          <BsCalendar4Week className="nav-icon-week" />
+          <BsCalendar4Week
+            className={
+              theme === "dark" ? "nav-icon-week-dark" : "nav-icon-week-light"
+            }
+          />
         </Col>
-        <Col className="nav-bar-titles">
+        <Col
+          className={
+            theme === "dark" ? "nav-bar-titles-dark" : "nav-bar-titles-light"
+          }
+        >
           <span>This Week</span>
         </Col>
       </Row>
