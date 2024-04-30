@@ -49,23 +49,34 @@ const Header = () => {
             <Dropdown.Toggle as={CustomToggle}>
               <MdMenu size={25} />
             </Dropdown.Toggle>
-            <DropdownMenu className="mt-1">
+            <DropdownMenu
+              className={`mt-1 ${
+                theme === "dark" ? "dropdown-menu-dark" : "dropdown-menu-light"
+              }`}
+            >
               {theme === "dark" ? (
                 <Dropdown.Item
                   onClick={toggleTheme}
-                  className="dropdown-titles"
+                  className="dropdown-titles-dark"
                 >
                   Light Mode
                 </Dropdown.Item>
               ) : (
                 <Dropdown.Item
                   onClick={toggleTheme}
-                  className="dropdown-titles"
+                  className="dropdown-titles-light"
                 >
                   Dark Mode
                 </Dropdown.Item>
               )}
-              <Dropdown.Item onClick={handleLogout} className="dropdown-titles">
+              <Dropdown.Item
+                onClick={handleLogout}
+                className={
+                  theme === "dark"
+                    ? "dropdown-logout-dark"
+                    : "dropdown-logout-light"
+                }
+              >
                 Logout
               </Dropdown.Item>
             </DropdownMenu>
