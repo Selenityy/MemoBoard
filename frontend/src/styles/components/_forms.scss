@@ -34,6 +34,7 @@
   max-width: 80%;
   margin: auto;
   padding: 2rem;
+  border-radius: 40px;
   @include theme-header-nav-background("light");
   @include responsive-form-settings(
     2rem,
@@ -49,23 +50,12 @@
   );
 }
 
-.input-floating {
-  color: #575757;
-  font-size: 1rem;
+.form-input-box-dark {
+  background-color: $background-color-header-nav-dark;
 }
 
-.input-label {
-  font-size: 1rem;
-
-  @media (max-width: 768px) {
-    font-size: 1.2rem;
-    font-weight: 500;
-  }
-
-  @media (max-width: 576px) {
-    font-size: 1rem;
-    font-weight: 600;
-  }
+.form-input-box-light {
+  background-color: $background-color-header-nav-light;
 }
 
 .input-feedback {
@@ -77,5 +67,80 @@
 
   @media (max-width: 576px) {
     font-weight: 600;
+  }
+}
+
+// Define generic styles for floating labels
+.input-floating {
+  &-dark {
+    background-color: $background-color-header-nav-dark !important;
+    color: $text-color-light;
+    border: 0.5px solid rgba($background-color-header-nav-light, 0.5);
+
+    .form-control,
+    .form-floating > label {
+      background-color: inherit;
+      color: inherit;
+      border: inherit;
+    }
+
+    label[for="floatingIdentifier"]::after {
+      background-color: inherit !important;
+    }
+
+    label[for="floatingPassword"]::after {
+      background-color: inherit !important;
+    }
+
+    label[for="floatingIdentifier"] {
+      color: $text-color-header-nav-light !important;
+    }
+
+    label[for="floatingPassword"] {
+      color: $text-color-header-nav-light !important;
+    }
+
+    &:hover,
+    &:focus {
+      .form-control {
+        background-color: $background-color-header-nav-dark;
+      }
+    }
+  }
+
+  &-light {
+    background-color: $background-color-light;
+    color: $text-color-dark;
+    border: 0.5px solid rgba($background-color-header-nav-dark, 0.5);
+
+    .form-control,
+    .form-floating > label {
+      background-color: inherit;
+      color: inherit;
+      border: inherit;
+    }
+
+    label[for="floatingIdentifier"]::after {
+      background-color: inherit !important;
+    }
+
+    label[for="floatingPassword"]::after {
+      background-color: inherit !important;
+    }
+
+    label[for="floatingIdentifier"] {
+      color: $text-color-header-nav-dark !important;
+    }
+
+    label[for="floatingPassword"] {
+      color: $text-color-header-nav-dark !important;
+    }
+
+    &:hover,
+    &:focus {
+      .form-control {
+        background-color: $background-color-light;
+      }
+    }
   }
 }
