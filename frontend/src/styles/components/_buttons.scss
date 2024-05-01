@@ -1,0 +1,40 @@
+@import "../utilities/variables";
+@import "../utilities/mixins";
+@import "../utilities/helpers";
+
+.signup-button-dark {
+  color: $text-color-header-nav-light;
+  background-color: transparent;
+  border: none;
+
+  &:hover,
+  &:active,
+  &:focus,
+  &:link,
+  &:visited {
+    color: $text-color-light;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    outline: none;
+  }
+}
+
+.signup-button-light {
+  color: $text-color-header-nav-dark;
+  background-color: transparent;
+  border: none;
+
+  &:hover,
+  &:active,
+  &:focus,
+  &:link,
+  &:visited {
+    color: $text-color-dark;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+}
