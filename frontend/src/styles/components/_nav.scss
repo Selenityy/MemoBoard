@@ -111,8 +111,12 @@
   color: $text-color-dark;
 }
 
-.full-width-hr {
-  // margin: -10px -40px 0;
+.full-width-hr-dark {
   width: calc(100% + 40px);
   background-color: $background-color-header-nav-dark;
+}
+
+.full-width-hr-light {
+  width: calc(100% + 40px);
+  background-color: $background-color-header-nav-light;
 }
