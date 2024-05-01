@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import {
   Form,
@@ -11,10 +12,12 @@ import {
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { loginUser } from "@/redux/features/userSlice";
+import { useTheme } from "@/context/ThemeContext";
 
 function LoginForm() {
   const dispatch = useDispatch();
   const router = useRouter();
+  const { theme } = useTheme();
 
   const [credentials, setCredentials] = useState({
     identifier: "",
@@ -59,7 +62,11 @@ function LoginForm() {
   };
 
   return (
-    <Container className="form-container">
+    <Container
+      className={
+        theme === "dark" ? "form-container-dark" : "form-container-light"
+      }
+    >
       <Row className="justify-content-center">
         <Col xs={12} sm={10} md={8} lg={6}>
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
