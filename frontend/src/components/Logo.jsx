@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { Row, Col } from "react-bootstrap";
 import { useTheme } from "@/context/ThemeContext";
