@@ -21,7 +21,7 @@
   &:hover {
     cursor: pointer;
     background-color: rgba(69, 69, 71, 0.5);
-    color: $text-color-header-nav-light;
+    color: $text-color-light;
     border-radius: 8px;
     width: 100%;
   }
@@ -51,7 +51,7 @@
   &:focus {
     cursor: pointer;
     background-color: rgba(148, 148, 148, 0.25);
-    color: $text-color-header-nav-dark;
+    color: $text-color-dark;
     border-radius: 8px;
     width: 100%;
   }
