@@ -69,17 +69,27 @@ function LoginForm() {
     >
       <Row className="justify-content-center">
         <Col xs={12} sm={10} md={8} lg={6}>
-          <Form noValidate validated={validated} onSubmit={handleSubmit}>
+          <Form
+            noValidate
+            validated={validated}
+            onSubmit={handleSubmit}
+            className={
+              theme === "dark" ? "form-input-box-dark" : "form-input-box-light"
+            }
+          >
             <FloatingLabel
               controlId="floatingIdentifier"
               label="Email or Username"
-              className="mb-3 input-floating"
+              className={`mb-3 ${
+                theme === "dark"
+                  ? "input-floating-dark"
+                  : "input-floating-light"
+              }`}
             >
               <Form.Control
                 type="text"
                 name="identifier"
                 placeholder=""
-                className="input-label"
                 value={credentials.identifier}
                 onChange={handleChange}
                 required
@@ -91,13 +101,19 @@ function LoginForm() {
             <FloatingLabel
               controlId="floatingPassword"
               label="Password"
-              className="mb-3 input-floating"
+              className={`mb-3 ${
+                theme === "dark"
+                  ? "input-floating-dark"
+                  : "input-floating-light"
+              }`}
             >
               <Form.Control
                 type="password"
                 name="password"
                 placeholder="Password"
-                className="input-label"
+                className={
+                  theme === "dark" ? "input-label-dark" : "input-label-light"
+                }
                 value={credentials.password}
                 onChange={handleChange}
                 required
