@@ -2,8 +2,9 @@
 @import "../utilities/variables";
 @import "../utilities/helpers";
 
-.project-rows {
+.project-rows-dark {
   background-color: $background-color-header-nav-dark;
+  color: $text-color-header-nav-light;
   gap: 8px;
   padding-bottom: 4px;
   padding-top: 4px;
@@ -17,32 +18,83 @@
 
   &:active {
     cursor: pointer;
-    background-color: rgba($text-color-light, 0.25);
+    background-color: rgba(148, 148, 148, 0.25);
     border-radius: 8px;
     width: 100%;
     height: fit-content;
   }
 }
 
-.project-names {
-  font-size: 0.9rem;
+.project-rows-light {
+  background-color: $background-color-header-nav-light;
+  color: $text-color-header-nav-dark;
+  gap: 8px;
+  padding-bottom: 4px;
+  padding-top: 4px;
+
+  &:hover {
+    background-color: rgba(245, 244, 243);
+    border-radius: 8px;
+    width: 100%;
+    height: fit-content;
+  }
+
+  &:active {
+    cursor: pointer;
+    background-color: rgba(148, 148, 148, 0.25);
+    color: $text-color-header-nav-dark;
+    border-radius: 8px;
+    width: 100%;
+    height: fit-content;
+  }
 }
 
-.project-span {
+.project-names-dark {
+  font-size: 0.9rem;
+  color: $text-color-light;
+}
+
+.project-names-light {
+  font-size: 0.9rem;
+  color: $text-color-dark;
+}
+
+.project-span-dark {
   font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 6px;
+  color: $text-color-light;
 }
 
-.add-project-btn,
-.add-project-btn:hover,
-.add-project-btn:focus,
-.add-project-btn:active {
+.project-span-light {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: $text-color-dark;
+}
+
+.add-project-btn-dark,
+.add-project-btn-dark:hover,
+.add-project-btn-dark:focus,
+.add-project-btn-dark:active {
   padding: 0;
   border: none;
   background: none;
   outline: none;
   box-shadow: none;
-  color: $text-color-header-nav-light;
+  color: $text-color-light;
+  margin-bottom: 6px;
+}
+
+.add-project-btn-light,
+.add-project-btn-light:hover,
+.add-project-btn-light:focus,
+.add-project-btn-light:active {
+  padding: 0;
+  border: none;
+  background: none;
+  outline: none;
+  box-shadow: none;
+  color: $text-color-dark;
   margin-bottom: 6px;
 }

@@ -117,18 +117,30 @@ const NavBar = () => {
         </Col>
       </Row>
       <Row>
-        <Col className="full-width-hr">
+        <Col
+          className={
+            theme === "dark" ? "full-width-hr-dark" : "full-width-hr-light"
+          }
+        >
           <hr />
         </Col>
       </Row>
       {/* PROJECTS */}
       <Row className="justify-content-bewteen align-items-center">
-        <Col className="project-span">
+        <Col
+          className={
+            theme === "dark" ? "project-span-dark" : "project-span-light"
+          }
+        >
           <span>Projects</span>
         </Col>
         <Col xs="auto">
           <button
-            className="add-project-btn"
+            className={
+              theme === "dark"
+                ? "add-project-btn-dark"
+                : "add-project-btn-light"
+            }
             onClick={() => setModalShow(true)}
           >
             <IoMdAdd size={20} className="me-2" />
@@ -137,7 +149,12 @@ const NavBar = () => {
       </Row>
       <Stack gap={3}>
         {projects.map((project) => (
-          <Row key={project._id} className="align-items-center project-rows">
+          <Row
+            key={project._id}
+            className={`align-items-center ${
+              theme === "dark" ? "project-rows-dark" : "project-rows-light"
+            }`}
+          >
             <Col>
               <ul className="ps-1">
                 <li className="p-0">
@@ -156,7 +173,15 @@ const NavBar = () => {
                         marginRight: "10px",
                       }}
                     ></div>
-                    <span className="project-names">{project.name}</span>
+                    <span
+                      className={
+                        theme === "dark"
+                          ? "project-names-dark"
+                          : "project-names-light"
+                      }
+                    >
+                      {project.name}
+                    </span>
                   </div>
                 </li>
               </ul>
