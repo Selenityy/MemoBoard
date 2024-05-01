@@ -1,5 +1,5 @@
 import React from "react";
-import HeaderNoHR from "@/components/HeaderNoHR";
+import LoginHeader from "@/components/LoginHeader";
 import { Col, Row, Container } from "react-bootstrap";
 import SignupForm from "@/components/SignupForm";
 import LoginBtn from "@/components/LoginBtn";
@@ -7,7 +7,7 @@ import LoginBtn from "@/components/LoginBtn";
 const SignupPage = () => {
   return (
     <div className="login-page">
-      <HeaderNoHR />
+      <LoginHeader />
       <Container className="my-5 py-5">
         <Row className="mb-4">
           <Col xs={12}>
