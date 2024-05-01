@@ -1,20 +1,34 @@
+"use client";
+
 import LoginHeader from "@/components/LoginHeader";
 import "../styles/main.scss";
 import LoginForm from "@/components/LoginForm";
 import { Col, Container, Row } from "react-bootstrap";
 import SignUpBtn from "@/components/SignUpBtn";
+import { useTheme } from "@/context/ThemeContext";
 
 const Auth = () => {
+  const { theme } = useTheme();
   return (
-    <div className="login-page">
+    <div className={theme === "dark" ? "login-page-dark" : "login-page-light"}>
       <LoginHeader />
       <Container className="my-5 py-5">
         <Row className="mb-4">
           <Col xs={12}>
-            <h2 className="text-center welcome-text">Welcome to MemoBoard</h2>
+            <h2
+              className={`text-center ${
+                theme === "dark" ? "welcome-text-dark" : "welcome-text-light"
+              }`}
+            >
+              Welcome to MemoBoard
+            </h2>
           </Col>
           <Col xs={12}>
-            <h3 className="text-center sign-in-text">
+            <h3
+              className={`text-center ${
+                theme === "dark" ? "sign-in-text-dark" : "sign-in-text-light"
+              }`}
+            >
               To get started, please log in
             </h3>
           </Col>
@@ -24,15 +38,15 @@ const Auth = () => {
             <span style={{ color: "#1f1f1f" }}>Google</span>
           </Col>
         </Row>
-        <Row className="align-items-center justify-content-center">
-          <Col xs={5} sm={4} md={3} lg={2}>
-            <div className="div-hr-border"></div>
+        <Row className="div-hr-container">
+          <Col className={`div-hr-border ${theme}`}>
+            <div></div>
           </Col>
           <Col xs="auto">
-            <span style={{ color: "#1f1f1f" }}>or</span>
+            <span className={`sign-in-or-text ${theme}`}>or</span>
           </Col>
-          <Col xs={5} sm={4} md={3} lg={2}>
-            <div className="div-hr-border"></div>
+          <Col className={`div-hr-border ${theme}`}>
+            <div></div>
           </Col>
         </Row>
         <Row>
