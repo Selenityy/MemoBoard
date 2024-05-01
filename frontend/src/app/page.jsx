@@ -35,20 +35,22 @@ const Auth = () => {
         </Row>
         <Row className="justify-content-center pb-3">
           <Col xs="auto">
-            <span style={{ color: "#1f1f1f" }}>Google</span>
+            <span className={`sign-in-or-text ${theme}`}>Google</span>
           </Col>
         </Row>
-        <Row className="div-hr-container">
-          <Col className={`div-hr-border ${theme}`}>
-            <div></div>
-          </Col>
-          <Col xs="auto">
-            <span className={`sign-in-or-text ${theme}`}>or</span>
-          </Col>
-          <Col className={`div-hr-border ${theme}`}>
-            <div></div>
-          </Col>
-        </Row>
+        <Container>
+          <Row className="div-hr-container">
+            <Col xs={3} className={`div-hr-border ${theme}`}>
+              <div></div>
+            </Col>
+            <Col xs="auto">
+              <span className={`sign-in-or-text ${theme}`}>or</span>
+            </Col>
+            <Col xs={3} className={`div-hr-border ${theme}`}>
+              <div></div>
+            </Col>
+          </Row>
+        </Container>
         <Row>
           <Col>
             <LoginForm />
