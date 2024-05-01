@@ -3,7 +3,7 @@
 @import "../utilities/mixins";
 
 .header-dark {
-  background-color: $background-color-header-nav-dark;
+  @include theme-header-nav-background("dark");
   border-bottom: 0.5px solid rgba($background-color-header-nav-light, 0.2);
   height: min-content;
   padding-bottom: 10px;
@@ -11,7 +11,7 @@
 }
 
 .header-light {
-  background-color: $background-color-header-nav-light;
+  @include theme-header-nav-background("light");
   border-bottom: 0.5px solid rgba($background-color-header-nav-dark, 0.2);
   height: min-content;
   padding-bottom: 10px;

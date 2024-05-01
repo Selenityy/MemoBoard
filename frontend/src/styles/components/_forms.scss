@@ -10,10 +10,30 @@
   }
 }
 
-.form-container {
+.form-container-dark {
   max-width: 80%;
   margin: auto;
   padding: 2rem;
+  @include theme-header-nav-background("dark");
+  @include responsive-form-settings(
+    2rem,
+    80%,
+    16px,
+    100%,
+    20px,
+    80%,
+    30px,
+    80%,
+    30px,
+    60%
+  );
+}
+
+.form-container-light {
+  max-width: 80%;
+  margin: auto;
+  padding: 2rem;
+  @include theme-header-nav-background("light");
   @include responsive-form-settings(
     2rem,
     80%,

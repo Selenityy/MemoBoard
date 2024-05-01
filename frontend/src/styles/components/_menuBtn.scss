@@ -3,14 +3,12 @@
 @import "../utilities/helpers";
 
 .dropdown-menu-dark {
-  background-color: $background-color-dark;
-  color: $text-color-light;
+  @include theme-background("dark");
   border: 1px solid rgba($background-color-header-nav-light, 0.2);
 }
 
 .dropdown-menu-light {
-  background-color: $background-color-light;
-  color: $text-color-dark;
+  @include theme-background("light");
   border: 1px solid rgba($background-color-header-nav-dark, 0.2);
 }
 
@@ -42,7 +40,7 @@
   &:hover {
     cursor: pointer;
     background-color: rgba(245, 244, 243);
-    // color: $text-color-header-nav-dark;
+    color: $text-color-dark;
     border-radius: 8px;
     width: 100%;
   }
@@ -64,7 +62,7 @@
   &:hover {
     cursor: pointer;
     background-color: rgba(69, 69, 71, 0.5);
-    color: $text-color-header-nav-light;
+    color: $text-color-light;
     border-radius: 8px;
     width: 100%;
   }
@@ -73,6 +71,7 @@
   &:focus {
     cursor: pointer;
     background-color: rgba(148, 148, 148, 0.25);
+    color: $text-color-light;
     border-radius: 8px;
     width: 100%;
   }
@@ -85,7 +84,7 @@
   &:hover {
     cursor: pointer;
     background-color: rgba(245, 244, 243);
-    // color: $text-color-header-nav-dark;
+    color: $text-color-dark;
     border-radius: 8px;
     width: 100%;
   }
@@ -94,7 +93,7 @@
   &:focus {
     cursor: pointer;
     background-color: rgba(148, 148, 148, 0.25);
-    color: $text-color-header-nav-dark;
+    color: $text-color-dark;
     border-radius: 8px;
     width: 100%;
   }

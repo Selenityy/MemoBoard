@@ -8,8 +8,7 @@
   margin: 0px;
   padding-top: 0.75rem;
   padding-left: 1.5rem;
-  background-color: $background-color-header-nav-dark;
-  color: $text-color-header-nav-light;
+  @include theme-header-nav-background("dark");
   border-right: 0.5px solid rgba($background-color-header-nav-light, 0.2);
 }
 
@@ -19,8 +18,7 @@
   margin: 0px;
   padding-top: 0.75rem;
   padding-left: 1.5rem;
-  background-color: $background-color-header-nav-light;
-  color: $text-color-header-nav-dark;
+  @include theme-header-nav-background("light");
   border-right: 0.5px solid rgba($background-color-header-nav-dark, 0.2);
 }
 
@@ -28,12 +26,12 @@
   padding-bottom: 4px;
   padding-top: 4px;
   padding-left: 2px;
-  background-color: $background-color-header-nav-dark;
-  color: $text-color-header-nav-light;
+  @include theme-header-nav-background("dark");
 
   &:hover {
     cursor: pointer;
     background-color: rgba(69, 69, 71, 0.5);
+    color: $text-color-light;
     border-radius: 8px;
     width: 100%;
   }
@@ -42,6 +40,7 @@
   &:focus {
     cursor: pointer;
     background-color: rgba(148, 148, 148, 0.25);
+    color: $text-color-light;
     border-radius: 8px;
     width: 100%;
   }
@@ -51,12 +50,12 @@
   padding-bottom: 4px;
   padding-top: 4px;
   padding-left: 2px;
-  background-color: $background-color-header-nav-light;
-  color: $text-color-header-nav-dark;
+  @include theme-header-nav-background("light");
 
   &:hover {
     cursor: pointer;
     background-color: rgba(245, 244, 243);
+    color: $text-color-dark;
     border-radius: 8px;
     width: 100%;
   }
@@ -65,7 +64,7 @@
   &:focus {
     cursor: pointer;
     background-color: rgba(148, 148, 148, 0.25);
-    color: $text-color-header-nav-dark;
+    color: $text-color-dark;
     border-radius: 8px;
     width: 100%;
   }

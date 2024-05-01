@@ -3,14 +3,14 @@
 @import "../utilities/helpers";
 
 .project-rows-dark {
-  background-color: $background-color-header-nav-dark;
-  color: $text-color-header-nav-light;
+  @include theme-header-nav-background("dark");
   gap: 8px;
   padding-bottom: 4px;
   padding-top: 4px;
 
   &:hover {
     background-color: rgba(69, 69, 71, 0.5);
+    color: $text-color-light;
     border-radius: 8px;
     width: 100%;
     height: fit-content;
@@ -19,6 +19,7 @@
   &:active {
     cursor: pointer;
     background-color: rgba(148, 148, 148, 0.25);
+    color: $text-color-light;
     border-radius: 8px;
     width: 100%;
     height: fit-content;
@@ -26,14 +27,14 @@
 }
 
 .project-rows-light {
-  background-color: $background-color-header-nav-light;
-  color: $text-color-header-nav-dark;
+  @include theme-header-nav-background("light");
   gap: 8px;
   padding-bottom: 4px;
   padding-top: 4px;
 
   &:hover {
     background-color: rgba(245, 244, 243);
+    color: $text-color-dark;
     border-radius: 8px;
     width: 100%;
     height: fit-content;
@@ -42,7 +43,7 @@
   &:active {
     cursor: pointer;
     background-color: rgba(148, 148, 148, 0.25);
-    color: $text-color-header-nav-dark;
+    color: $text-color-dark;
     border-radius: 8px;
     width: 100%;
     height: fit-content;

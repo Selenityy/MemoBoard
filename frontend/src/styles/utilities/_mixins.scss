@@ -31,7 +31,21 @@
     $background-color-light
   );
 
-  color: if($theme == "dark", $text-color-dark, $text-color-light);
+  color: if($theme == "dark", $text-color-light, $text-color-dark);
+}
+
+@mixin theme-header-nav-background($theme) {
+  background-color: if(
+    $theme == "dark",
+    $background-color-header-nav-dark,
+    $background-color-header-nav-light
+  );
+
+  color: if(
+    $theme == "dark",
+    $text-color-header-nav-light,
+    $text-color-header-nav-dark
+  );
 }
 
 @mixin responsive-form-settings(

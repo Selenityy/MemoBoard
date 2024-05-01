@@ -4,17 +4,15 @@
 
 .modal-light {
   @extend %flex-center;
+  @include theme-background("light");
   padding: 1rem;
   border: 1px solid $border-color-light;
-  background: $background-color-light;
-  color: $text-color-dark;
 }
 
 .modal-dark {
   @extend %flex-center;
+  @include theme-background("dark");
   padding: 1rem;
-  background: $background-color-dark;
-  color: $text-color-light;
 }
 
 .custom-modal-width {
