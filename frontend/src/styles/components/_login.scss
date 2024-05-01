@@ -2,9 +2,33 @@
 @import "../utilities/variables";
 @import "../utilities/helpers";
 
-.login-page {
-  background-color: $background-color-light;
+.login-page-dark {
+  @include theme-background("dark");
   height: 100vh;
+}
+
+.login-page-light {
+  @include theme-background("light");
+  height: 100vh;
+}
+
+.div-hr-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  margin-left: 25%;
+}
+
+.div-hr-border {
+  height: 0.5px;
+
+  &.dark {
+    @include theme-background("light");
+  }
+  &.light {
+    @include theme-background("dark");
+  }
 }
 
 // .login-container {

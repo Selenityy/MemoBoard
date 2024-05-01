@@ -21,7 +21,16 @@
   padding-top: 4px;
 }
 
-.welcome-text {
+.welcome-text-dark {
+  font-family: $font-secondary;
+  color: $text-color-light;
+  font-size: 2.5rem;
+  @media (max-width: 567px) {
+    font-size: 2.3rem;
+  }
+}
+
+.welcome-text-light {
   font-family: $font-secondary;
   color: $text-color-dark;
   font-size: 2.5rem;
@@ -30,7 +39,18 @@
   }
 }
 
-.sign-in-text {
+.sign-in-text-dark {
+  font-family: $font-secondary;
+  color: $text-color-light;
+  font-weight: 300;
+  font-size: 1.5rem;
+  @media (max-width: 567px) {
+    font-size: 1.5rem;
+    font-weight: 350;
+  }
+}
+
+.sign-in-text-light {
   font-family: $font-secondary;
   color: $text-color-dark;
   font-weight: 300;
@@ -38,5 +58,14 @@
   @media (max-width: 567px) {
     font-size: 1.5rem;
     font-weight: 350;
+  }
+}
+
+.sign-in-or-text {
+  &.dark {
+    @include theme-background("dark");
+  }
+  &.light {
+    @include theme-background("light");
   }
 }
