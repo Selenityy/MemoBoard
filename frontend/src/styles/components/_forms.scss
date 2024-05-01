@@ -14,6 +14,7 @@
   max-width: 80%;
   margin: auto;
   padding: 2rem;
+  border-radius: 40px;
   @include theme-header-nav-background("dark");
   @include responsive-form-settings(
     2rem,
