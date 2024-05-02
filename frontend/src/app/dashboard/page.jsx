@@ -27,8 +27,6 @@ const DashboardPage = () => {
       };
       updateTimezone();
     }
-
-    console.log("Using timezone:", storedTimezone);
   }, [dispatch]);
 
   return (
