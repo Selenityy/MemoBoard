@@ -15,9 +15,11 @@ import { MdToday } from "react-icons/md";
 import { BsCalendarWeek } from "react-icons/bs";
 import { IoTodayOutline } from "react-icons/io5";
 import { BsCalendar4Week } from "react-icons/bs";
+import { useRouter } from "next/navigation";
 
 const NavBar = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const projects = useSelector(selectProjects);
   const [refreshDataTrigger, setRefreshDataTrigger] = useState(false);
   const [modalShow, setModalShow] = useState(false);
@@ -34,12 +36,22 @@ const NavBar = () => {
     updateProjects();
   }, [dispatch, refreshDataTrigger]);
 
+  const homeClick = () => {
+    router.push("/dashboard");
+  };
+
+  const projectClick = (project) => {
+    const formattedProjectName = project.name.replace(/\s+/g, "-");
+    router.push(`/dashboard/project/${formattedProjectName}`);
+  };
+
   return (
     <Container fluid style={{ padding: "0px" }}>
       <Row
         className={`${
           theme === "dark" ? "nav-icon-row-dark" : "nav-icon-row-light"
         } align-items-center nav-icon-row`}
+        onClick={() => homeClick()}
       >
         <Col xs="auto">
           <RiHome2Line
@@ -155,7 +167,7 @@ const NavBar = () => {
               theme === "dark" ? "project-rows-dark" : "project-rows-light"
             }`}
           >
-            <Col>
+            <Col onClick={() => projectClick(project)}>
               <ul className="ps-1">
                 <li className="p-0">
                   <div
