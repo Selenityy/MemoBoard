@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Button, Col, Container, Row, Form } from "react-bootstrap";
 import { useTheme } from "@/context/ThemeContext";
 import { useDispatch } from "react-redux";
+import { createProject } from "@/redux/features/projectSlice";
 
 const ProjectModal = (props) => {
   const { theme } = useTheme();
