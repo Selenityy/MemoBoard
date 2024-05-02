@@ -147,7 +147,7 @@ const NavBar = () => {
           </button>
         </Col>
       </Row>
-      <Stack gap={3}>
+      <Stack>
         {projects.map((project) => (
           <Row
             key={project._id}
