@@ -119,7 +119,7 @@ function LoginForm() {
                 Please provide a password.
               </Form.Control.Feedback>
             </FloatingLabel>
-            <Button variant="primary" type="submit" className="w-100">
+            <Button variant="primary" type="submit" className="submit-form-btn">
               Login
             </Button>
             <div style={{ color: "red" }}>{errorMessage}</div>
