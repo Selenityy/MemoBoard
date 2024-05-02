@@ -111,9 +111,6 @@ function LoginForm() {
                 type="password"
                 name="password"
                 placeholder="Password"
-                className={
-                  theme === "dark" ? "input-label-dark" : "input-label-light"
-                }
                 value={credentials.password}
                 onChange={handleChange}
                 required
