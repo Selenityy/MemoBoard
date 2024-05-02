@@ -27,7 +27,9 @@ const DashboardLayout = ({ children }) => {
           <NavBar />
         </Col>
         <Col
-          className={`w-100% ${theme === "dark" ? "body-dark" : "body-light"}`}
+          className={`w-100% px-4 pt-3 ${
+            theme === "dark" ? "body-dark" : "body-light"
+          }`}
         >
           {children}
         </Col>
