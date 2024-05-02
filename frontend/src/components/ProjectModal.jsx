@@ -30,7 +30,7 @@ const ProjectModal = (props) => {
     setValidated(true);
     try {
       const res = await dispatch(createProject(projectDetails)).unwrap();
-      console.log("res", res);
+      props.onHide();
       setProjectDetails({
         name: "",
         color: "#C8A2C8",
