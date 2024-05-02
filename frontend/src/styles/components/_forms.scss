@@ -70,34 +70,37 @@
   }
 }
 
-// Define generic styles for floating labels
 .input-floating {
   &-dark {
     background-color: $background-color-header-nav-dark !important;
     color: $text-color-light;
-    border: 0.5px solid rgba($background-color-header-nav-light, 0.5);
 
     .form-control,
     .form-floating > label {
       background-color: inherit;
       color: inherit;
-      border: inherit;
+      border: 0.5px solid white;
+      border-radius: 50px;
     }
 
-    label[for="floatingIdentifier"]::after {
+    label[for="floatingIdentifier"]::after,
+    label[for="floatingPassword"]::after,
+    label[for="floatingFirstName"]::after,
+    label[for="floatingLastName"]::after,
+    label[for="floatingEmail"]::after,
+    label[for="floatingUsername"]::after,
+    label[for="floatingConfirmPassword"]::after {
       background-color: inherit !important;
     }
 
-    label[for="floatingPassword"]::after {
-      background-color: inherit !important;
-    }
-
-    label[for="floatingIdentifier"] {
-      color: $text-color-header-nav-light !important;
-    }
-
-    label[for="floatingPassword"] {
-      color: $text-color-header-nav-light !important;
+    label[for="floatingIdentifier"],
+    label[for="floatingPassword"],
+    label[for="floatingFirstName"],
+    label[for="floatingLastName"],
+    label[for="floatingEmail"],
+    label[for="floatingUsername"],
+    label[for="floatingConfirmPassword"] {
+      color: inherit !important;
     }
 
     &:hover,
@@ -111,7 +114,7 @@
   &-light {
     background-color: $background-color-light;
     color: $text-color-dark;
-    border: 0.5px solid rgba($background-color-header-nav-dark, 0.5);
+    // border: 0.5px solid rgba($background-color-header-nav-dark, 0.5);
 
     .form-control,
     .form-floating > label {
@@ -120,21 +123,21 @@
       border: inherit;
     }
 
-    label[for="floatingIdentifier"]::after {
-      background-color: inherit !important;
-    }
+    // label[for="floatingIdentifier"]::after {
+    //   background-color: inherit !important;
+    // }
 
-    label[for="floatingPassword"]::after {
-      background-color: inherit !important;
-    }
+    // label[for="floatingPassword"]::after {
+    //   background-color: inherit !important;
+    // }
 
-    label[for="floatingIdentifier"] {
-      color: $text-color-header-nav-dark !important;
-    }
+    // label[for="floatingIdentifier"] {
+    //   color: $text-color-header-nav-dark !important;
+    // }
 
-    label[for="floatingPassword"] {
-      color: $text-color-header-nav-dark !important;
-    }
+    // label[for="floatingPassword"] {
+    //   color: $text-color-header-nav-dark !important;
+    // }
 
     &:hover,
     &:focus {
