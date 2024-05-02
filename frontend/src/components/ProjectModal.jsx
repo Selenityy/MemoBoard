@@ -63,11 +63,18 @@ const ProjectModal = (props) => {
       dialogClassName="custom-modal-width"
     >
       <Modal.Header
-        className={`${
-          theme === "dark" ? "modal-dark" : "modal-light"
-        } modal-header`}
+        className={`${theme === "dark" ? "modal-dark" : "modal-light"}`}
       >
-        <Modal.Title id="project-modal-title-vcenter">Add Project</Modal.Title>
+        <Modal.Title
+          id="project-modal-title-vcenter"
+          className={
+            theme === "dark"
+              ? "project-modal-title-dark"
+              : "project-modal-title-light"
+          }
+        >
+          Add Project
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body className={theme === "dark" ? "modal-dark" : "modal-light"}>
         <Container>
@@ -75,7 +82,15 @@ const ProjectModal = (props) => {
             <Row className="justify-content-between">
               <Col xs={9}>
                 <Form.Group className="mb-3" controlId="formName">
-                  <Form.Label>Name:</Form.Label>
+                  <Form.Label
+                    className={
+                      theme === "dark"
+                        ? "project-form-labels-dark"
+                        : "project-form-labels-light"
+                    }
+                  >
+                    Name:
+                  </Form.Label>
                   <Form.Control
                     className={
                       theme === "dark"
@@ -98,7 +113,15 @@ const ProjectModal = (props) => {
               </Col>
               <Col xs="auto">
                 <Form.Group className="mb-3" controlId="formColor">
-                  <Form.Label>Color</Form.Label>
+                  <Form.Label
+                    className={
+                      theme === "dark"
+                        ? "project-form-labels-dark"
+                        : "project-form-labels-light"
+                    }
+                  >
+                    Color
+                  </Form.Label>
                   <Form.Control
                     type="color"
                     name="color"
@@ -117,7 +140,15 @@ const ProjectModal = (props) => {
             <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="formDescription">
-                  <Form.Label>Description:</Form.Label>
+                  <Form.Label
+                    className={
+                      theme === "dark"
+                        ? "project-form-labels-dark"
+                        : "project-form-labels-light"
+                    }
+                  >
+                    Description:
+                  </Form.Label>
                   <Form.Control
                     className={
                       theme === "dark"
@@ -138,10 +169,20 @@ const ProjectModal = (props) => {
         </Container>
       </Modal.Body>
       <Modal.Footer className={theme === "dark" ? "modal-dark" : "modal-light"}>
-        <Button variant="secondary" onClick={closeModal} size="sm">
+        <Button
+          variant="secondary"
+          onClick={closeModal}
+          size="sm"
+          className="save-close-btn"
+        >
           Close
         </Button>
-        <Button onClick={addProjectSubmit} variant="primary" size="sm">
+        <Button
+          onClick={addProjectSubmit}
+          variant="primary"
+          size="sm"
+          className="save-close-btn"
+        >
           Save Changes
         </Button>
       </Modal.Footer>

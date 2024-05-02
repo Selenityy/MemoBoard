@@ -3,22 +3,43 @@
 @import "../utilities/helpers";
 
 .modal-light {
-  @extend %flex-center;
+  //   @extend %flex-center;
   @include theme-background("light");
-  padding: 1rem;
-  border: 1px solid $border-color-light;
+  padding: 0.5rem;
+  //   border: 1px solid $border-color-light;
 }
 
 .modal-dark {
-  @extend %flex-center;
+  //   @extend %flex-center;
   @include theme-background("dark");
-  padding: 1rem;
+  padding: 0.5rem;
+  //   border: 0.5px solid $border-color-dark;
+  border-bottom: 0.5px solid $border-color-dark;
+  border-top: 0.5px solid $border-color-dark;
 }
 
 .custom-modal-width {
   max-width: 450px;
 }
 
-.modal-header {
-  padding: 0.5rem;
+.project-modal-title-light {
+  font-size: 1.2rem;
+  margin-left: 0.5rem;
+  color: $text-color-dark;
+}
+
+.project-modal-title-dark {
+  font-size: 1.2rem;
+  margin-left: 0.5rem;
+  color: $text-color-light;
+}
+
+.project-form-labels-light {
+  font-size: 0.8rem;
+  color: $text-color-dark;
+}
+
+.project-form-labels-dark {
+  font-size: 0.8rem;
+  color: $text-color-light;
 }
