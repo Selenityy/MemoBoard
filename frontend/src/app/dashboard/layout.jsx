@@ -1,8 +1,13 @@
+"use client";
+
 import Header from "@/components/Header";
+import NavBar from "@/components/NavBar";
 import React from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import { useTheme } from "@/context/ThemeContext";
 
 const DashboardLayout = ({ children }) => {
+  const { theme } = useTheme();
   return (
     <Container fluid>
       <Row>
@@ -10,8 +15,22 @@ const DashboardLayout = ({ children }) => {
           <Header />
         </Col>
       </Row>
-      <Row className="w-100%">
-        <Col>{children}</Col>
+      <Row>
+        <Col
+          xs={2}
+          className={`${
+            theme === "dark"
+              ? "nav-bar-contatiner-dark"
+              : "nav-bar-contatiner-light"
+          }`}
+        >
+          <NavBar />
+        </Col>
+        <Col
+          className={`w-100% ${theme === "dark" ? "body-dark" : "body-light"}`}
+        >
+          {children}
+        </Col>
       </Row>
     </Container>
   );
