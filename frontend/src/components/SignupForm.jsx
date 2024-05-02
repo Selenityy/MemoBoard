@@ -268,7 +268,7 @@ const SignupForm = () => {
                 </FloatingLabel>
               </Col>
             </Row>
-            <Button variant="primary" type="submit" className="w-100">
+            <Button variant="primary" type="submit" className="submit-form-btn">
               Signup
             </Button>
             <div style={{ color: "red" }}>{errorMessage}</div>
