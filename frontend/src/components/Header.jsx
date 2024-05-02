@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Logo from "./Logo";
 import { Col, Container, Dropdown, DropdownMenu, Row } from "react-bootstrap";
 import "../styles/main.scss";
@@ -10,11 +10,13 @@ import { useTheme } from "@/context/ThemeContext";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { logout } from "@/redux/features/userSlice";
+import SettingsModal from "./SettingsModal";
 
 const Header = () => {
   const { theme, toggleTheme } = useTheme();
   const dispatch = useDispatch();
   const router = useRouter();
+  const [modalShow, setModalShow] = useState(false);
 
   const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
     <a
@@ -29,6 +31,11 @@ const Header = () => {
       {children}
     </a>
   ));
+
+  const handleSettings = async (e) => {
+    e.preventDefault();
+    setModalShow(true);
+  };
 
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -77,6 +84,16 @@ const Header = () => {
                 </Dropdown.Item>
               )}
               <Dropdown.Item
+                onClick={handleSettings}
+                className={
+                  theme === "dark"
+                    ? "dropdown-logout-dark"
+                    : "dropdown-logout-light"
+                }
+              >
+                Settings
+              </Dropdown.Item>
+              <Dropdown.Item
                 onClick={handleLogout}
                 className={
                   theme === "dark"
@@ -90,6 +107,7 @@ const Header = () => {
           </Dropdown>
         </Col>
       </Row>
+      <SettingsModal show={modalShow} onHide={() => setModalShow(false)} />
     </Container>
   );
 };
