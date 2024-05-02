@@ -11,8 +11,10 @@ import {
 } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { signupUser } from "@/redux/features/userSlice";
+import { useTheme } from "@/context/ThemeContext";
 
 const SignupForm = () => {
+  const { theme } = useTheme();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -82,125 +84,190 @@ const SignupForm = () => {
   };
 
   return (
-    <Container className="form-container">
+    <Container
+      className={
+        theme === "dark" ? "form-container-dark" : "form-container-light"
+      }
+    >
       <Row className="justify-content-center">
-        <Col xs={12} sm={10} md={8} lg={6}>
-          <Form noValidate validated={validated} onSubmit={handleSubmit}>
-            <FloatingLabel
-              controlId="floatingFirstName"
-              label="First Name"
-              className="mb-3 input-floating"
-            >
-              <Form.Control
-                type="text"
-                name="firstName"
-                placeholder=""
-                className="input-label"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-              />
-              <Form.Control.Feedback type="invalid" className="input-feedback">
-                Please provide a first name
-              </Form.Control.Feedback>
-            </FloatingLabel>
-            <FloatingLabel
-              controlId="floatingLastName"
-              label="Last Name"
-              className="mb-3 input-floating"
-            >
-              <Form.Control
-                type="text"
-                name="lastName"
-                placeholder=""
-                className="input-label"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-              />
-              <Form.Control.Feedback type="invalid" className="input-feedback">
-                Please provide a last name
-              </Form.Control.Feedback>
-            </FloatingLabel>
-            <FloatingLabel
-              controlId="floatingEmail"
-              label="Email"
-              className="mb-3 input-floating"
-            >
-              <Form.Control
-                type="email"
-                name="email"
-                placeholder=""
-                className="input-label"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-              <Form.Control.Feedback type="invalid" className="input-feedback">
-                Please provide an email
-              </Form.Control.Feedback>
-            </FloatingLabel>
-            <FloatingLabel
-              controlId="floatingUsername"
-              label="Username"
-              className="mb-3 input-floating"
-            >
-              <Form.Control
-                type="text"
-                name="username"
-                placeholder=""
-                className="input-label"
-                value={formData.username}
-                onChange={handleChange}
-                required
-              />
-              <Form.Control.Feedback type="invalid" className="input-feedback">
-                Please provide a username
-              </Form.Control.Feedback>
-            </FloatingLabel>
-            <FloatingLabel
-              controlId="floatingPassword"
-              label="Password"
-              className="mb-3 input-floating"
-            >
-              <Form.Control
-                type="password"
-                name="password"
-                placeholder=""
-                className="input-label"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-              <Form.Control.Feedback type="invalid" className="input-feedback">
-                Please provide a password
-              </Form.Control.Feedback>
-            </FloatingLabel>
-            <FloatingLabel
-              controlId="floatingConfirmPassword"
-              label="Confirm Password"
-              className="mb-3 input-floating"
-            >
-              <Form.Control
-                type="password"
-                name="confirmPassword"
-                placeholder=""
-                className="input-label"
-                value={confirmPassword}
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value);
-                  setPasswordMismatch(false);
-                  setUserCreated(false);
-                }}
-                required
-                isInvalid={passwordMismatch}
-              />
-              <Form.Control.Feedback type="invalid" className="input-feedback">
-                {passwordMismatch
-                  ? "Passwords do not match"
-                  : "Please confirm your password"}
-              </Form.Control.Feedback>
-            </FloatingLabel>
+        <Col>
+          <Form
+            noValidate
+            validated={validated}
+            onSubmit={handleSubmit}
+            className={
+              theme === "dark" ? "form-input-box-dark" : "form-input-box-light"
+            }
+          >
+            <Row>
+              <Col>
+                <FloatingLabel
+                  controlId="floatingFirstName"
+                  label="First Name"
+                  className={`mb-3 ${
+                    theme === "dark"
+                      ? "input-floating-dark"
+                      : "input-floating-light"
+                  }`}
+                >
+                  <Form.Control
+                    type="text"
+                    name="firstName"
+                    placeholder=""
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
+                  />
+                  <Form.Control.Feedback
+                    type="invalid"
+                    className="input-feedback"
+                  >
+                    Please provide a first name
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+              </Col>
+              <Col>
+                <FloatingLabel
+                  controlId="floatingLastName"
+                  label="Last Name"
+                  className={`mb-3 ${
+                    theme === "dark"
+                      ? "input-floating-dark"
+                      : "input-floating-light"
+                  }`}
+                >
+                  <Form.Control
+                    type="text"
+                    name="lastName"
+                    placeholder=""
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    required
+                  />
+                  <Form.Control.Feedback
+                    type="invalid"
+                    className="input-feedback"
+                  >
+                    Please provide a last name
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <FloatingLabel
+                  controlId="floatingEmail"
+                  label="Email"
+                  className={`mb-3 ${
+                    theme === "dark"
+                      ? "input-floating-dark"
+                      : "input-floating-light"
+                  }`}
+                >
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    placeholder=""
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                  <Form.Control.Feedback
+                    type="invalid"
+                    className="input-feedback"
+                  >
+                    Please provide an email
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+              </Col>
+              <Col>
+                <FloatingLabel
+                  controlId="floatingUsername"
+                  label="Username"
+                  className={`mb-3 ${
+                    theme === "dark"
+                      ? "input-floating-dark"
+                      : "input-floating-light"
+                  }`}
+                >
+                  <Form.Control
+                    type="text"
+                    name="username"
+                    placeholder=""
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
+                  />
+                  <Form.Control.Feedback
+                    type="invalid"
+                    className="input-feedback"
+                  >
+                    Please provide a username
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <FloatingLabel
+                  controlId="floatingPassword"
+                  label="Password"
+                  className={`mb-3 ${
+                    theme === "dark"
+                      ? "input-floating-dark"
+                      : "input-floating-light"
+                  }`}
+                >
+                  <Form.Control
+                    type="password"
+                    name="password"
+                    placeholder=""
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
+                  <Form.Control.Feedback
+                    type="invalid"
+                    className="input-feedback"
+                  >
+                    Please provide a password
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+              </Col>
+              <Col>
+                <FloatingLabel
+                  controlId="floatingConfirmPassword"
+                  label="Confirm Password"
+                  className={`mb-3 ${
+                    theme === "dark"
+                      ? "input-floating-dark"
+                      : "input-floating-light"
+                  }`}
+                >
+                  <Form.Control
+                    type="password"
+                    name="confirmPassword"
+                    placeholder=""
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      setPasswordMismatch(false);
+                      setUserCreated(false);
+                    }}
+                    required
+                    isInvalid={passwordMismatch}
+                  />
+                  <Form.Control.Feedback
+                    type="invalid"
+                    className="input-feedback"
+                  >
+                    {passwordMismatch
+                      ? "Passwords do not match"
+                      : "Please confirm your password"}
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+              </Col>
+            </Row>
             <Button variant="primary" type="submit" className="w-100">
               Signup
             </Button>
