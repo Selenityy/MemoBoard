@@ -30,6 +30,43 @@ export const fetchProjects = createAsyncThunk(
   }
 );
 
+export const createProject = createAsyncThunk(
+  "/dashboard/projects/create",
+  async (formData, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch(
+        "http://localhost:3000/dashboard/projects/create",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to create a project");
+      }
+      if (data.newProject) {
+        return data.newProject;
+      } else {
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 const initialState = {
   byId: {},
   allIds: [],
@@ -56,6 +93,25 @@ export const projectSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchProjects.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // CREATE PROJECT
+      .addCase(createProject.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(createProject.fulfilled, (state, action) => {
+        const newProject = action.payload;
+        if (!state.allIds.includes(newProject._id)) {
+          state.allIds.push(newProject._id);
+        }
+        state.byId[newProject._id] = newProject;
+        state.currentProject = newProject._id; // set new porject to current project
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(createProject.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
