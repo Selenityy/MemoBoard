@@ -5,9 +5,14 @@ import { Col, Row } from "react-bootstrap";
 import { useTheme } from "@/context/ThemeContext";
 import React from "react";
 
-const ProjectPage = () => {
+const ProjectPage = ({ params: { slug } }) => {
   const { theme } = useTheme();
-  return <div>Project Page</div>;
+  const displayName = slug.replace(/-/g, " ");
+  return (
+    <div>
+      <span>Project Page for {displayName}</span>
+    </div>
+  );
 };
 
 export default ProjectPage;
