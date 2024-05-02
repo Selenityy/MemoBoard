@@ -39,7 +39,7 @@ const SignupPage = () => {
             <SignupForm />
           </Col>
         </Row>
-        <Row className="justify-content-center">
+        <Row className="justify-content-center mt-2">
           <Col xs="auto">
             <LoginBtn />
           </Col>

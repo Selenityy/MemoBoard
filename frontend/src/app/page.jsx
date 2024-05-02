@@ -56,7 +56,7 @@ const Auth = () => {
             <LoginForm />
           </Col>
         </Row>
-        <Row className="justify-content-center">
+        <Row className="justify-content-center mt-2">
           <Col xs="auto">
             <SignUpBtn />
           </Col>
