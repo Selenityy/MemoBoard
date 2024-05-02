@@ -39,12 +39,42 @@ export const signupUser = createAsyncThunk(
         body: JSON.stringify(formData),
       });
       const data = await response.json();
-      console.log("data:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed fetch to signup user");
       }
       if (data.newUser) {
         return data.newUser;
+      } else {
+        return thunkAPI.rejectWithValue(data.message);
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchTimeZone = createAsyncThunk(
+  "/user/timezone",
+  async (_, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch("http://localhost:3000/dashboard/data", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      console.log("backend:", data.user.timezone);
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch timezone");
+      }
+      if (data.user.timezone) {
+        return data.user.timezone;
       } else {
         return thunkAPI.rejectWithValue(data.message);
       }
@@ -76,6 +106,7 @@ export const userSlice = createSlice({
   reducers: {
     logout: (state) => {
       localStorage.removeItem("token");
+      localStorage.removeItem("timezone");
       state.user = initialState.user;
       state.isLoggedIn = false;
       state.status = "idle";
@@ -109,6 +140,20 @@ export const userSlice = createSlice({
         state.error = null;
       })
       .addCase(signupUser.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // TIMEZONE
+      .addCase(fetchTimeZone.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchTimeZone.fulfilled, (state, action) => {
+        state.user = { ...state.user, ...action.payload };
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(fetchTimeZone.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
