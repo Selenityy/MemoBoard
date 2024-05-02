@@ -54,7 +54,7 @@ exports.createProject = [
     .trim()
     .isLength({ max: 100 })
     .withMessage("The project name must 100 characters or less"),
-  body("color").trim(),
+  body("color"),
   body("description")
     .trim()
     .optional()
@@ -72,7 +72,7 @@ exports.createProject = [
       });
     }
 
-    const { name, description } = req.body;
+    const { name, description, color } = req.body;
     try {
       const newProject = new Project({
         name,
