@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+// LOGIN
 export const loginUser = createAsyncThunk(
   "/user/login",
   async (credentials, thunkAPI) => {
@@ -27,6 +28,7 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+// SIGN UP
 export const signupUser = createAsyncThunk(
   "/user/signup",
   async (formData, thunkAPI) => {
@@ -53,6 +55,7 @@ export const signupUser = createAsyncThunk(
   }
 );
 
+// GET ALL USER INFO
 export const fetchUserInfo = createAsyncThunk(
   "/user/info",
   async (_, thunkAPI) => {
@@ -83,6 +86,7 @@ export const fetchUserInfo = createAsyncThunk(
   }
 );
 
+// GET USER ID
 export const fetchUserId = createAsyncThunk("/user/id", async (_, thunkAPI) => {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -110,6 +114,7 @@ export const fetchUserId = createAsyncThunk("/user/id", async (_, thunkAPI) => {
   }
 });
 
+// GET TIMEZONE
 export const fetchTimeZone = createAsyncThunk(
   "/user/timezone",
   async (_, thunkAPI) => {
@@ -140,6 +145,7 @@ export const fetchTimeZone = createAsyncThunk(
   }
 );
 
+// UPDATE ALL USER INFO
 export const updateUserInfo = createAsyncThunk(
   "/user/info/update",
   async ({ userId, userInfo }, thunkAPI) => {
@@ -227,6 +233,36 @@ export const updateUserInfo = createAsyncThunk(
         updatedEmail,
         updatedUsername,
       };
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+// DELETE ACCOUNT
+export const deleteAccount = createAsyncThunk(
+  "/user/delete",
+  async (userId, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:3000/dashboard/${userId}/account`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to delete account");
+      }
+      return data.message;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -345,6 +381,20 @@ export const userSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchUserId.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // DELETE ACCOUNT
+      .addCase(deleteAccount.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteAccount.fulfilled, (state, action) => {
+        state.user = { ...state.user, ...action.payload };
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(deleteAccount.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
