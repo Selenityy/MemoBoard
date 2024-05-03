@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+// GET ALL PROJECTS
 export const fetchProjects = createAsyncThunk(
   "/dashboard/projects",
   async (_, thunkAPI) => {
@@ -30,6 +31,41 @@ export const fetchProjects = createAsyncThunk(
   }
 );
 
+// GET ONE PROJECT
+export const fetchProject = createAsyncThunk(
+  "/dashboard/projects",
+  async (projectId, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:3000/dashboard/projects/${projectId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch project");
+      }
+      if (data.project) {
+        return data.project;
+      } else {
+        return thunkAPI.rejectWithValue(data.message);
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+// CREATE A PROJECT
 export const createProject = createAsyncThunk(
   "/dashboard/projects/create",
   async (formData, thunkAPI) => {
@@ -67,6 +103,11 @@ export const createProject = createAsyncThunk(
   }
 );
 
+// UPDATE A PROJECT
+export const updateProject = 
+
+// DELETE A PROJECT
+
 const initialState = {
   byId: {},
   allIds: [],
@@ -93,6 +134,25 @@ export const projectSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchProjects.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // FETCH ONE PROJECT
+      .addCase(fetchProject.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchProject.fulfilled, (state, action) => {
+        const project = action.payload;
+        state.byId[project._id] = project;
+        if (!state.allIds.includes(project._id)) {
+          state.allIds.push(project._id);
+        }
+        state.currentProject = project._id;
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(fetchProject.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
