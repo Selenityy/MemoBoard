@@ -1,5 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { memo } from "react";
+
+const defaultMemo = {
+  _id: "",
+  body: "",
+  user: "", // reference to user id
+  dueDateTime: null,
+  progress: "Not Started",
+  tags: [], // array of tag ids
+  priority: null,
+  notes: "",
+  parentId: null, // if parent id, then not null and use id
+};
 
 // GET ALL PARENT MEMOS
 export const fetchMemos = createAsyncThunk(
@@ -226,17 +237,17 @@ const initialState = {
   error: null,
 };
 
-const defaultMemo = {
-  _id: "",
-  body: "",
-  user: "", // reference to user id
-  dueDateTime: null,
-  progress: "Not Started",
-  tags: [], // array of tag ids
-  priority: null,
-  notes: "",
-  parentId: null, // if parent id, then not null and use id
-};
+// const defaultMemo = {
+//   _id: "",
+//   body: "",
+//   user: "", // reference to user id
+//   dueDateTime: null,
+//   progress: "Not Started",
+//   tags: [], // array of tag ids
+//   priority: null,
+//   notes: "",
+//   parentId: null, // if parent id, then not null and use id
+// };
 
 export const memoSlice = createSlice({
   name: "memo",
