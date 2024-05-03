@@ -229,7 +229,7 @@ const SettingsModal = (props) => {
             </Tab>
             <Tab eventKey="account" title="Account"></Tab>
             <Tab eventKey="general" title="General"></Tab>
-            <Tab eventKey="tags" title="Tags"></Tab>
+            {/* <Tab eventKey="tags" title="Tags"></Tab> */}
             <Tab eventKey="display" title="Display"></Tab>
           </Tabs>
         </Container>
