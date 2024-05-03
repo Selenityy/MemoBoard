@@ -22,6 +22,30 @@
   max-width: 450px;
 }
 
+.settings-modal-width {
+  max-width: 600px;
+}
+
+.settings-modal-body {
+  padding: 15px;
+}
+
+.settings-modal-header {
+  padding-left: 20px;
+  padding-bottom: 10px;
+  border-bottom: none;
+}
+
+.settings-modal-title {
+  font-size: 1rem;
+  color: $text-color-dark;
+}
+
+.small-tabs .nav-link {
+  padding: 5px 10px; /* Reduce padding to shrink size */
+  font-size: 12px; /* Smaller font size */
+}
+
 .project-modal-title-light {
   font-size: 1.2rem;
   margin-left: 0.5rem;
