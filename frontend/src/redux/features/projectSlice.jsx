@@ -23,7 +23,10 @@ export const fetchProjects = createAsyncThunk(
       if (data.projects) {
         return data.projects;
       } else {
-        return thunkAPI.rejectWithValue(data.message);
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
       }
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -57,7 +60,10 @@ export const fetchProject = createAsyncThunk(
       if (data.project) {
         return data.project;
       } else {
-        return thunkAPI.rejectWithValue(data.message);
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
       }
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -130,7 +136,10 @@ export const updateProject = createAsyncThunk(
       if (data.updatedProject) {
         return data.updatedProject;
       } else {
-        return thunkAPI.rejectWithValue(data.message);
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
       }
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);

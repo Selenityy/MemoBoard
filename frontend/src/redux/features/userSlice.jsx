@@ -20,7 +20,10 @@ export const loginUser = createAsyncThunk(
         localStorage.setItem("token", data.token);
         return data.user;
       } else {
-        return thunkAPI.rejectWithValue(data.message);
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
       }
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -47,7 +50,10 @@ export const signupUser = createAsyncThunk(
       if (data.newUser) {
         return data.newUser;
       } else {
-        return thunkAPI.rejectWithValue(data.message);
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
       }
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -78,7 +84,10 @@ export const fetchUserInfo = createAsyncThunk(
       if (data.user) {
         return data.user;
       } else {
-        return thunkAPI.rejectWithValue(data.message);
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
       }
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -107,7 +116,10 @@ export const fetchUserId = createAsyncThunk("/user/id", async (_, thunkAPI) => {
     if (data.user._id) {
       return data.user._id;
     } else {
-      return thunkAPI.rejectWithValue(data.message);
+      return thunkAPI.rejectWithValue({
+        message: data.message,
+        error: data.errors,
+      });
     }
   } catch (error) {
     return thunkAPI.rejectWithValue(error.message);
@@ -137,7 +149,10 @@ export const fetchTimeZone = createAsyncThunk(
       if (data.user.timezone) {
         return data.user.timezone;
       } else {
-        return thunkAPI.rejectWithValue(data.message);
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
       }
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -178,7 +193,10 @@ export const updateUserInfo = createAsyncThunk(
         console.log("updated first name:", updatedFirstName);
         console.log("updated last name:", updatedLastName);
       } else {
-        return thunkAPI.rejectWithValue(fullNameObj.message);
+        return thunkAPI.rejectWithValue({
+          message: fullNameObj.message,
+          error: data.errors,
+        });
       }
 
       // Update email
@@ -201,7 +219,10 @@ export const updateUserInfo = createAsyncThunk(
       if (emailObj.email) {
         updatedEmail = emailObj.email;
       } else {
-        return thunkAPI.rejectWithValue(emailObj.message);
+        return thunkAPI.rejectWithValue({
+          message: emailObj.message,
+          error: data.errors,
+        });
       }
 
       // Update username
@@ -224,7 +245,10 @@ export const updateUserInfo = createAsyncThunk(
       if (usernameObj.username) {
         updatedUsername = usernameObj.username;
       } else {
-        return thunkAPI.rejectWithValue(usernameObj.message);
+        return thunkAPI.rejectWithValue({
+          message: usernameObj.message,
+          error: data.errors,
+        });
       }
 
       return {
