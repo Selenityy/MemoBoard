@@ -2,14 +2,14 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // GET ALL PARENT MEMOS
 export const fetchMemos = createAsyncThunk(
-  "/memo/fetchMemos",
+  "/dashboard/memos/fetchMemos",
   async (_, thunkAPI) => {
     const token = localStorage.getItem("token");
     if (!token) {
       return thunkAPI.rejectWithValue("No token found");
     }
     try {
-      const response = await fetch("http://localhost:3001/dashboard/memos", {
+      const response = await fetch("http://localhost:3000/dashboard/memos", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -23,7 +23,10 @@ export const fetchMemos = createAsyncThunk(
       if (data.parentMemos) {
         return data.parentMemos;
       } else {
-        return thunkAPI.rejectWithValue(data.message);
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
       }
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -33,7 +36,7 @@ export const fetchMemos = createAsyncThunk(
 
 // GET ONE PARENT MEMO
 export const fetchMemo = createAsyncThunk(
-  "/memo/fetchMemo",
+  "/dashboard/memos/fetchMemo",
   async (memoId, thunkAPI) => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -41,7 +44,7 @@ export const fetchMemo = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3001/dashboard/memos/${memoId}`,
+        `http://localhost:3000/dashboard/memos/${memoId}`,
         {
           method: "GET",
           headers: {
@@ -57,7 +60,10 @@ export const fetchMemo = createAsyncThunk(
       if (data.parentMemo) {
         return data.parentMemo;
       } else {
-        return thunkAPI.rejectWithValue(data.message);
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
       }
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -67,7 +73,7 @@ export const fetchMemo = createAsyncThunk(
 
 // GET ALL CHILDREN MEMOS OF A PARENT MEMO
 export const fetchChildrenMemos = createAsyncThunk(
-  "/memo/fetchChildrenMemos",
+  "/dashboard/memos/fetchChildrenMemos",
   async (memoId, thunkAPI) => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -75,7 +81,7 @@ export const fetchChildrenMemos = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3001/dashboard/memos/${memoId}/children`,
+        `http://localhost:3000/dashboard/memos/${memoId}/children`,
         {
           method: "GET",
           headers: {
@@ -91,7 +97,10 @@ export const fetchChildrenMemos = createAsyncThunk(
       if (data.childMemos) {
         return { parentId: memoId, children: data.childMemos };
       } else {
-        return thunkAPI.rejectWithValue(data.message);
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
       }
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -100,8 +109,81 @@ export const fetchChildrenMemos = createAsyncThunk(
 );
 
 // CREATE A MEMO
+export const createMemo = createAsyncThunk(
+  "/dashboard/memos/create",
+  async (formData, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const completeData = { ...defaultMemo, ...formData };
+      const response = await fetch(
+        "http://localhost:3000/dashboard/memos/create",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(completeData),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to create a memo");
+      }
+      if (data.newMemo) {
+        return data.newMemo;
+      } else {
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 
 // UPDATE A MEMO
+export const updateMemo = createAsyncThunk(
+  "/dashboard/memos/update",
+  async ({ formData, memoId }, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:3000/dashboard/memos/${memoId}/update`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+      const data = response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to update memo");
+      }
+      if (data.updatedMemo) {
+        return data.updatedMemo;
+      } else {
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 
 // DELETE A MEMO
 
@@ -110,7 +192,7 @@ const initialState = {
   allIds: [],
   parentMemos: [],
   childrenMemos: {},
-  currentMemo: null,
+  currentMemo: defaultMemo,
   status: "idle",
   error: null,
 };
@@ -194,6 +276,58 @@ export const memoSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchChildrenMemos.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // CREATE MEMO
+      .addCase(createMemo.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(createMemo.fulfilled, (state, action) => {
+        const newMemo = action.payload;
+        state.byId[newMemo._id] = newMemo;
+        state.allIds.push(newMemo._id);
+        state.currentMemo = newMemo._id;
+        if (newMemo.parentId === null) {
+          state.parentMemos.push(newMemo._id);
+        } else {
+          if (!state.childrenMemos[newMemo.parentId]) {
+            state.childrenMemos[newMemo.parentId] = [];
+          }
+          state.childrenMemos[newMemo.parentId].push(newMemo._id);
+        }
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(createMemo.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // UPDATE MEMO
+      .addCase(updateMemo.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateMemo.fulfilled, (state, action) => {
+        const updatedMemo = action.payload;
+        state.byId[updatedMemo._id] = updatedMemo;
+        if (!state.allIds.includes(updateMemo._id)) {
+          state.allIds.push(updatedMemo._id);
+        }
+        state.currentMemo = updatedMemo._id;
+        if (updatedMemo.parentId === null) {
+          state.parentMemos.push(updatedMemo._id);
+        } else {
+          if (!state.childrenMemos[updatedMemo.parentId]) {
+            state.childrenMemos[updatedMemo.parentId] = [];
+          }
+          state.childrenMemos[updatedMemo.parentId].push(updatedMemo._id);
+        }
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(updateMemo.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
