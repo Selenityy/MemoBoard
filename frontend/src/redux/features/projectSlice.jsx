@@ -33,7 +33,7 @@ export const fetchProjects = createAsyncThunk(
 
 // GET ONE PROJECT
 export const fetchProject = createAsyncThunk(
-  "/dashboard/projects",
+  "/dashboard/project",
   async (projectId, thunkAPI) => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -104,7 +104,39 @@ export const createProject = createAsyncThunk(
 );
 
 // UPDATE A PROJECT
-export const updateProject = 
+export const updateProject = createAsyncThunk(
+  "/dashboard/project/update",
+  async ({ projectId, projectData }, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:3000/dashboard/projects/${projectId}/update`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(projectData),
+        }
+      );
+      const data = response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to update project");
+      }
+      if (data.updatedProject) {
+        return data.updatedProject;
+      } else {
+        return thunkAPI.rejectWithValue(data.message);
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 
 // DELETE A PROJECT
 
@@ -172,6 +204,25 @@ export const projectSlice = createSlice({
         state.error = null;
       })
       .addCase(createProject.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // UPDATE PROJECT
+      .addCase(updateProject.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateProject.fulfilled, (state, action) => {
+        const project = action.payload;
+        state.byId[project._id] = project;
+        if (!state.allIds.includes(project._id)) {
+          state.allIds.push(project._id);
+        }
+        state.currentProject = project._id;
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(updateProject.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
