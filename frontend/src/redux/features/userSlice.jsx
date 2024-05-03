@@ -390,9 +390,13 @@ export const userSlice = createSlice({
         state.status = "loading";
       })
       .addCase(deleteAccount.fulfilled, (state, action) => {
-        state.user = { ...state.user, ...action.payload };
+        state.user = initialState.user;
+        state.isLoggedIn = false;
         state.status = "succeeded";
         state.error = null;
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("timezone");
       })
       .addCase(deleteAccount.rejected, (state, action) => {
         state.status = "failed";
