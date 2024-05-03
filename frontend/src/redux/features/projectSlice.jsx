@@ -139,6 +139,34 @@ export const updateProject = createAsyncThunk(
 );
 
 // DELETE A PROJECT
+export const deleteProject = createAsyncThunk(
+  "/dashboard/project/delete",
+  async (projectId, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch(
+        `http://locahlhost:3000/dashboard/projects/${projectId}/delete`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to delete project");
+      }
+      return data.message;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 
 const initialState = {
   byId: {},
@@ -223,6 +251,29 @@ export const projectSlice = createSlice({
         state.error = null;
       })
       .addCase(updateProject.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // DELETE PROJECT
+      .addCase(deleteProject.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteProject.fulfilled, (state, action) => {
+        const projectId = action.meta.arg; // This assumes the projectId was passed as the argument to the thunk.
+
+        state.allIds = state.allIds.filter((id) => id !== projectId);
+
+        // Delete the project from the `byId` object
+        delete state.byId[projectId];
+
+        if (state.currentProject === projectId) {
+          state.currentProject = null;
+        }
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(deleteProject.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
