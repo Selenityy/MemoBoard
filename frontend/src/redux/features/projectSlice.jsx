@@ -140,7 +140,7 @@ export const updateProject = createAsyncThunk(
 
 // DELETE A PROJECT
 export const deleteProject = createAsyncThunk(
-  "/dashboard/project/delete",
+  "/dashboard/projects/delete",
   async (projectId, thunkAPI) => {
     const token = localStorage.getItem("token");
     if (!token) {
