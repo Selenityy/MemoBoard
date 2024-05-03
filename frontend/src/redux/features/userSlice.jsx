@@ -53,6 +53,63 @@ export const signupUser = createAsyncThunk(
   }
 );
 
+export const fetchUserInfo = createAsyncThunk(
+  "/user/info",
+  async (_, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch("http://localhost:3000/dashboard/data", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch user info");
+      }
+      if (data.user) {
+        return data.user;
+      } else {
+        return thunkAPI.rejectWithValue(data.message);
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchUserId = createAsyncThunk("/user/id", async (_, thunkAPI) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return thunkAPI.rejectWithValue("No token found");
+  }
+  try {
+    const response = await fetch("http://localhost:3000/dashboard/data", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch userId");
+    }
+    if (data.user._id) {
+      return data.user._id;
+    } else {
+      return thunkAPI.rejectWithValue(data.message);
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.message);
+  }
+});
+
 export const fetchTimeZone = createAsyncThunk(
   "/user/timezone",
   async (_, thunkAPI) => {
@@ -69,7 +126,6 @@ export const fetchTimeZone = createAsyncThunk(
         },
       });
       const data = await response.json();
-      console.log("backend:", data.user.timezone);
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch timezone");
       }
@@ -78,6 +134,99 @@ export const fetchTimeZone = createAsyncThunk(
       } else {
         return thunkAPI.rejectWithValue(data.message);
       }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateUserInfo = createAsyncThunk(
+  "/user/info/update",
+  async ({ userId, userInfo }, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      // Update full name
+      const nameRes = await fetch(
+        `http://localhost:3000/dashboard/${userId}/updateName`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userInfo),
+        }
+      );
+      const fullNameObj = await nameRes.json();
+      if (!nameRes.ok) {
+        throw new Error(fullNameObj.message || "Failed to update full name");
+      }
+      let updatedFirstName;
+      let updatedLastName;
+      if (fullNameObj.user) {
+        updatedFirstName = fullNameObj.user.firstName;
+        updatedLastName = fullNameObj.user.lastName;
+        console.log("updated first name:", updatedFirstName);
+        console.log("updated last name:", updatedLastName);
+      } else {
+        return thunkAPI.rejectWithValue(fullNameObj.message);
+      }
+
+      // Update email
+      const emailRes = await fetch(
+        `http://localhost:3000/dashboard/${userId}/updateEmail`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userInfo),
+        }
+      );
+      const emailObj = await emailRes.json();
+      if (!emailRes.ok) {
+        throw new Error(emailObj.message || "Failed to update email");
+      }
+      let updatedEmail;
+      if (emailObj.email) {
+        updatedEmail = emailObj.email;
+      } else {
+        return thunkAPI.rejectWithValue(emailObj.message);
+      }
+
+      // Update username
+      const usernameRes = await fetch(
+        `http://localhost:3000/dashboard/${userId}/updateUsername`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userInfo),
+        }
+      );
+      const usernameObj = await usernameRes.json();
+      if (!usernameRes.ok) {
+        throw new Error(usernameObj.message || "Failed to update email");
+      }
+      let updatedUsername;
+      if (usernameObj.username) {
+        updatedUsername = usernameObj.username;
+      } else {
+        return thunkAPI.rejectWithValue(usernameObj.message);
+      }
+
+      return {
+        updatedFirstName,
+        updatedLastName,
+        updatedEmail,
+        updatedUsername,
+      };
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -144,7 +293,35 @@ export const userSlice = createSlice({
         state.error = action.payload;
       })
 
-      // TIMEZONE
+      // FETCH USER INFO
+      .addCase(fetchUserInfo.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchUserInfo.fulfilled, (state, action) => {
+        state.user = { ...state.user, ...action.payload };
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(fetchUserInfo.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // UPDATE USER INFO
+      .addCase(updateUserInfo.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateUserInfo.fulfilled, (state, action) => {
+        state.user = { ...state.user, ...action.payload };
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(updateUserInfo.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // FETCH TIMEZONE
       .addCase(fetchTimeZone.pending, (state) => {
         state.status = "loading";
       })
@@ -154,6 +331,20 @@ export const userSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchTimeZone.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // FETCH USER ID
+      .addCase(fetchUserId.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchUserId.fulfilled, (state, action) => {
+        state.user = { ...state.user, ...action.payload };
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(fetchUserId.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
