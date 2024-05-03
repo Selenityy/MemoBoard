@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { memo } from "react";
 
 // GET ALL PARENT MEMOS
 export const fetchMemos = createAsyncThunk(
@@ -186,6 +187,34 @@ export const updateMemo = createAsyncThunk(
 );
 
 // DELETE A MEMO
+export const deleteMemo = createAsyncThunk(
+  "/dashboard/memos/delete",
+  async (memoId, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:3000/dashboard/memos/${memoId}/delete`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to delete memo");
+      }
+      return data.message;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 
 const initialState = {
   byId: {},
@@ -328,6 +357,44 @@ export const memoSlice = createSlice({
         state.error = null;
       })
       .addCase(updateMemo.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // DELETE MEMO
+      .addCase(deleteMemo.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteMemo.fulfilled, (state, action) => {
+        const memoId = action.meta.arg;
+        const memo = state.byId[memoId];
+
+        if (memo) {
+          // If it's a parent memo, remove from parentMemos list
+          if (!memo.parentId) {
+            state.parentMemos = state.parentMemos.filter((id) => id !== memoId);
+          } else {
+            // If it's a child memo, remove from the respective parent's children list
+            const siblings = state.childrenMemos[memo.parentId];
+            if (siblings) {
+              state.childrenMemos[memo.parentId] = siblings.filter(
+                (id) => id !== memoId
+              );
+            }
+          }
+          // Remove from allIds and byId
+          state.allIds = state.allIds.filter((id) => id !== memoId);
+          delete state.byId[memoId];
+          // Reset currentMemo if it was the deleted memo
+          if (state.currentMemo === memoId) {
+            state.currentMemo = defaultMemo;
+          }
+        }
+
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(deleteMemo.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
