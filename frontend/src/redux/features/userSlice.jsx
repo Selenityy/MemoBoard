@@ -169,7 +169,6 @@ export const updateTimezone = createAsyncThunk(
       return thunkAPI.rejectWithValue("No token found");
     }
     try {
-      console.log("new:", newTimezone);
       const response = await fetch(
         `http://localhost:3000/dashboard/${userId}/updateTimezone`,
         {
@@ -178,11 +177,10 @@ export const updateTimezone = createAsyncThunk(
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({newTimezone}),
+          body: JSON.stringify({ newTimezone }),
         }
       );
       const data = await response.json();
-      console.log("backend data:", data.timezone);
       if (!response.ok) {
         throw new Error(data.message || "Failed to update timzone");
       }
@@ -438,7 +436,8 @@ export const userSlice = createSlice({
         state.status = "loading";
       })
       .addCase(updateTimezone.fulfilled, (state, action) => {
-        state.user = { ...state.user, ...action.payload };
+        // state.user = { ...state.user, ...action.payload };
+        state.user.timezone = action.payload.newTimezone;
         state.status = "succeeded";
         state.error = null;
       })
