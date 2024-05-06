@@ -29,13 +29,12 @@ const DashboardPage = () => {
         };
         const formatter = new Intl.DateTimeFormat("en-US", options);
         setDateString(formatter.format(date));
-        console.log("Formatted date:", formatter.format(date));
       } catch (error) {
         console.error(error);
       }
     };
     fetchAndFormateUserInfo();
-  }, [user.timezone, dispatch]);
+  }, [user.timezone, user.firstName, dispatch]);
 
   return (
     <>
