@@ -160,6 +160,46 @@ export const fetchTimeZone = createAsyncThunk(
   }
 );
 
+// UPDATE TIMEZONE
+export const updateTimezone = createAsyncThunk(
+  "/user/timezone/update",
+  async ({ userId, newTimezone }, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      console.log("new:", newTimezone);
+      const response = await fetch(
+        `http://localhost:3000/dashboard/${userId}/updateTimezone`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({newTimezone}),
+        }
+      );
+      const data = await response.json();
+      console.log("backend data:", data.timezone);
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to update timzone");
+      }
+      if (data.timezone) {
+        return data.timezone;
+      } else {
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 // UPDATE ALL USER INFO
 export const updateUserInfo = createAsyncThunk(
   "/user/info/update",
@@ -190,8 +230,6 @@ export const updateUserInfo = createAsyncThunk(
       if (fullNameObj.user) {
         updatedFirstName = fullNameObj.user.firstName;
         updatedLastName = fullNameObj.user.lastName;
-        console.log("updated first name:", updatedFirstName);
-        console.log("updated last name:", updatedLastName);
       } else {
         return thunkAPI.rejectWithValue({
           message: fullNameObj.message,
@@ -391,6 +429,20 @@ export const userSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchTimeZone.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // UPDATE TIMEZONE
+      .addCase(updateTimezone.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateTimezone.fulfilled, (state, action) => {
+        state.user = { ...state.user, ...action.payload };
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(updateTimezone.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
