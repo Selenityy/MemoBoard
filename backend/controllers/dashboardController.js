@@ -74,9 +74,9 @@ exports.updateProfileGoogleAuth = asyncHandler(async (req, res, next) => {
 exports.updateEmail = asyncHandler(async (req, res, next) => {
   const { newEmail } = req.body;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
-  if (!newEmail) {
-    return res.status(400).json({ message: "Email is required." });
-  }
+//   if (!newEmail) {
+//     return res.status(400).json({ message: "Email is required." });
+//   }
 
   try {
     const updatedUser = await User.findByIdAndUpdate(
@@ -104,11 +104,11 @@ exports.updateEmail = asyncHandler(async (req, res, next) => {
 exports.updateName = asyncHandler(async (req, res, next) => {
   const { newFirstName, newLastName } = req.body;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
-  if (!newFirstName || !newLastName) {
-    return res
-      .status(400)
-      .json({ message: "First and last name is required." });
-  }
+//   if (!newFirstName || !newLastName) {
+//     return res
+//       .status(400)
+//       .json({ message: "First and last name is required." });
+//   }
 
   try {
     const updatedUser = await User.findByIdAndUpdate(
@@ -139,9 +139,9 @@ exports.updateName = asyncHandler(async (req, res, next) => {
 exports.updateUsername = asyncHandler(async (req, res, next) => {
   const { newUsername } = req.body;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
-  if (!newUsername) {
-    return res.status(400).json({ message: "Username is required" });
-  }
+//   if (!newUsername) {
+//     return res.status(400).json({ message: "Username is required" });
+//   }
 
   try {
     const updatedUser = await User.findByIdAndUpdate(
