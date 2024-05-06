@@ -83,11 +83,12 @@ const SettingsModal = (props) => {
 
       if (timezoneChanged) {
         let newTimezone = selectedTimezone.value;
-        console.log("selected timezone:", newTimezone);
         await dispatch(updateTimezone({ userId, newTimezone })).unwrap();
         setUserInfo({ newTimezone: selectedTimezone });
         setTimezoneChanged(false);
       }
+      await dispatch(fetchUserInfo()).unwrap();
+
       props.onHide();
       setValidated(false);
       setErrorMessage("");
