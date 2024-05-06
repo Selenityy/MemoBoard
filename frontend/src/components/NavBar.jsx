@@ -40,6 +40,18 @@ const NavBar = () => {
     router.push("/dashboard");
   };
 
+  const allMemoClick = () => {
+    router.push("/dashboard/all-tasks");
+  };
+
+  const todayMemoClick = () => {
+    router.push("/dashboard/today-tasks");
+  };
+
+  const weekMemoClick = () => {
+    router.push("/dashboard/week-tasks");
+  };
+
   const projectClick = (project) => {
     const formattedProjectName = project.name.replace(/\s+/g, "-");
     router.push(`/dashboard/project/${formattedProjectName}`);
@@ -72,6 +84,7 @@ const NavBar = () => {
         className={`${
           theme === "dark" ? "nav-icon-row-dark" : "nav-icon-row-light"
         } align-items-center nav-icon-row`}
+        onClick={() => allMemoClick()}
       >
         <Col xs="auto">
           <FaRegCheckCircle
@@ -92,6 +105,7 @@ const NavBar = () => {
         className={`${
           theme === "dark" ? "nav-icon-row-dark" : "nav-icon-row-light"
         } align-items-center nav-icon-row`}
+        onClick={() => todayMemoClick()}
       >
         <Col xs="auto">
           <IoTodayOutline
@@ -112,6 +126,7 @@ const NavBar = () => {
         className={`${
           theme === "dark" ? "nav-icon-row-dark" : "nav-icon-row-light"
         } align-items-center nav-icon-row`}
+        onClick={() => weekMemoClick()}
       >
         <Col xs="auto">
           <BsCalendar4Week
