@@ -7,7 +7,9 @@ import {
   fetchUserId,
   fetchUserInfo,
   updateUserInfo,
+  updateTimezone,
 } from "@/redux/features/userSlice";
+import TimezoneSelect from "react-timezone-select";
 
 const SettingsModal = (props) => {
   const { theme } = useTheme();
@@ -22,6 +24,10 @@ const SettingsModal = (props) => {
   const [validated, setValidated] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [userId, setUserId] = useState(null);
+  const [selectedTimezone, setSelectedTimezone] = useState({
+    value: "America/Chicago",
+    label: "Central Daylight Time (CDT)",
+  });
 
   useEffect(() => {
     const updateUserInfo = async () => {
@@ -60,15 +66,20 @@ const SettingsModal = (props) => {
     }
     setValidated(true);
     try {
+      let newTimezone = selectedTimezone.value;
+      console.log("selected timezone:", newTimezone);
+
       await dispatch(updateUserInfo({ userId, userInfo })).unwrap();
+      await dispatch(updateTimezone({ userId, newTimezone })).unwrap();
+      setUserInfo({ newTimezone: selectedTimezone });
       props.onHide();
-      setUserInfo({
-        newFirstName: "",
-        newLastName: "",
-        newUsername: "",
-        newEmail: "",
-        newTimezone: "",
-      });
+      //   setUserInfo({
+      //     newFirstName: "",
+      //     newLastName: "",
+      //     newUsername: "",
+      //     newEmail: "",
+      //     newTimezone: selectedTimezone,
+      //   });
       setValidated(false);
       setErrorMessage("");
     } catch (error) {
@@ -86,7 +97,7 @@ const SettingsModal = (props) => {
       newLastName: "",
       newUsername: "",
       newEmail: "",
-      newTimezone: "",
+      newTimezone: selectedTimezone,
     });
   };
 
@@ -227,7 +238,15 @@ const SettingsModal = (props) => {
                 <div style={{ color: "red" }}>{errorMessage}</div>
               </Form>
             </Tab>
-            <Tab eventKey="account" title="Account"></Tab>
+            <Tab eventKey="account" title="Account">
+              <div>Select Timezone:</div>
+              <div>
+                <TimezoneSelect
+                  value={selectedTimezone}
+                  onChange={setSelectedTimezone}
+                />
+              </div>
+            </Tab>
             <Tab eventKey="general" title="General"></Tab>
             {/* <Tab eventKey="tags" title="Tags"></Tab> */}
             <Tab eventKey="display" title="Display"></Tab>
