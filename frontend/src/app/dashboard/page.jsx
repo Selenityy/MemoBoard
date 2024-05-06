@@ -53,18 +53,12 @@ const DashboardPage = () => {
         weekday: "long",
         month: "long",
         day: "numeric",
-        timeZone: user.timezone,
-        hour: "numeric",
-        minute: "numeric",
       };
       const formatter = new Intl.DateTimeFormat("en-US", options);
       setDateString(formatter.format(date));
     };
-
-    if (user.timezone) {
-      formatDate();
-    }
-  }, [user.timezone]);
+    formatDate();
+  }, []);
 
   return (
     <>
@@ -75,7 +69,7 @@ const DashboardPage = () => {
       </Row>
       <Row>
         <Col>
-          <span>Good afternoon, {user.firstName}</span>
+          <span>Good afternoon, {firstName}</span>
         </Col>
       </Row>
     </>
