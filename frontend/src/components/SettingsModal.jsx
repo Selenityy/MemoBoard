@@ -2,7 +2,7 @@ import { Modal, Tab, Tabs } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Row, Form } from "react-bootstrap";
 import { useTheme } from "@/context/ThemeContext";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   fetchUserId,
   fetchUserInfo,
@@ -14,6 +14,7 @@ import TimezoneSelect from "react-timezone-select";
 const SettingsModal = (props) => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.user);
   const [userInfo, setUserInfo] = useState({
     newFirstName: "",
     newLastName: "",
@@ -21,13 +22,12 @@ const SettingsModal = (props) => {
     newEmail: "",
     newTimezone: "",
   });
+  const [selectedTimezone, setSelectedTimezone] = useState(null);
   const [validated, setValidated] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [userId, setUserId] = useState(null);
-  const [selectedTimezone, setSelectedTimezone] = useState({
-    value: "America/Chicago",
-    label: "Central Daylight Time (CDT)",
-  });
+  const [userInfoChanged, setUserInfoChanged] = useState(false);
+  const [timezoneChanged, setTimezoneChanged] = useState(false);
 
   useEffect(() => {
     const updateUserInfo = async () => {
@@ -37,25 +37,34 @@ const SettingsModal = (props) => {
         setUserId(userIdRes.payload);
 
         // userInfo
-        const res = await dispatch(fetchUserInfo());
-        const userInfoRes = res.payload;
+        await dispatch(fetchUserInfo()).unwrap();
         setUserInfo({
-          newFirstName: userInfoRes.firstName,
-          newLastName: userInfoRes.lastName,
-          newUsername: userInfoRes.username,
-          newEmail: userInfoRes.email,
-          newTimezone: userInfoRes.timezone,
+          newFirstName: user.firstName,
+          newLastName: user.lastName,
+          newUsername: user.username,
+          newEmail: user.email,
+          newTimezone: user.timezone,
+        });
+        setSelectedTimezone({
+          value: user.timezone,
+          label: user.timezone,
         });
       } catch (error) {
         console.error("Failed to get the user info:", error);
       }
     };
     updateUserInfo();
-  }, [dispatch]);
+  }, [dispatch, user.timezone]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserInfo((prev) => ({ ...prev, [name]: value }));
+    setUserInfoChanged(true);
+  };
+
+  const handleTimezoneChange = (selectedOption) => {
+    setSelectedTimezone(selectedOption);
+    setTimezoneChanged(true);
   };
 
   const savingSettings = async (e) => {
@@ -65,21 +74,21 @@ const SettingsModal = (props) => {
       e.stopPropagation();
     }
     setValidated(true);
-    try {
-      let newTimezone = selectedTimezone.value;
-      console.log("selected timezone:", newTimezone);
 
-      await dispatch(updateUserInfo({ userId, userInfo })).unwrap();
-      await dispatch(updateTimezone({ userId, newTimezone })).unwrap();
-      setUserInfo({ newTimezone: selectedTimezone });
+    try {
+      if (userInfoChanged) {
+        await dispatch(updateUserInfo({ userId, userInfo })).unwrap();
+        setUserInfoChanged(false);
+      }
+
+      if (timezoneChanged) {
+        let newTimezone = selectedTimezone.value;
+        console.log("selected timezone:", newTimezone);
+        await dispatch(updateTimezone({ userId, newTimezone })).unwrap();
+        setUserInfo({ newTimezone: selectedTimezone });
+        setTimezoneChanged(false);
+      }
       props.onHide();
-      //   setUserInfo({
-      //     newFirstName: "",
-      //     newLastName: "",
-      //     newUsername: "",
-      //     newEmail: "",
-      //     newTimezone: selectedTimezone,
-      //   });
       setValidated(false);
       setErrorMessage("");
     } catch (error) {
@@ -92,13 +101,8 @@ const SettingsModal = (props) => {
   const closeModal = async (e) => {
     e.preventDefault();
     props.onHide();
-    setUserInfo({
-      newFirstName: "",
-      newLastName: "",
-      newUsername: "",
-      newEmail: "",
-      newTimezone: selectedTimezone,
-    });
+    setUserInfo(false);
+    setTimezoneChanged(false);
   };
 
   return (
@@ -243,7 +247,7 @@ const SettingsModal = (props) => {
               <div>
                 <TimezoneSelect
                   value={selectedTimezone}
-                  onChange={setSelectedTimezone}
+                  onChange={handleTimezoneChange}
                 />
               </div>
             </Tab>
