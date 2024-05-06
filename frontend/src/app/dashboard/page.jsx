@@ -4,13 +4,30 @@ import "../../styles/main.scss";
 import { Col, Row } from "react-bootstrap";
 import { useTheme } from "@/context/ThemeContext";
 import React, { useEffect, useState } from "react";
-import { fetchTimeZone } from "@/redux/features/userSlice";
-import { useDispatch } from "react-redux";
+import { fetchTimeZone, fetchUserInfo } from "@/redux/features/userSlice";
+import { useSelector, useDispatch } from "react-redux";
 
 const DashboardPage = () => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
-  //   const date = new Date();
+  const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [dateString, setDateString] = useState("");
+  const [selectedTimezone, setSelectedTimezone] = useState({ value: "UTC" });
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      try {
+        const res = await dispatch(fetchUserInfo()).unwrap();
+        setUsername(res.username);
+        setFirstName(res.firstName);
+        setSelectedTimezone(res.timezone);
+      } catch (error) {
+        console.error("Failed to get the username", error);
+      }
+    };
+    getUserInfo();
+  }, [dispatch]);
 
   useEffect(() => {
     let storedTimezone = localStorage.getItem("timezone");
@@ -29,9 +46,38 @@ const DashboardPage = () => {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    const formatDate = () => {
+      const date = new Date();
+      const options = {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        timeZone: user.timezone,
+        hour: "numeric",
+        minute: "numeric",
+      };
+      const formatter = new Intl.DateTimeFormat("en-US", options);
+      setDateString(formatter.format(date));
+    };
+
+    if (user.timezone) {
+      formatDate();
+    }
+  }, [user.timezone]);
+
   return (
     <>
-      <span>Home</span>
+      <Row>
+        <Col>
+          <span>{dateString}</span>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <span>Good afternoon, {user.firstName}</span>
+        </Col>
+      </Row>
     </>
   );
 };
