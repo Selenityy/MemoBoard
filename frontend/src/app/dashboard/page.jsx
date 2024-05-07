@@ -4,7 +4,7 @@ import "../../styles/main.scss";
 import { Col, Row, Form } from "react-bootstrap";
 import { useTheme } from "@/context/ThemeContext";
 import React, { useEffect, useState } from "react";
-import { fetchTimeZone, fetchUserInfo } from "@/redux/features/userSlice";
+import { fetchUserInfo } from "@/redux/features/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 
 const DashboardPage = () => {
@@ -13,6 +13,7 @@ const DashboardPage = () => {
   const [dateString, setDateString] = useState("");
   const { user } = useSelector((state) => state.user);
   const [timeOfDay, setTimeOfDay] = useState("");
+  const [clock, setClock] = useState("");
   const [note, setNote] = useState("");
 
   const loadNotes = () => {
@@ -49,8 +50,15 @@ const DashboardPage = () => {
           //   timeZone: user.timezone,
           //   timeZoneName: "short",
         };
+        const timeOptions = {
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+        };
         const formatter = new Intl.DateTimeFormat("en-US", options);
+        const timeFormatter = new Intl.DateTimeFormat("en-UD", timeOptions);
         setDateString(formatter.format(date));
+        setClock(timeFormatter.format(date));
         updateTimeOfDay();
       } catch (error) {
         console.error(error);
@@ -84,6 +92,9 @@ const DashboardPage = () => {
         <Col>
           <span>Home</span>
         </Col>
+      </Row>
+      <Row>
+        <Col>{clock && <span>{clock}</span>}</Col>
       </Row>
       <Row>
         <Col>{dateString && <span>{dateString}</span>}</Col>
@@ -120,8 +131,8 @@ const DashboardPage = () => {
             style={{
               resize: "none",
               overflowY: "auto",
-              maxHeight: "600px",
-              maxWidth: "800px",
+              height: "200px",
+              width: "1000px",
             }}
           />
         </Col>
