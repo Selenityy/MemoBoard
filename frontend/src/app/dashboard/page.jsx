@@ -1,7 +1,7 @@
 "use client";
 
 import "../../styles/main.scss";
-import { Col, Row } from "react-bootstrap";
+import { Col, Row, Form } from "react-bootstrap";
 import { useTheme } from "@/context/ThemeContext";
 import React, { useEffect, useState } from "react";
 import { fetchTimeZone, fetchUserInfo } from "@/redux/features/userSlice";
@@ -13,6 +13,12 @@ const DashboardPage = () => {
   const [dateString, setDateString] = useState("");
   const { user } = useSelector((state) => state.user);
   const [timeOfDay, setTimeOfDay] = useState("");
+  const [note, setNote] = useState("");
+
+  const loadNotes = () => {
+    const notes = localStorage.getItem("notes");
+    setNote(notes);
+  };
 
   useEffect(() => {
     const updateTimeOfDay = () => {
@@ -51,7 +57,26 @@ const DashboardPage = () => {
       }
     };
     fetchAndFormateUserInfo();
+    loadNotes();
+
+    if (localStorage.getItem("notes") === null) {
+      localStorage.setItem("notes", note);
+    }
   }, [user.timezone, user.firstName, dispatch]);
+
+  const handleBlur = () => {
+    handleSave(note);
+    // setNotes(loadNotes()); // reload to update notes
+  };
+
+  const handleNoteChange = (e) => {
+    setNote(e.target.value);
+  };
+
+  const handleSave = (note) => {
+    setNote(note);
+    localStorage.setItem("notes", note);
+  };
 
   return (
     <>
@@ -68,6 +93,37 @@ const DashboardPage = () => {
           <span>
             Good {timeOfDay}, {user.firstName}
           </span>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <div>
+            <span>My Tasks</span>
+          </div>
+        </Col>
+        <Col>
+          <div>
+            <span>Projects</span>
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <span>Notes</span>
+          <Form.Control
+            as="textarea"
+            rows={3}
+            value={note}
+            onChange={handleNoteChange}
+            onBlur={handleBlur}
+            placeholder="Type your notes here..."
+            style={{
+              resize: "none",
+              overflowY: "auto",
+              maxHeight: "600px",
+              maxWidth: "800px",
+            }}
+          />
         </Col>
       </Row>
     </>
