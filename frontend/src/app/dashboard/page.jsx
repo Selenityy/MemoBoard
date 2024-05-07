@@ -11,7 +11,6 @@ const DashboardPage = () => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const [dateString, setDateString] = useState("");
-  console.log(dateString);
   const { user } = useSelector((state) => state.user);
   const [timeOfDay, setTimeOfDay] = useState("");
 
