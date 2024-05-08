@@ -1,11 +1,14 @@
 "use client";
 
 import "../../styles/main.scss";
+import Quill from "quill";
+import "quill/dist/quill.snow.css"; // Make sure to import Quill styles
 import { Col, Row, Form } from "react-bootstrap";
 import { useTheme } from "@/context/ThemeContext";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { fetchUserInfo } from "@/redux/features/userSlice";
 import { useSelector, useDispatch } from "react-redux";
+import MyTasksWidget from "@/components/MyTasksWidget";
 
 const DashboardPage = () => {
   const { theme } = useTheme();
@@ -14,12 +17,52 @@ const DashboardPage = () => {
   const { user } = useSelector((state) => state.user);
   const [timeOfDay, setTimeOfDay] = useState("");
   const [clock, setClock] = useState("");
-  const [note, setNote] = useState("");
+  const editorRef = useRef(null);
+  const [editor, setEditor] = useState(null);
 
-  const loadNotes = () => {
-    const notes = localStorage.getItem("notes");
-    setNote(notes);
-  };
+  const toolbarOptions = [
+    ["bold", "italic", "underline", "strike"], // toggled buttons
+    ["blockquote", "code-block"],
+
+    [{ header: 1 }, { header: 2 }], // custom button values
+    [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+    // [{ script: "sub" }, { script: "super" }], // superscript/subscript
+    // [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
+    // [{ direction: "rtl" }], // text direction
+
+    // [{ size: ["small", false, "large", "huge"] }], // custom dropdown
+    // [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+    // [{ font: [] }],
+    // [{ align: [] }],
+
+    ["clean"], // remove formatting button
+  ];
+
+  useEffect(() => {
+    if (editorRef.current && !editor) {
+      const quill = new Quill(editorRef.current, {
+        theme: "snow",
+        modules: {
+          toolbar: toolbarOptions,
+        },
+        placeholder: "Your personal notepad...",
+      });
+      setEditor(quill);
+
+      quill.on("text-change", () => {
+        const html = quill.root.innerHTML;
+        localStorage.setItem("notes", html);
+      });
+
+      // Load stored notes if any
+      const storedNotes = localStorage.getItem("notes");
+      if (storedNotes) {
+        quill.root.innerHTML = storedNotes;
+      }
+    }
+  }, [editorRef]);
 
   useEffect(() => {
     const updateTimeOfDay = () => {
@@ -65,26 +108,7 @@ const DashboardPage = () => {
       }
     };
     fetchAndFormateUserInfo();
-    loadNotes();
-
-    if (localStorage.getItem("notes") === null) {
-      localStorage.setItem("notes", note);
-    }
   }, [user.timezone, user.firstName, dispatch]);
-
-  const handleBlur = () => {
-    handleSave(note);
-    // setNotes(loadNotes()); // reload to update notes
-  };
-
-  const handleNoteChange = (e) => {
-    setNote(e.target.value);
-  };
-
-  const handleSave = (note) => {
-    setNote(note);
-    localStorage.setItem("notes", note);
-  };
 
   return (
     <>
@@ -109,7 +133,7 @@ const DashboardPage = () => {
       <Row>
         <Col>
           <div>
-            <span>My Tasks</span>
+            <MyTasksWidget />
           </div>
         </Col>
         <Col>
@@ -118,23 +142,17 @@ const DashboardPage = () => {
           </div>
         </Col>
       </Row>
-      <Row>
+      <Row style={{ width: "50%" }}>
         <Col>
           <span>Notes</span>
-          <Form.Control
-            as="textarea"
-            rows={3}
-            value={note}
-            onChange={handleNoteChange}
-            onBlur={handleBlur}
-            placeholder="Type your notes here..."
+          <div
+            ref={editorRef}
             style={{
-              resize: "none",
-              overflowY: "auto",
               height: "200px",
-              width: "1000px",
+              width: "full",
             }}
           />
+          <div id="toolbar"></div>
         </Col>
       </Row>
     </>
