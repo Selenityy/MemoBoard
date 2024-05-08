@@ -1,14 +1,15 @@
-// const nextConfig = {
-//   images: {
-//     remotePatterns: [
-//       { protocol: "http", hostname: "localhost" },
-//       {
-//         protocol: "https",
-//         hostname: "github.com",
-//         pathname: "/Selenityy/MemoBoard/tree/main/backend/**",
-//       },
-//     ],
-//   },
-// };
+const nextConfig = {
+  reactStrictMode: false,
+  images: {
+    remotePatterns: [
+      { protocol: "http", hostname: "localhost" },
+      {
+        protocol: "https",
+        hostname: "github.com",
+        pathname: "/Selenityy/MemoBoard/tree/main/backend/**",
+      },
+    ],
+  },
+};
 
-// module.exports = nextConfig;
+module.exports = nextConfig;
