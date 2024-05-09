@@ -12,6 +12,43 @@ const defaultMemo = {
   parentId: null, // if parent id, then not null and use id
 };
 
+// GET ALL MEMOS
+export const fetchAllMemos = createAsyncThunk(
+  "/dashboard/memos/fetchAllMemos",
+  async (_, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch(
+        "http://localhost:3000/dashboard/memos/all-memos",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch all memos");
+      }
+      if (data.memos) {
+        return data.memos;
+      } else {
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 // GET ALL PARENT MEMOS
 export const fetchMemos = createAsyncThunk(
   "/dashboard/memos/fetchMemos",
@@ -254,6 +291,25 @@ export const memoSlice = createSlice({
   initialState,
   extraReducers: (builder) => {
     builder
+      // GET ALL MEMOS
+      .addCase(fetchAllMemos.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAllMemos.fulfilled, (state, action) => {
+        action.payload.forEach((memo) => {
+          state.byId[memo._id] = memo;
+          if (!state.allIds.includes(memo._id)) {
+            state.allIds.push(memo._id);
+          }
+        });
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(fetchAllMemos.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
       // GET ALL PARENT MEMOS
       .addCase(fetchMemos.pending, (state) => {
         state.status = "loading";
