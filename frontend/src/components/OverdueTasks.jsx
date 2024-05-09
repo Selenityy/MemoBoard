@@ -4,18 +4,27 @@ import { createSelector } from "reselect";
 import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "@/context/ThemeContext";
 import { fetchAllMemos } from "@/redux/features/memoSlice";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, isToday, isPast, compareAsc } from "date-fns";
 
 const selectedOverdueMemos = createSelector(
   [(state) => state.memo.allIds, (state) => state.memo.byId],
   (allIds, byId) => {
-    const now = new Date();
     return allIds
       .map((id) => byId[id])
       .filter(
         (memo) =>
-          new Date(memo.dueDateTime) < now && memo.progress !== "Completed"
-      );
+          memo.dueDateTime &&
+          isPast(parseISO(memo.dueDateTime)) &&
+          !isToday(parseISO(memo.dueDateTime)) &&
+          memo.progress !== "Completed"
+      )
+      .sort((a, b) => {
+        const dateA = parseISO(a.dueDateTime);
+        const dateB = parseISO(b.dueDateTime);
+        if (isToday(dateA) && !isToday(dateB)) return -1;
+        if (!isToday(dateA) && isToday(dateB)) return 1;
+        return compareAsc(dateA, dateB);
+      });
   }
 );
 
