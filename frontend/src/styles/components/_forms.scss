@@ -148,6 +148,17 @@
   }
 }
 
-.ql-toolbar {
-  background-color: #f3f3f3;
+.ql-editor {
+  padding: 15px;
+}
+
+.ql-toolbar.ql-snow {
+  //   background-color: #f3f3f3;
+  border: none !important;
+  background-color: transparent;
+  padding: 5px 5px 5px 5px !important;
+}
+
+.ql-container.ql-snow {
+  border: none !important;
 }
