@@ -3,6 +3,25 @@ const Memo = require("../models/memoModel");
 const Project = require("../models/projectModel");
 const { body, validationResult } = require("express-validator");
 
+// Display all memos
+exports.getAllMemos = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
+  try {
+    const memos = await Memo.find({ user: userId });
+    if (!memos) {
+      return res.status(404).json({ message: "All memos not found" });
+    }
+    const memosObject = memos.map((memo) => memo.toObject({ virtuals: true }));
+    res.json({
+      message: "Successfully retrieved all memos",
+      memos: memosObject,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error, cannot display all memos" });
+  }
+});
+
 // Display all parent memos
 exports.getAllParentMemos = asyncHandler(async (req, res, next) => {
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
