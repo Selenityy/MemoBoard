@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { fetchAllMemos, fetchChildrenMemos } from "@/redux/features/memoSlice";
+import React, { useEffect } from "react";
+import { fetchAllMemos } from "@/redux/features/memoSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "@/context/ThemeContext";
 import { MdCheckBox } from "react-icons/md";
 import { createSelector } from "reselect";
+import { format, parseISO } from "date-fns";
 
 const selectCompletedMemos = createSelector(
   [(state) => state.memo.allIds, (state) => state.memo.byId],
@@ -27,13 +28,31 @@ const CompletedTasks = () => {
     <div className={theme === "dark" ? "body-dark" : "body-light"}>
       <ul>
         {completedMemos.map((memo) => (
-          <div
+          <li
             key={memo._id}
-            style={{ display: "flex", alignItems: "center", gap: "10px" }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              width: "100%",
+            }}
           >
-            <MdCheckBox />
-            <li>{memo.body}</li>
-          </div>
+            <MdCheckBox style={{ color: "green" }} />
+            <ul
+              style={{
+                flex: 1,
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <li style={{ color: "grey" }}>{memo.body}</li>
+              {memo.dueDateTime && (
+                <li style={{ color: "red" }}>
+                  {format(parseISO(memo.dueDateTime), "MMM d")}
+                </li>
+              )}
+            </ul>
+          </li>
         ))}
       </ul>
     </div>
