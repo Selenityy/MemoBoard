@@ -9,7 +9,7 @@ export const fetchTags = createAsyncThunk(
       return thunkAPI.rejectWithValue("No token found");
     }
     try {
-      const response = await fetch("http://localhost:3001/dashboard/tags", {
+      const response = await fetch("http://localhost:3000/dashboard/tags", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
