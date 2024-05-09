@@ -13,10 +13,10 @@ import MyTasksWidget from "@/components/MyTasksWidget";
 const DashboardPage = () => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
-  const [dateString, setDateString] = useState("");
+  const [dateString, setDateString] = useState("Loading date...");
   const { user } = useSelector((state) => state.user);
-  const [timeOfDay, setTimeOfDay] = useState("");
-  const [clock, setClock] = useState("");
+  const [timeOfDay, setTimeOfDay] = useState("Loading time of day...");
+  const [clock, setClock] = useState("Loading time...");
   const editorRef = useRef(null);
   const [editor, setEditor] = useState(null);
 
@@ -65,49 +65,67 @@ const DashboardPage = () => {
   }, [editorRef]);
 
   useEffect(() => {
-    const updateTimeOfDay = () => {
-      const userTime = new Date().toLocaleString("en-US", {
-        timeZone: user.timezone,
-      });
-      const userDate = new Date(userTime);
-      const hours = userDate.getHours();
-      if (hours < 12) {
-        setTimeOfDay("morning");
-      } else if (hours >= 12 && hours < 17) {
-        setTimeOfDay("afternoon");
-      } else {
-        setTimeOfDay("evening");
-      }
-    };
+    if (!user.timezone) {
+      dispatch(fetchUserInfo());
+    } else {
+      const updateTimeOfDay = () => {
+        try {
+          const timeZone = user.timezone;
+          const userTime = new Date().toLocaleString("en-US", {
+            timeZone,
+          });
+          const userDate = new Date(userTime);
+          const hours = userDate.getHours();
+          if (hours < 12) {
+            setTimeOfDay("morning");
+          } else if (hours >= 12 && hours < 17) {
+            setTimeOfDay("afternoon");
+          } else {
+            setTimeOfDay("evening");
+          }
+        } catch (error) {
+          console.log("Error updating time of day:", error);
+        }
+      };
 
-    const fetchAndFormateUserInfo = async () => {
-      try {
-        await dispatch(fetchUserInfo()).unwrap();
-        const date = new Date();
-        const options = {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-          //   hour: "numeric",
-          //   minute: "numeric",
-          //   timeZone: user.timezone,
-          //   timeZoneName: "short",
-        };
-        const timeOptions = {
-          hour: "numeric",
-          minute: "numeric",
-          hour12: true,
-        };
-        const formatter = new Intl.DateTimeFormat("en-US", options);
-        const timeFormatter = new Intl.DateTimeFormat("en-UD", timeOptions);
-        setDateString(formatter.format(date));
-        setClock(timeFormatter.format(date));
-        updateTimeOfDay();
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchAndFormateUserInfo();
+      const fetchAndFormateUserInfo = async () => {
+        try {
+          const fetchedUserInfo = await dispatch(fetchUserInfo()).unwrap();
+          const timeZone = fetchedUserInfo.timezone;
+          const userTimeStr = new Date().toLocaleString("en-US", { timeZone });
+          const userTime = new Date(userTimeStr);
+          const options = {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+            //   hour: "numeric",
+            //   minute: "numeric",
+            //   timeZone: user.timezone,
+            //   timeZoneName: "short",
+          };
+          const timeOptions = {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          };
+
+          const formatter = new Intl.DateTimeFormat("en-US", {
+            ...options,
+            timeZone,
+          });
+
+          const timeFormatter = new Intl.DateTimeFormat("en-US", {
+            ...timeOptions,
+          });
+          setDateString(formatter.format(userTime));
+          setClock(timeFormatter.format(userTime));
+          updateTimeOfDay(userTime);
+        } catch (error) {
+          console.error("Error fetching or formatting user info:", error);
+        }
+      };
+      fetchAndFormateUserInfo();
+    }
   }, [user.timezone, user.firstName, dispatch]);
 
   return (
@@ -118,10 +136,14 @@ const DashboardPage = () => {
         </Col>
       </Row>
       <Row>
-        <Col>{clock && <span>{clock}</span>}</Col>
+        <Col>
+          <span>{clock}</span>
+        </Col>
       </Row>
       <Row>
-        <Col>{dateString && <span>{dateString}</span>}</Col>
+        <Col>
+          <span>{dateString}</span>
+        </Col>
       </Row>
       <Row>
         <Col>
