@@ -15,7 +15,7 @@ const useLiveTime = (timezone, interval = 1000) => {
         timeZone: timezone,
       });
       const now = new Date();
-      const formattedTime = timeFormatter.format(now); // Use the formatter here
+      const formattedTime = timeFormatter.format(now);
       setTime(formattedTime);
     };
 
