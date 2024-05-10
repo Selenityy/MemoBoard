@@ -1,5 +1,5 @@
 import "../../styles/main.scss";
-import { Col, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import React from "react";
 import MyTasksWidget from "@/components/MyTasksWidget";
 import PersonalNotesWidget from "@/components/PersonalNotesWidget";
@@ -10,23 +10,30 @@ const DashboardPage = () => {
   return (
     <>
       <Row>
-        <Col>
+        <Col xs={1}>
+          <span style={{ fontWeight: "bold" }}>Home</span>
+        </Col>
+      </Row>
+      <Row>
+        <Col style={{ paddingBottom: "20px" }}>
           <WelcomeComponent />
         </Col>
       </Row>
-      <Row>
-        <Col>
-          <MyTasksWidget />
-        </Col>
-        <Col>
-          <ProjectsWidget />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <PersonalNotesWidget />
-        </Col>
-      </Row>
+      <Container>
+        <Row style={{ gap: "20px", marginBottom: "20px" }}>
+          <Col style={{ padding: "0px" }}>
+            <MyTasksWidget />
+          </Col>
+          <Col style={{ padding: "0px" }}>
+            <ProjectsWidget />
+          </Col>
+        </Row>
+        <Row style={{ paddingBottom: "20px" }}>
+          <Col xs={12} style={{ padding: "0px" }}>
+            <PersonalNotesWidget />
+          </Col>
+        </Row>
+      </Container>
     </>
   );
 };
