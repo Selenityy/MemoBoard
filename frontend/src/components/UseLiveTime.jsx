@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const useLiveTime = (timezone, interval = 60000) => {
+const useLiveTime = (timezone, interval = 1000) => {
   const [time, setTime] = useState("");
 
   useEffect(() => {
