@@ -53,12 +53,19 @@ const WelcomeComponent = () => {
   }, [user.timezone, user.firstName, dispatch]);
 
   return (
-    <Container>
-      <Row>
+    <Container
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {/* <Row>
         <Col>
           <span>Home</span>
         </Col>
-      </Row>
+      </Row> */}
       <Row>
         <Col>
           <span>{clock}</span>
