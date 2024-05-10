@@ -2,7 +2,17 @@
 
 import React from "react";
 import { Col, Container, Row } from "react-bootstrap";
-import { QuillComponent } from "@/components/Quill";
+import dynamic from "next/dynamic";
+
+const QuillComponent = dynamic(
+  () =>
+    import("@/components/Quill").then((module) => ({
+      default: module.QuillComponent,
+    })),
+  {
+    ssr: false,
+  }
+);
 
 const PersonalNotesWidget = () => {
   return (
