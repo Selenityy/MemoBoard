@@ -1,15 +1,14 @@
 "use client";
 
 import "../../styles/main.scss";
-import Quill from "quill";
-import "quill/dist/quill.snow.css"; // Make sure to import Quill styles
-import { Col, Row, Form } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { useTheme } from "@/context/ThemeContext";
 import React, { useEffect, useRef, useState } from "react";
 import { fetchUserInfo } from "@/redux/features/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import MyTasksWidget from "@/components/MyTasksWidget";
 import useLiveTime from "@/components/UseLiveTime";
+import QuillComponent from "@/components/Quill";
 
 const DashboardPage = () => {
   const { theme } = useTheme();
@@ -18,39 +17,6 @@ const DashboardPage = () => {
   const [dateString, setDateString] = useState("Loading date...");
   const [timeOfDay, setTimeOfDay] = useState("Loading time of day...");
   const clock = useLiveTime(user.timezone || "America/Los_Angeles", 1000);
-  const editorRef = useRef(null);
-  const [editor, setEditor] = useState(null);
-
-  const toolbarOptions = [
-    ["bold", "italic", "underline", "strike"],
-    ["blockquote", "code-block"],
-    [{ header: 1 }, { header: 2 }],
-    [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
-    [{ color: [] }, { background: [] }],
-    ["clean"],
-  ];
-
-  useEffect(() => {
-    if (editorRef.current && !editor) {
-      const quill = new Quill(editorRef.current, {
-        theme: "snow",
-        modules: {
-          toolbar: toolbarOptions,
-        },
-      });
-      setEditor(quill);
-
-      quill.on("text-change", () => {
-        const html = quill.root.innerHTML;
-        localStorage.setItem("notes", html);
-      });
-
-      const storedNotes = localStorage.getItem("notes");
-      if (storedNotes) {
-        quill.root.innerHTML = storedNotes;
-      }
-    }
-  }, [editorRef]);
 
   useEffect(() => {
     const fetchAndFormateUserInfo = async () => {
@@ -135,15 +101,8 @@ const DashboardPage = () => {
         <Col xs={12} style={{ padding: "16px 0px 5px 25px" }}>
           <span style={{ fontWeight: "bold" }}>Personal Notes</span>
         </Col>
-        <Col xs={12}>
-          <div
-            ref={editorRef}
-            style={{
-              height: "200px",
-              width: "full",
-            }}
-          />
-          <div id="toolbar"></div>
+        <Col xs={12} style={{ width: "full", height: "200px" }}>
+          <QuillComponent />
         </Col>
       </Row>
     </>
