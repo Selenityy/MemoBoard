@@ -61,11 +61,6 @@ const WelcomeComponent = () => {
         justifyContent: "center",
       }}
     >
-      {/* <Row>
-        <Col>
-          <span>Home</span>
-        </Col>
-      </Row> */}
       <Row>
         <Col>
           <span>{clock}</span>
