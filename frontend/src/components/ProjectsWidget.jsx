@@ -10,8 +10,9 @@ const ProjectsWidget = () => {
         border: "1px solid grey",
         borderRadius: "16px",
         height: "400px",
-        width: "600px",
+        width: "100%",
         padding: "16px",
+        margin: "0px",
       }}
     >
       <Row
