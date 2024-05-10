@@ -8,7 +8,8 @@ import { fetchUserInfo } from "@/redux/features/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import MyTasksWidget from "@/components/MyTasksWidget";
 import useLiveTime from "@/components/UseLiveTime";
-import QuillComponent from "@/components/Quill";
+import { QuillComponent } from "@/components/Quill";
+import PersonalNotesWidget from "@/components/PersonalNotesWidget";
 
 const DashboardPage = () => {
   const { theme } = useTheme();
@@ -80,9 +81,7 @@ const DashboardPage = () => {
       </Row>
       <Row>
         <Col>
-          <div>
-            <MyTasksWidget />
-          </div>
+          <MyTasksWidget />
         </Col>
         <Col>
           <div>
@@ -90,19 +89,9 @@ const DashboardPage = () => {
           </div>
         </Col>
       </Row>
-      <Row
-        style={{
-          width: "50%",
-          border: "1px solid grey",
-          borderRadius: "16px",
-          padding: "none",
-        }}
-      >
-        <Col xs={12} style={{ padding: "16px 0px 5px 25px" }}>
-          <span style={{ fontWeight: "bold" }}>Personal Notes</span>
-        </Col>
-        <Col xs={12} style={{ width: "full", height: "200px" }}>
-          <QuillComponent />
+      <Row>
+        <Col>
+          <PersonalNotesWidget />
         </Col>
       </Row>
     </>
