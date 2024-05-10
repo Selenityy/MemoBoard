@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect } from "react";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
 import { createSelector } from "reselect";

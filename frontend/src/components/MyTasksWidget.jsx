@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import Nav from "react-bootstrap/Nav";
