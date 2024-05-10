@@ -9,35 +9,25 @@ import React, { useEffect, useRef, useState } from "react";
 import { fetchUserInfo } from "@/redux/features/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import MyTasksWidget from "@/components/MyTasksWidget";
+import useLiveTime from "@/components/UseLiveTime";
 
 const DashboardPage = () => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
-  const [dateString, setDateString] = useState("Loading date...");
   const { user } = useSelector((state) => state.user);
+  const [dateString, setDateString] = useState("Loading date...");
   const [timeOfDay, setTimeOfDay] = useState("Loading time of day...");
-  const [clock, setClock] = useState("Loading time...");
+  const clock = useLiveTime(user.timezone || "America/Los_Angeles", 1000);
   const editorRef = useRef(null);
   const [editor, setEditor] = useState(null);
 
   const toolbarOptions = [
-    ["bold", "italic", "underline", "strike"], // toggled buttons
+    ["bold", "italic", "underline", "strike"],
     ["blockquote", "code-block"],
-
-    [{ header: 1 }, { header: 2 }], // custom button values
+    [{ header: 1 }, { header: 2 }],
     [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
-    // [{ script: "sub" }, { script: "super" }], // superscript/subscript
-    // [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
-    // [{ direction: "rtl" }], // text direction
-
-    // [{ size: ["small", false, "large", "huge"] }], // custom dropdown
-    // [{ header: [1, 2, 3, 4, 5, 6, false] }],
-
-    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-    // [{ font: [] }],
-    // [{ align: [] }],
-
-    ["clean"], // remove formatting button
+    [{ color: [] }, { background: [] }],
+    ["clean"],
   ];
 
   useEffect(() => {
@@ -47,7 +37,6 @@ const DashboardPage = () => {
         modules: {
           toolbar: toolbarOptions,
         },
-        // placeholder: "Your personal notepad...",
       });
       setEditor(quill);
 
@@ -56,7 +45,6 @@ const DashboardPage = () => {
         localStorage.setItem("notes", html);
       });
 
-      // Load stored notes if any
       const storedNotes = localStorage.getItem("notes");
       if (storedNotes) {
         quill.root.innerHTML = storedNotes;
@@ -65,67 +53,39 @@ const DashboardPage = () => {
   }, [editorRef]);
 
   useEffect(() => {
-    if (!user.timezone) {
-      dispatch(fetchUserInfo());
-    } else {
-      const updateTimeOfDay = () => {
-        try {
-          const timeZone = user.timezone;
-          const userTime = new Date().toLocaleString("en-US", {
-            timeZone,
-          });
-          const userDate = new Date(userTime);
-          const hours = userDate.getHours();
-          if (hours < 12) {
-            setTimeOfDay("morning");
-          } else if (hours >= 12 && hours < 17) {
-            setTimeOfDay("afternoon");
-          } else {
-            setTimeOfDay("evening");
-          }
-        } catch (error) {
-          console.log("Error updating time of day:", error);
-        }
-      };
+    const fetchAndFormateUserInfo = async () => {
+      try {
+        const fetchedUserInfo = user.timezone
+          ? user
+          : await dispatch(fetchUserInfo()).unwrap();
+        const timeZone = fetchedUserInfo.timezone;
+        const userTimeStr = new Date().toLocaleString("en-US", { timeZone });
+        const userTime = new Date(userTimeStr);
+        const options = {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+        };
+        const formatter = new Intl.DateTimeFormat("en-US", {
+          ...options,
+          timeZone,
+        });
 
-      const fetchAndFormateUserInfo = async () => {
-        try {
-          const fetchedUserInfo = await dispatch(fetchUserInfo()).unwrap();
-          const timeZone = fetchedUserInfo.timezone;
-          const userTimeStr = new Date().toLocaleString("en-US", { timeZone });
-          const userTime = new Date(userTimeStr);
-          const options = {
-            weekday: "long",
-            month: "long",
-            day: "numeric",
-            //   hour: "numeric",
-            //   minute: "numeric",
-            //   timeZone: user.timezone,
-            //   timeZoneName: "short",
-          };
-          const timeOptions = {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: true,
-          };
-
-          const formatter = new Intl.DateTimeFormat("en-US", {
-            ...options,
-            timeZone,
-          });
-
-          const timeFormatter = new Intl.DateTimeFormat("en-US", {
-            ...timeOptions,
-          });
-          setDateString(formatter.format(userTime));
-          setClock(timeFormatter.format(userTime));
-          updateTimeOfDay(userTime);
-        } catch (error) {
-          console.error("Error fetching or formatting user info:", error);
-        }
-      };
-      fetchAndFormateUserInfo();
-    }
+        setDateString(formatter.format(userTime));
+        const hours = userTime.getHours();
+        setTimeOfDay(
+          hours < 12
+            ? "morning"
+            : hours >= 12 && hours < 17
+            ? "afternoon"
+            : "evening"
+        );
+      } catch (error) {
+        console.error("Error fetching or formatting user info:", error);
+      }
+    };
+    fetchAndFormateUserInfo();
+    // }
   }, [user.timezone, user.firstName, dispatch]);
 
   return (
