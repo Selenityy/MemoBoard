@@ -9,7 +9,10 @@ import { useTheme } from "@/context/ThemeContext";
 const DashboardLayout = ({ children }) => {
   const { theme } = useTheme();
   return (
-    <Container fluid>
+    <Container
+      fluid
+      style={{ width: "full", height: "100vh", overflowY: "scroll" }}
+    >
       <Row>
         <Col className="w-full m-0 p-0">
           <Header />
