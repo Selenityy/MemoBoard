@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { Row, Col } from "react-bootstrap";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
 import { createSelector } from "reselect";
 import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "@/context/ThemeContext";
 import { fetchAllMemos, updateMemo } from "@/redux/features/memoSlice";
 import { format, parseISO, isToday, isPast, compareAsc } from "date-fns";
+import { IoMdAdd } from "react-icons/io";
 
 const selectedMemos = createSelector(
   [(state) => state.memo.allIds, (state) => state.memo.byId],
@@ -52,48 +54,82 @@ const UpcomingTasks = () => {
     }
   };
 
+  const createTaskClick = () => {
+    // new line to type the memo body and click calendar icon to add due date
+    console.log("clicked");
+  };
+
   return (
-    <div className={theme === "dark" ? "body-dark" : "body-light"}>
-      <ul>
-        {memos.map((memo) => (
-          <li
-            key={memo._id}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              width: "100%",
-            }}
+    <>
+      <Row
+        style={{
+          alignItems: "center",
+        }}
+      >
+        <Col xs="auto" style={{ padding: "0px 0px 10px 10px", margin: "0px" }}>
+          <button
+            className={
+              theme === "dark"
+                ? "add-project-btn-dark"
+                : "add-project-btn-light"
+            }
+            onClick={() => createTaskClick()}
+            style={{ padding: "0px", margin: "0px" }}
           >
-            <MdCheckBoxOutlineBlank
-              onClick={() => checkboxToggle(memo, memo._id)}
-            />
-            <ul
+            <IoMdAdd style={{ color: "#5a5b5c" }} size={20} className="me-2" />
+          </button>
+        </Col>
+        <Col
+          className={
+            theme === "dark" ? "project-span-dark" : "project-span-light"
+          }
+          style={{ padding: "0px 0px 10px 0px", margin: "0px" }}
+        >
+          <span style={{ color: "#5a5b5c" }}>Create Task</span>
+        </Col>
+      </Row>
+      <div className={theme === "dark" ? "body-dark" : "body-light"}>
+        <ul>
+          {memos.map((memo) => (
+            <li
+              key={memo._id}
               style={{
-                flex: 1,
                 display: "flex",
-                justifyContent: "space-between",
+                alignItems: "center",
+                gap: "10px",
+                width: "100%",
               }}
             >
-              <li>{memo.body}</li>
-              {memo.dueDateTime && (
-                <li
-                  style={{
-                    color: isToday(parseISO(memo.dueDateTime))
-                      ? "green"
-                      : "black",
-                  }}
-                >
-                  {isToday(parseISO(memo.dueDateTime))
-                    ? "Today"
-                    : format(parseISO(memo.dueDateTime), "MMM d")}
-                </li>
-              )}
-            </ul>
-          </li>
-        ))}
-      </ul>
-    </div>
+              <MdCheckBoxOutlineBlank
+                onClick={() => checkboxToggle(memo, memo._id)}
+              />
+              <ul
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <li>{memo.body}</li>
+                {memo.dueDateTime && (
+                  <li
+                    style={{
+                      color: isToday(parseISO(memo.dueDateTime))
+                        ? "green"
+                        : "black",
+                    }}
+                  >
+                    {isToday(parseISO(memo.dueDateTime))
+                      ? "Today"
+                      : format(parseISO(memo.dueDateTime), "MMM d")}
+                  </li>
+                )}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 };
 
