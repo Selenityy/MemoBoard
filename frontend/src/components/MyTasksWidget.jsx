@@ -6,9 +6,11 @@ import Nav from "react-bootstrap/Nav";
 import UpcomingTasks from "./UpcomingTasks";
 import OverdueTasks from "./OverdueTasks";
 import CompletedTasks from "./CompletedTasks";
+import { useTheme } from "@/context/ThemeContext";
 
 const MyTasksWidget = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
+  const { theme } = useTheme();
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -22,6 +24,7 @@ const MyTasksWidget = () => {
         return <UpcomingTasks />;
     }
   };
+
   return (
     <Container
       style={{
@@ -52,7 +55,6 @@ const MyTasksWidget = () => {
             variant="underline"
             defaultActiveKey="upcoming"
             onSelect={(selectedKey) => setActiveTab(selectedKey)}
-            // className="justify-content-around"
           >
             <Nav.Item>
               <Nav.Link eventKey="upcoming" style={{ color: "black" }}>
