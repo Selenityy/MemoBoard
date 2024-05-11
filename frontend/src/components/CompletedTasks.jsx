@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { fetchAllMemos } from "@/redux/features/memoSlice";
+import { fetchAllMemos, updateMemo } from "@/redux/features/memoSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "@/context/ThemeContext";
 import { MdCheckBox } from "react-icons/md";
@@ -24,6 +24,19 @@ const CompletedTasks = () => {
     dispatch(fetchAllMemos());
   }, [dispatch]);
 
+  const checkboxToggle = async (memo, memoId) => {
+    const updatedMemo = {
+      ...memo,
+      progress: "Active",
+    };
+    try {
+      await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
+      dispatch(fetchAllMemos());
+    } catch (error) {
+      console.error("Error updating memo:", error);
+    }
+  };
+
   return (
     <div className={theme === "dark" ? "body-dark" : "body-light"}>
       <ul>
@@ -37,7 +50,10 @@ const CompletedTasks = () => {
               width: "100%",
             }}
           >
-            <MdCheckBox style={{ color: "green" }} />
+            <MdCheckBox
+              onClick={() => checkboxToggle(memo, memo._id)}
+              style={{ color: "green" }}
+            />
             <ul
               style={{
                 flex: 1,
@@ -47,7 +63,7 @@ const CompletedTasks = () => {
             >
               <li style={{ color: "grey" }}>{memo.body}</li>
               {memo.dueDateTime && (
-                <li style={{ color: "red" }}>
+                <li style={{ color: "grey" }}>
                   {format(parseISO(memo.dueDateTime), "MMM d")}
                 </li>
               )}
