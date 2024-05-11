@@ -1,12 +1,16 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Row, Col } from "react-bootstrap";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
 import { createSelector } from "reselect";
 import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "@/context/ThemeContext";
-import { fetchAllMemos, updateMemo } from "@/redux/features/memoSlice";
+import {
+  fetchAllMemos,
+  updateMemo,
+  createMemo,
+} from "@/redux/features/memoSlice";
 import { format, parseISO, isToday, isPast, compareAsc } from "date-fns";
 import { IoMdAdd } from "react-icons/io";
 
@@ -15,16 +19,15 @@ const selectedMemos = createSelector(
   (allIds, byId) => {
     return allIds
       .map((id) => byId[id])
-      .filter(
-        (memo) =>
-          memo.dueDateTime &&
-          (!isPast(parseISO(memo.dueDateTime)) ||
-            isToday(parseISO(memo.dueDateTime))) &&
-          memo.progress !== "Completed"
-      )
+      .filter((memo) => memo.progress !== "Completed")
       .sort((a, b) => {
-        const dateA = parseISO(a.dueDateTime);
-        const dateB = parseISO(b.dueDateTime);
+        const dateA = a.dueDateTime
+          ? parseISO(a.dueDateTime)
+          : new Date(9999, 0, 1);
+        const dateB = b.dueDateTime
+          ? parseISO(b.dueDateTime)
+          : new Date(9999, 0, 1);
+
         if (isToday(dateA) && !isToday(dateB)) return -1;
         if (!isToday(dateA) && isToday(dateB)) return 1;
         return compareAsc(dateA, dateB);
@@ -36,10 +39,19 @@ const UpcomingTasks = () => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const memos = useSelector(selectedMemos);
+  const [newMemoLine, setNewMemoLine] = useState(false);
+  const [newMemoText, setNewMemoText] = useState("");
+  const inputRef = useRef(null);
 
   useEffect(() => {
     dispatch(fetchAllMemos());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (newMemoLine && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [newMemoLine]);
 
   const checkboxToggle = async (memo, memoId) => {
     const updatedMemo = {
@@ -54,9 +66,24 @@ const UpcomingTasks = () => {
     }
   };
 
-  const createTaskClick = () => {
-    // new line to type the memo body and click calendar icon to add due date
-    console.log("clicked");
+  const createMemoClick = async () => {
+    if (!newMemoText.trim()) {
+      setNewMemoLine(false);
+    } else {
+      try {
+        await dispatch(createMemo({ body: newMemoText, parentId: null }));
+        dispatch(fetchAllMemos());
+        setNewMemoText("");
+        setNewMemoLine(false);
+      } catch (error) {
+        console.error("Error creating memo:", error);
+      }
+    }
+  };
+
+  const handleAddClick = () => {
+    setNewMemoLine(true);
+    setNewMemoText("");
   };
 
   return (
@@ -73,7 +100,7 @@ const UpcomingTasks = () => {
                 ? "add-project-btn-dark"
                 : "add-project-btn-light"
             }
-            onClick={() => createTaskClick()}
+            onClick={handleAddClick}
             style={{ padding: "0px", margin: "0px" }}
           >
             <IoMdAdd style={{ color: "#5a5b5c" }} size={20} className="me-2" />
@@ -85,9 +112,24 @@ const UpcomingTasks = () => {
           }
           style={{ padding: "0px 0px 10px 0px", margin: "0px" }}
         >
-          <span style={{ color: "#5a5b5c" }}>Create Task</span>
+          <span style={{ color: "#5a5b5c" }}>Create Memo</span>
         </Col>
       </Row>
+      {newMemoLine && (
+        <Row>
+          <Col>
+            <input
+              ref={inputRef}
+              type="text"
+              value={newMemoText}
+              onChange={(e) => setNewMemoText(e.target.value)}
+              placeholder="Type new memo here..."
+              className="form-control"
+              onBlur={createMemoClick}
+            />
+          </Col>
+        </Row>
+      )}
       <div className={theme === "dark" ? "body-dark" : "body-light"}>
         <ul>
           {memos.map((memo) => (
