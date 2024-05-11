@@ -5,7 +5,7 @@ import { MdCheckBoxOutlineBlank } from "react-icons/md";
 import { createSelector } from "reselect";
 import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "@/context/ThemeContext";
-import { fetchAllMemos } from "@/redux/features/memoSlice";
+import { fetchAllMemos, updateMemo } from "@/redux/features/memoSlice";
 import { format, parseISO, isToday, isPast, compareAsc } from "date-fns";
 
 const selectedOverdueMemos = createSelector(
@@ -39,6 +39,19 @@ const OverdueTasks = () => {
     dispatch(fetchAllMemos());
   }, [dispatch]);
 
+  const checkboxToggle = async (memo, memoId) => {
+    const updatedMemo = {
+      ...memo,
+      progress: "Completed",
+    };
+    try {
+      await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
+      dispatch(fetchAllMemos());
+    } catch (error) {
+      console.error("Error updating memo:", error);
+    }
+  };
+
   return (
     <div className={theme === "dark" ? "body-dark" : "body-light"}>
       <ul>
@@ -52,7 +65,9 @@ const OverdueTasks = () => {
               width: "100%",
             }}
           >
-            <MdCheckBoxOutlineBlank />
+            <MdCheckBoxOutlineBlank
+              onClick={() => checkboxToggle(memo, memo._id)}
+            />
             <ul
               style={{
                 flex: 1,
