@@ -133,7 +133,7 @@ exports.createMemo = [
     .isMongoId()
     .withMessage("Each tag must be a valid MongoDB ObjectId."),
   body("parentId")
-    .optional()
+    .optional({ nullable: true, checkFalsy: true })
     .isMongoId()
     .withMessage("ParentId must be a valid MongoDB ObjectId."),
 
