@@ -26,7 +26,9 @@ const PersonalNotesWidget = () => {
     >
       <Row>
         <Col xs={12} style={{ padding: "16px 0px 5px 25px" }}>
-          <span style={{ fontWeight: "bold" }}>Personal Notes</span>
+          <span style={{ fontWeight: "bold", fontSize: "1.2rem" }}>
+            Personal Notes
+          </span>
         </Col>
         <Col xs={12} style={{ width: "full", height: "300px" }}>
           <QuillComponent />
