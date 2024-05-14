@@ -63,17 +63,37 @@ const WelcomeComponent = () => {
     >
       <Row>
         <Col>
-          <span>{clock}</span>
+          <span
+            style={{
+              fontWeight: "900",
+              fontSize: "4rem",
+              fontFamily: "Architects Daughter",
+            }}
+          >
+            {clock}
+          </span>
         </Col>
       </Row>
       <Row>
         <Col>
-          <span>{dateString}</span>
+          <span
+            style={{
+              fontWeight: "600",
+              fontSize: "1rem",
+            }}
+          >
+            {dateString}
+          </span>
         </Col>
       </Row>
       <Row>
         <Col>
-          <span>
+          <span
+            style={{
+              fontWeight: "700",
+              fontSize: "2rem",
+            }}
+          >
             Good {timeOfDay}, {user.firstName}
           </span>
         </Col>
