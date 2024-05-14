@@ -19,7 +19,10 @@ const selectedMemos = createSelector(
   (allIds, byId) => {
     return allIds
       .map((id) => byId[id])
-      .filter((memo) => memo.progress !== "Completed")
+      .filter((memo) => {
+        const dueDate = memo.dueDateTime ? parseISO(memo.dueDateTime) : null;
+        return memo.progress !== "Completed" && (!dueDate || !isPast(dueDate));
+      })
       .sort((a, b) => {
         const dateA = a.dueDateTime
           ? parseISO(a.dueDateTime)
