@@ -1,0 +1,53 @@
+@import "../utilities/helpers";
+@import "../utilities/variables";
+@import "../utilities/mixins";
+
+.project-widget-items-dark {
+  //   @include theme-header-nav-background("dark");
+  gap: 8px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background-color: rgba(69, 69, 71, 0.5);
+    color: $text-color-light;
+    border-radius: 8px;
+    width: 100%;
+    height: fit-content;
+  }
+
+  &:active {
+    cursor: pointer;
+    background-color: rgba(148, 148, 148, 0.25);
+    color: $text-color-light;
+    border-radius: 8px;
+    width: 100%;
+    height: fit-content;
+  }
+}
+
+.project-widget-items-light {
+  //   @include theme-header-nav-background("light");
+  gap: 8px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background-color: rgba(245, 244, 243);
+    color: $text-color-dark;
+    border-radius: 8px;
+    width: 100%;
+    height: fit-content;
+  }
+
+  &:active {
+    cursor: pointer;
+    background-color: rgba(148, 148, 148, 0.25);
+    color: $text-color-dark;
+    border-radius: 8px;
+    width: 100%;
+    height: fit-content;
+  }
+}
