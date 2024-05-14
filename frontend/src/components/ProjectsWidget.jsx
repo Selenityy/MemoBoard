@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { Row, Col, Container } from "react-bootstrap";
 import { useTheme } from "@/context/ThemeContext";
 import { useSelector, useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 import { createSelector } from "reselect";
 import { fetchProjects } from "@/redux/features/projectSlice";
 
@@ -15,11 +16,17 @@ const selectAllProjects = createSelector(
 const ProjectsWidget = () => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
+  const router = useRouter();
   const allProjects = useSelector(selectAllProjects);
 
   useEffect(() => {
     dispatch(fetchProjects());
   }, [dispatch]);
+
+  const navToProject = (project) => {
+    const formattedProjectName = project.name.replace(/\s+/g, "-");
+    router.push(`/dashboard/project/${formattedProjectName}`);
+  };
 
   return (
     <Container
@@ -65,11 +72,12 @@ const ProjectsWidget = () => {
           {allProjects.map((project) => (
             <div
               key={project._id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                width: "max-content",
-              }}
+              className={
+                theme === "dark"
+                  ? "project-widget-items-dark"
+                  : "project-widget-items-light"
+              }
+              onClick={() => navToProject(project)}
             >
               <ul
                 style={{
