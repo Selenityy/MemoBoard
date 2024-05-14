@@ -13,6 +13,9 @@ import {
 } from "@/redux/features/memoSlice";
 import { format, parseISO, isToday, isPast, compareAsc } from "date-fns";
 import { IoMdAdd } from "react-icons/io";
+import Calendar from "react-calendar";
+import { CiCalendar } from "react-icons/ci";
+import "react-calendar/dist/Calendar.css";
 
 const selectedMemos = createSelector(
   [(state) => state.memo.allIds, (state) => state.memo.byId],
@@ -21,7 +24,10 @@ const selectedMemos = createSelector(
       .map((id) => byId[id])
       .filter((memo) => {
         const dueDate = memo.dueDateTime ? parseISO(memo.dueDateTime) : null;
-        return memo.progress !== "Completed" && (!dueDate || !isPast(dueDate));
+        return (
+          memo.progress !== "Completed" &&
+          (!dueDate || !isPast(dueDate) || isToday(dueDate))
+        );
       })
       .sort((a, b) => {
         const dateA = a.dueDateTime
@@ -44,7 +50,9 @@ const UpcomingTasks = () => {
   const memos = useSelector(selectedMemos);
   const [newMemoLine, setNewMemoLine] = useState(false);
   const [newMemoText, setNewMemoText] = useState("");
+  const [showCalendar, setShowCalendar] = useState({});
   const inputRef = useRef(null);
+  const calendarRefs = useRef({});
 
   useEffect(() => {
     dispatch(fetchAllMemos());
@@ -56,7 +64,27 @@ const UpcomingTasks = () => {
     }
   }, [newMemoLine]);
 
-  const checkboxToggle = async (memo, memoId) => {
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      Object.keys(calendarRefs.current).forEach((id) => {
+        if (
+          calendarRefs.current[id] &&
+          !calendarRefs.current[id].contains(event.target)
+        ) {
+          setShowCalendar((prevState) => ({
+            ...prevState,
+            [id]: false,
+          }));
+        }
+      });
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const checkboxToggle = async (memo) => {
     const updatedMemo = {
       ...memo,
       progress: "Completed",
@@ -87,6 +115,29 @@ const UpcomingTasks = () => {
   const handleAddClick = () => {
     setNewMemoLine(true);
     setNewMemoText("");
+  };
+
+  const changeDueDate = async (date, memo) => {
+    const updatedMemo = {
+      ...memo,
+      dueDateTime: date.toISOString(),
+    };
+    try {
+      await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
+      dispatch(fetchAllMemos());
+    } catch (error) {
+      console.error("Error updating memo due date/time:", error);
+    }
+  };
+
+  const toggleCalendar = (id) => {
+    setShowCalendar((prevState) => {
+      const newState = { ...prevState, [id]: !prevState[id] };
+      // console.log(
+      //   `Toggling calendar for ID ${id}: ${prevState[id]} -> ${newState[id]}`
+      // );
+      return newState;
+    });
   };
 
   return (
@@ -158,18 +209,51 @@ const UpcomingTasks = () => {
                 <li>{memo.body}</li>
                 {memo.dueDateTime && (
                   <li
+                    onClick={() => toggleCalendar(memo._id)}
                     style={{
+                      cursor: memo.dueDateTime ? "pointer" : "default",
                       color: isToday(parseISO(memo.dueDateTime))
                         ? "green"
                         : "black",
                     }}
                   >
-                    {isToday(parseISO(memo.dueDateTime))
-                      ? "Today"
-                      : format(parseISO(memo.dueDateTime), "MMM d")}
+                    {memo.dueDateTime
+                      ? isToday(parseISO(memo.dueDateTime))
+                        ? "Today"
+                        : format(parseISO(memo.dueDateTime), "MMM d")
+                      : null}
                   </li>
                 )}
               </ul>
+              <div
+                ref={(el) => (calendarRefs.current[memo._id] = el)}
+                style={{ position: "relative" }}
+              >
+                {!memo.dueDateTime && (
+                  <CiCalendar onClick={() => toggleCalendar(memo._id)} />
+                )}
+                {showCalendar[memo._id] && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      zIndex: 1000,
+                      top: "100%",
+                      left: 0,
+                    }}
+                  >
+                    <Calendar
+                      onChange={(date) => {
+                        changeDueDate(date, memo);
+                        toggleCalendar(memo._id);
+                      }}
+                      value={
+                        memo.dueDateTime ? parseISO(memo.dueDateTime) : null
+                      }
+                      calendarType={"gregory"}
+                    />
+                  </div>
+                )}
+              </div>
             </li>
           ))}
         </ul>
