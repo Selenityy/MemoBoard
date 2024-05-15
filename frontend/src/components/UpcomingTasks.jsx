@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "@/context/ThemeContext";
 import {
   fetchAllMemos,
+  fetchChildrenMemos,
   updateMemo,
   createMemo,
 } from "@/redux/features/memoSlice";
@@ -49,13 +50,18 @@ const UpcomingTasks = () => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const memos = useSelector(selectedMemos);
+  const [submemos, setSubmemos] = useState([]);
   const [newMemoLine, setNewMemoLine] = useState(false);
   const [newMemoText, setNewMemoText] = useState("");
+  const [newSubMemoLine, setNewSubMemoLine] = useState(false);
+  const [newSubMemoText, setNewSubMemoText] = useState("");
   const [showCalendar, setShowCalendar] = useState({});
   const [showBigCalendar, setShowBigCalendar] = useState({});
   const [showMemoModal, setShowMemoModal] = useState(false);
   const [selectedMemo, setSelectedMemo] = useState(null);
+  const [memoNotes, setMemoNotes] = useState("");
   const inputRef = useRef(null);
+  const submemoRef = useRef(null);
   const calendarRefs = useRef({});
 
   useEffect(() => {
@@ -101,6 +107,23 @@ const UpcomingTasks = () => {
     }
   };
 
+  const checkCompleted = async (memo) => {
+    const updatedMemo = {
+      ...memo,
+      progress: "Completed",
+    };
+    try {
+      await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
+      dispatch(fetchAllMemos());
+      setSelectedMemo((prevMemo) => ({
+        ...prevMemo,
+        progress: updatedMemo.progress,
+      }));
+    } catch (error) {
+      console.error("Error updating memo:", error);
+    }
+  };
+
   const createMemoClick = async () => {
     if (!newMemoText.trim()) {
       setNewMemoLine(false);
@@ -116,9 +139,33 @@ const UpcomingTasks = () => {
     }
   };
 
+  const createSubMemoClick = async (memo) => {
+    if (!newSubMemoText.trim()) {
+      setNewSubMemoLine(false);
+    } else {
+      try {
+        await dispatch(
+          createMemo({ body: newSubMemoText, parentId: memo._id })
+        );
+        await dispatch(fetchAllMemos());
+        const res = await dispatch(fetchChildrenMemos(memo._id)).unwrap();
+        setSubmemos(res.children);
+        setNewSubMemoText("");
+        setNewSubMemoLine(false);
+      } catch (error) {
+        console.error("Error creating submemo:", error);
+      }
+    }
+  };
+
   const handleAddClick = () => {
     setNewMemoLine(true);
     setNewMemoText("");
+  };
+
+  const handleSubMemoAddClick = () => {
+    setNewSubMemoLine(true);
+    setNewSubMemoText("");
   };
 
   const changeDueDate = async (date, memo) => {
@@ -151,7 +198,24 @@ const UpcomingTasks = () => {
         dueDateTime: null,
       }));
     } catch (error) {
-      console.error("Error updating memo due date/time:", error);
+      console.error("Error clearing memo due date/time:", error);
+    }
+  };
+
+  const updateNotes = async (memo) => {
+    const updatedMemo = {
+      ...memo,
+      notes: memoNotes,
+    };
+    try {
+      await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
+      dispatch(fetchAllMemos());
+      setSelectedMemo((prevMemo) => ({
+        ...prevMemo,
+        notes: memoNotes,
+      }));
+    } catch (error) {
+      console.error("Error updating memo notes:", error);
     }
   };
 
@@ -169,9 +233,16 @@ const UpcomingTasks = () => {
     }));
   };
 
-  const toggleMemoModal = (memo) => {
+  const toggleMemoModal = async (memo) => {
     setSelectedMemo(memo);
+    setMemoNotes(memo.notes);
     setShowMemoModal(true);
+    try {
+      const res = await dispatch(fetchChildrenMemos(memo._id)).unwrap();
+      setSubmemos(res.children);
+    } catch (error) {
+      console.error("Error fetching children memos:", error);
+    }
   };
 
   const handleClose = () => {
@@ -202,7 +273,13 @@ const UpcomingTasks = () => {
             >
               {selectedMemo.progress !== "Completed" ? (
                 <>
-                  <button>&#10003; Mark Complete</button>
+                  <button
+                    onClick={() =>
+                      checkCompleted(selectedMemo, selectedMemo._id)
+                    }
+                  >
+                    &#10003; Mark Complete
+                  </button>
                   <div style={{ color: "black", fontSize: "1rem" }}>...</div>
                 </>
               ) : (
@@ -229,7 +306,7 @@ const UpcomingTasks = () => {
                       padding: "10px",
                       border: "none",
                     }}
-                    defaultValue={selectedMemo.body}
+                    value={selectedMemo.body}
                   />
                 </Col>
               </Row>
@@ -289,7 +366,7 @@ const UpcomingTasks = () => {
                             changeDueDate(date, selectedMemo);
                             toggleBigCalendar(selectedMemo._id);
                           }}
-                          defaultValue={
+                          value={
                             selectedMemo.dueDateTime
                               ? parseISO(selectedMemo.dueDateTime)
                               : null
@@ -320,12 +397,112 @@ const UpcomingTasks = () => {
                   <textarea
                     style={{ color: "black" }}
                     placeholder="What is this memo about?"
+                    value={selectedMemo.notes}
+                    onChange={(e) => setMemoNotes(e.target.value)}
+                    onBlur={() => updateNotes(selectedMemo)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        updateNotes(selectedMemo);
+                      }
+                    }}
                   ></textarea>
                 </Col>
               </Row>
               <Row>
                 <Col>
-                  <button>+ Add submemo</button>
+                  <button onClick={handleSubMemoAddClick}>+ Add submemo</button>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  {newSubMemoLine && (
+                    <Row>
+                      <Col>
+                        <input
+                          ref={submemoRef}
+                          type="text"
+                          onChange={(e) => setNewSubMemoText(e.target.value)}
+                          placeholder="Type new submemo here..."
+                          className="form-control"
+                          onBlur={() => createSubMemoClick(selectedMemo)}
+                        />
+                      </Col>
+                    </Row>
+                  )}
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <ul>
+                    {submemos.length > 0 &&
+                      submemos.map((submemo) => (
+                        <li
+                          key={submemo._id}
+                          style={{ listStyleType: "circle", color: "black" }}
+                          onClick={() => toggleMemoModal(submemo)}
+                        >
+                          {submemo.progress === "Completed" ? (
+                            <>
+                              <span
+                                style={{
+                                  color: "grey",
+                                  textDecoration: "line-through",
+                                }}
+                              >
+                                {submemo.body}
+                              </span>
+                              <span
+                                style={{
+                                  cursor: submemo.dueDateTime
+                                    ? "pointer"
+                                    : "default",
+                                  color: "grey",
+                                  textDecoration: "line-through",
+                                }}
+                              >
+                                {submemo.dueDateTime
+                                  ? isToday(parseISO(submemo.dueDateTime))
+                                    ? "Today"
+                                    : format(
+                                        parseISO(submemo.dueDateTime),
+                                        "MMM d"
+                                      )
+                                  : null}
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <span style={{ color: "black" }}>
+                                {submemo.body}
+                              </span>
+                              {submemo.dueDateTime !== null && (
+                                <span
+                                  style={{
+                                    cursor: submemo.dueDateTime
+                                      ? "pointer"
+                                      : "default",
+                                    color: isToday(
+                                      parseISO(submemo.dueDateTime)
+                                    )
+                                      ? "green"
+                                      : "black",
+                                  }}
+                                >
+                                  {submemo.dueDateTime
+                                    ? isToday(parseISO(submemo.dueDateTime))
+                                      ? "Today"
+                                      : format(
+                                          parseISO(submemo.dueDateTime),
+                                          "MMM d"
+                                        )
+                                    : null}
+                                </span>
+                              )}
+                            </>
+                          )}
+                        </li>
+                      ))}
+                  </ul>
                 </Col>
               </Row>
             </Container>
@@ -365,7 +542,7 @@ const UpcomingTasks = () => {
             <input
               ref={inputRef}
               type="text"
-              defaultValue={newMemoText}
+              vlue={newMemoText}
               onChange={(e) => setNewMemoText(e.target.value)}
               placeholder="Type new memo here..."
               className="form-control"
@@ -439,7 +616,7 @@ const UpcomingTasks = () => {
                         changeDueDate(date, memo);
                         toggleCalendar(memo._id);
                       }}
-                      defaultValue={
+                      value={
                         memo.dueDateTime ? parseISO(memo.dueDateTime) : null
                       }
                       calendarType={"gregory"}
