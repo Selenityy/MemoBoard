@@ -1,0 +1,31 @@
+@import "../utilities/variables";
+@import "../utilities/mixins";
+@import "../utilities/helpers";
+
+.react-calendar {
+  .react-calendar__month-view__weekdays {
+    abbr {
+      color: black; // Ensure the days of the week are in black
+      text-decoration: none; // Remove any underline if present
+    }
+  }
+
+  .react-calendar__tile {
+    color: black; // Ensure the default tile text color is black
+  }
+
+  .react-calendar__tile--now {
+    background: #ffffe0; // Highlight today's date with a background color
+    color: black; // Ensure the text color is black
+  }
+
+  .react-calendar__tile--active {
+    background: #8e44ad; // Active date background color
+    color: white; // Active date text color
+  }
+
+  .react-calendar__tile--hover {
+    background: #e4e4e4; // Background color on hover
+    color: black; // Text color on hover
+  }
+}
