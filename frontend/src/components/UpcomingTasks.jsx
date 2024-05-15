@@ -138,6 +138,23 @@ const UpcomingTasks = () => {
     }
   };
 
+  const clearDueDate = async (memo) => {
+    const updatedMemo = {
+      ...memo,
+      dueDateTime: null,
+    };
+    try {
+      await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
+      dispatch(fetchAllMemos());
+      setSelectedMemo((prevMemo) => ({
+        ...prevMemo,
+        dueDateTime: null,
+      }));
+    } catch (error) {
+      console.error("Error updating memo due date/time:", error);
+    }
+  };
+
   const toggleCalendar = (id) => {
     setShowCalendar((prevState) => {
       const newState = { ...prevState, [id]: !prevState[id] };
@@ -146,10 +163,10 @@ const UpcomingTasks = () => {
   };
 
   const toggleBigCalendar = (id) => {
-    setShowBigCalendar((prevState) => {
-      const newState = { ...prevState, [id]: !prevState[id] };
-      return newState;
-    });
+    setShowBigCalendar((prevState) => ({
+      ...prevState,
+      [id]: !prevState[id],
+    }));
   };
 
   const toggleMemoModal = (memo) => {
@@ -222,22 +239,42 @@ const UpcomingTasks = () => {
                 </Col>
                 <Col>
                   <div
-                    style={{ color: "black" }}
-                    onClick={() => toggleBigCalendar(selectedMemo._id)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                    }}
                   >
-                    {selectedMemo.dueDateTime
-                      ? format(parseISO(selectedMemo.dueDateTime), "MMM d")
-                      : "No due date"}
+                    {selectedMemo.dueDateTime ? (
+                      <>
+                        <div
+                          style={{ color: "black", cursor: "pointer" }}
+                          onClick={() => toggleBigCalendar(selectedMemo._id)}
+                        >
+                          {format(parseISO(selectedMemo.dueDateTime), "MMM d")}
+                        </div>
+                        <div
+                          style={{
+                            color: "black",
+                            fontSize: "1rem",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => clearDueDate(selectedMemo)}
+                        >
+                          X
+                        </div>
+                      </>
+                    ) : (
+                      <CiCalendar
+                        style={{ color: "black" }}
+                        onClick={() => toggleBigCalendar(selectedMemo._id)}
+                      />
+                    )}
                   </div>
                   <div
                     ref={(el) => (calendarRefs.current[selectedMemo._id] = el)}
                     style={{ position: "relative" }}
                   >
-                    {!selectedMemo.dueDateTime && (
-                      <CiCalendar
-                        onClick={() => toggleBigCalendar(selectedMemo._id)}
-                      />
-                    )}
                     {showBigCalendar[selectedMemo._id] && (
                       <div
                         style={{
