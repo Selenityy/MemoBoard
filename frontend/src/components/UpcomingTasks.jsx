@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Container } from "react-bootstrap";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
 import { createSelector } from "reselect";
 import { useSelector, useDispatch } from "react-redux";
@@ -16,6 +16,7 @@ import { IoMdAdd } from "react-icons/io";
 import Calendar from "react-calendar";
 import { CiCalendar } from "react-icons/ci";
 import "react-calendar/dist/Calendar.css";
+import Modal from "react-bootstrap/Modal";
 
 const selectedMemos = createSelector(
   [(state) => state.memo.allIds, (state) => state.memo.byId],
@@ -51,6 +52,9 @@ const UpcomingTasks = () => {
   const [newMemoLine, setNewMemoLine] = useState(false);
   const [newMemoText, setNewMemoText] = useState("");
   const [showCalendar, setShowCalendar] = useState({});
+  const [showBigCalendar, setShowBigCalendar] = useState({});
+  const [showMemoModal, setShowMemoModal] = useState(false);
+  const [selectedMemo, setSelectedMemo] = useState(null);
   const inputRef = useRef(null);
   const calendarRefs = useRef({});
 
@@ -125,6 +129,10 @@ const UpcomingTasks = () => {
     try {
       await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
       dispatch(fetchAllMemos());
+      setSelectedMemo((prevMemo) => ({
+        ...prevMemo,
+        dueDateTime: updatedMemo.dueDateTime,
+      }));
     } catch (error) {
       console.error("Error updating memo due date/time:", error);
     }
@@ -133,15 +141,160 @@ const UpcomingTasks = () => {
   const toggleCalendar = (id) => {
     setShowCalendar((prevState) => {
       const newState = { ...prevState, [id]: !prevState[id] };
-      // console.log(
-      //   `Toggling calendar for ID ${id}: ${prevState[id]} -> ${newState[id]}`
-      // );
       return newState;
     });
   };
 
+  const toggleBigCalendar = (id) => {
+    setShowBigCalendar((prevState) => {
+      const newState = { ...prevState, [id]: !prevState[id] };
+      return newState;
+    });
+  };
+
+  const toggleMemoModal = (memo) => {
+    setSelectedMemo(memo);
+    setShowMemoModal(true);
+  };
+
+  const handleClose = () => {
+    setShowMemoModal(false);
+    setShowBigCalendar(false);
+  };
+
   return (
     <>
+      {showMemoModal && selectedMemo && (
+        <Modal
+          show={showMemoModal}
+          onHide={handleClose}
+          size="lg"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title
+              style={{
+                fontSize: "0.5rem",
+                display: "flex",
+                width: "100%",
+                justifyContent: "space-between",
+                alignItems: "center",
+                paddingRight: "10px",
+              }}
+            >
+              {selectedMemo.progress !== "Completed" ? (
+                <>
+                  <button>&#10003; Mark Complete</button>
+                  <div style={{ color: "black", fontSize: "1rem" }}>...</div>
+                </>
+              ) : (
+                <>
+                  <button style={{ backgroundColor: "green" }}>
+                    &#10003; Completed
+                  </button>
+                  <div style={{ color: "black", fontSize: "1rem" }}>...</div>
+                </>
+              )}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Container>
+              <Row>
+                <Col>
+                  <textarea
+                    aria-label="Memo Body"
+                    style={{
+                      width: "100%",
+                      height: "40px",
+                      overflow: "hidden",
+                      resize: "none",
+                      padding: "10px",
+                      border: "none",
+                    }}
+                    defaultValue={selectedMemo.body}
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col style={{ padding: "10px 20px 10px 20px" }}>
+                  <div style={{ color: "black" }}>Due Date</div>
+                </Col>
+                <Col>
+                  <div
+                    style={{ color: "black" }}
+                    onClick={() => toggleBigCalendar(selectedMemo._id)}
+                  >
+                    {selectedMemo.dueDateTime
+                      ? format(parseISO(selectedMemo.dueDateTime), "MMM d")
+                      : "No due date"}
+                  </div>
+                  <div
+                    ref={(el) => (calendarRefs.current[selectedMemo._id] = el)}
+                    style={{ position: "relative" }}
+                  >
+                    {!selectedMemo.dueDateTime && (
+                      <CiCalendar
+                        onClick={() => toggleBigCalendar(selectedMemo._id)}
+                      />
+                    )}
+                    {showBigCalendar[selectedMemo._id] && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          zIndex: 1050,
+                          top: "100%",
+                          left: 0,
+                        }}
+                      >
+                        <Calendar
+                          onChange={(date) => {
+                            changeDueDate(date, selectedMemo);
+                            toggleBigCalendar(selectedMemo._id);
+                          }}
+                          defaultValue={
+                            selectedMemo.dueDateTime
+                              ? parseISO(selectedMemo.dueDateTime)
+                              : null
+                          }
+                          calendarType={"gregory"}
+                          style={{ backgroundColor: "white", color: "black" }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <div style={{ color: "black" }}>Projects</div>
+                </Col>
+                <Col>
+                  <div style={{ color: "black" }}>
+                    list user project associated with the memo
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <div style={{ color: "black" }}>Descriptions</div>
+                </Col>
+                <Col>
+                  <textarea
+                    style={{ color: "black" }}
+                    placeholder="What is this memo about?"
+                  ></textarea>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <button>+ Add submemo</button>
+                </Col>
+              </Row>
+            </Container>
+          </Modal.Body>
+        </Modal>
+      )}
       <Row
         style={{
           alignItems: "center",
@@ -175,7 +328,7 @@ const UpcomingTasks = () => {
             <input
               ref={inputRef}
               type="text"
-              value={newMemoText}
+              defaultValue={newMemoText}
               onChange={(e) => setNewMemoText(e.target.value)}
               placeholder="Type new memo here..."
               className="form-control"
@@ -206,10 +359,13 @@ const UpcomingTasks = () => {
                   justifyContent: "space-between",
                 }}
               >
-                <li>{memo.body}</li>
+                <li onClick={() => toggleMemoModal(memo)}>{memo.body}</li>
                 {memo.dueDateTime && (
                   <li
-                    onClick={() => toggleCalendar(memo._id)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleCalendar(memo._id);
+                    }}
                     style={{
                       cursor: memo.dueDateTime ? "pointer" : "default",
                       color: isToday(parseISO(memo.dueDateTime))
@@ -246,7 +402,7 @@ const UpcomingTasks = () => {
                         changeDueDate(date, memo);
                         toggleCalendar(memo._id);
                       }}
-                      value={
+                      defaultValue={
                         memo.dueDateTime ? parseISO(memo.dueDateTime) : null
                       }
                       calendarType={"gregory"}
