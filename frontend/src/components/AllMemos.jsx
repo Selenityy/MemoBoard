@@ -20,6 +20,7 @@ import Calendar from "react-calendar";
 import { CiCalendar } from "react-icons/ci";
 import "react-calendar/dist/Calendar.css";
 import Modal from "react-bootstrap/Modal";
+import Select from "react-dropdown-select";
 
 const allMemos = createSelector(
   [(state) => state.memo.allIds, (state) => state.memo.byId],
@@ -57,10 +58,19 @@ const AllMemos = () => {
   const [showMemoModal, setShowMemoModal] = useState(false);
   const [selectedMemo, setSelectedMemo] = useState(null);
   const [memoNotes, setMemoNotes] = useState("");
+  const [memoProgress, setMemoProgress] = useState("");
+  console.log("memo progress:", memoProgress);
   const [showEllipsis, setShowEllipsis] = useState(false);
   const inputRef = useRef(null);
   const submemoRef = useRef(null);
   const calendarRefs = useRef({});
+  const options = [
+    { value: "Not Started", label: "Not Started" },
+    { value: "Active", label: "Active" },
+    { value: "Pending", label: "Pending" },
+    { value: "Completed", label: "Completed" },
+    { value: "Cancelled", label: "Cancelled" },
+  ];
 
   useEffect(() => {
     dispatch(fetchAllMemos());
@@ -243,6 +253,29 @@ const AllMemos = () => {
     }
   };
 
+  const updateProgress = async (selectedOption) => {
+    const updatedMemo = {
+      ...selectedMemo,
+      progress: selectedOption[0].value,
+    };
+    setMemoProgress(selectedOption[0].value);
+    try {
+      await dispatch(
+        updateMemo({
+          formData: updatedMemo,
+          memoId: selectedMemo._id,
+        })
+      );
+      dispatch(fetchAllMemos());
+      setSelectedMemo((prevMemo) => ({
+        ...prevMemo,
+        progress: selectedOption[0].value,
+      }));
+    } catch (error) {
+      console.error("Error updating progress:", error);
+    }
+  };
+
   const toggleCalendar = (id) => {
     setShowCalendar((prevState) => {
       const newState = { ...prevState, [id]: !prevState[id] };
@@ -258,12 +291,10 @@ const AllMemos = () => {
   };
 
   const toggleMemoModal = async (memo) => {
-    console.log("Memo selected: ", memo);
     setSelectedMemo(memo);
     setMemoNotes(memo.notes);
+    await setMemoProgress(memo.progress);
     setShowMemoModal(true);
-    console.log("showMemoModal: ", showMemoModal);
-    console.log("selectedMemo: ", selectedMemo);
     try {
       const res = await dispatch(fetchChildrenMemos(memo._id)).unwrap();
       setSubmemos(res.children);
@@ -275,6 +306,7 @@ const AllMemos = () => {
   const handleClose = () => {
     setShowMemoModal(false);
     setShowBigCalendar(false);
+    setSelectedMemo(null);
   };
 
   const addMemoBtn = () => {
@@ -431,6 +463,23 @@ const AllMemos = () => {
                       </div>
                     )}
                   </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <div style={{ color: "black" }}>Progress</div>
+                </Col>
+                <Col>
+                  <Select
+                    style={{ color: "black" }}
+                    options={options}
+                    value={options.find((option) => {
+                      option.value === memoProgress;
+                    })}
+                    onChange={(selectedOption) => {
+                      updateProgress(selectedOption);
+                    }}
+                  />
                 </Col>
               </Row>
               <Row>
@@ -604,7 +653,70 @@ const AllMemos = () => {
             <Col>
               <ul>
                 {notStartedMemos.map((memo) => (
-                  <li key={memo.id}>{memo.body}</li>
+                  <li
+                    key={memo.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      width: "100%",
+                    }}
+                  >
+                    <MdCheckBoxOutlineBlank
+                      onClick={() => checkboxToggle(memo, memo._id)}
+                    />
+                    <ul
+                      style={{
+                        flex: 1,
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <li onClick={() => toggleMemoModal(memo)}>{memo.body}</li>
+                      {memo.dueDateTime && (
+                        <li
+                          onClick={(e) => {
+                            e.preventDefault();
+                            toggleCalendar(memo._id);
+                          }}
+                          style={{ color: "grey" }}
+                        >
+                          {format(parseISO(memo.dueDateTime), "MMM d")}
+                        </li>
+                      )}
+                    </ul>
+                    <div
+                      ref={(el) => (calendarRefs.current[memo._id] = el)}
+                      style={{ position: "relative" }}
+                    >
+                      {!memo.dueDateTime && (
+                        <CiCalendar onClick={() => toggleCalendar(memo._id)} />
+                      )}
+                      {showCalendar[memo._id] && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            zIndex: 1000,
+                            top: "100%",
+                            left: 0,
+                          }}
+                        >
+                          <Calendar
+                            onChange={(date) => {
+                              changeDueDate(date, memo);
+                              toggleCalendar(memo._id);
+                            }}
+                            value={
+                              memo.dueDateTime
+                                ? parseISO(memo.dueDateTime)
+                                : null
+                            }
+                            calendarType={"gregory"}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </li>
                 ))}
               </ul>
             </Col>
@@ -644,7 +756,70 @@ const AllMemos = () => {
             <Col>
               <ul>
                 {activeMemos.map((memo) => (
-                  <li key={memo.id}>{memo.body}</li>
+                  <li
+                    key={memo.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      width: "100%",
+                    }}
+                  >
+                    <MdCheckBoxOutlineBlank
+                      onClick={() => checkboxToggle(memo, memo._id)}
+                    />
+                    <ul
+                      style={{
+                        flex: 1,
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <li onClick={() => toggleMemoModal(memo)}>{memo.body}</li>
+                      {memo.dueDateTime && (
+                        <li
+                          onClick={(e) => {
+                            e.preventDefault();
+                            toggleCalendar(memo._id);
+                          }}
+                          style={{ color: "grey" }}
+                        >
+                          {format(parseISO(memo.dueDateTime), "MMM d")}
+                        </li>
+                      )}
+                    </ul>
+                    <div
+                      ref={(el) => (calendarRefs.current[memo._id] = el)}
+                      style={{ position: "relative" }}
+                    >
+                      {!memo.dueDateTime && (
+                        <CiCalendar onClick={() => toggleCalendar(memo._id)} />
+                      )}
+                      {showCalendar[memo._id] && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            zIndex: 1000,
+                            top: "100%",
+                            left: 0,
+                          }}
+                        >
+                          <Calendar
+                            onChange={(date) => {
+                              changeDueDate(date, memo);
+                              toggleCalendar(memo._id);
+                            }}
+                            value={
+                              memo.dueDateTime
+                                ? parseISO(memo.dueDateTime)
+                                : null
+                            }
+                            calendarType={"gregory"}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </li>
                 ))}
               </ul>
             </Col>
@@ -684,7 +859,70 @@ const AllMemos = () => {
             <Col>
               <ul>
                 {pendingMemos.map((memo) => (
-                  <li key={memo.id}>{memo.body}</li>
+                  <li
+                    key={memo.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      width: "100%",
+                    }}
+                  >
+                    <MdCheckBoxOutlineBlank
+                      onClick={() => checkboxToggle(memo, memo._id)}
+                    />
+                    <ul
+                      style={{
+                        flex: 1,
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <li onClick={() => toggleMemoModal(memo)}>{memo.body}</li>
+                      {memo.dueDateTime && (
+                        <li
+                          onClick={(e) => {
+                            e.preventDefault();
+                            toggleCalendar(memo._id);
+                          }}
+                          style={{ color: "grey" }}
+                        >
+                          {format(parseISO(memo.dueDateTime), "MMM d")}
+                        </li>
+                      )}
+                    </ul>
+                    <div
+                      ref={(el) => (calendarRefs.current[memo._id] = el)}
+                      style={{ position: "relative" }}
+                    >
+                      {!memo.dueDateTime && (
+                        <CiCalendar onClick={() => toggleCalendar(memo._id)} />
+                      )}
+                      {showCalendar[memo._id] && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            zIndex: 1000,
+                            top: "100%",
+                            left: 0,
+                          }}
+                        >
+                          <Calendar
+                            onChange={(date) => {
+                              changeDueDate(date, memo);
+                              toggleCalendar(memo._id);
+                            }}
+                            value={
+                              memo.dueDateTime
+                                ? parseISO(memo.dueDateTime)
+                                : null
+                            }
+                            calendarType={"gregory"}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </li>
                 ))}
               </ul>
             </Col>
