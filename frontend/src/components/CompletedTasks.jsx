@@ -6,6 +6,7 @@ import {
   fetchChildrenMemos,
   updateMemo,
   createMemo,
+  deleteMemo,
 } from "@/redux/features/memoSlice";
 import { Row, Col, Container } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
@@ -37,6 +38,7 @@ const CompletedTasks = () => {
   const [showMemoModal, setShowMemoModal] = useState(false);
   const [selectedMemo, setSelectedMemo] = useState(null);
   const [memoNotes, setMemoNotes] = useState("");
+  const [showEllipsis, setShowEllipsis] = useState(false);
   const inputRef = useRef(null);
   const submemoRef = useRef(null);
   const calendarRefs = useRef({});
@@ -110,6 +112,21 @@ const CompletedTasks = () => {
       } catch (error) {
         console.error("Error creating submemo:", error);
       }
+    }
+  };
+
+  const clickEllipsis = () => {
+    setShowEllipsis((prevState) => !prevState);
+  };
+
+  const clickDeleteMemo = async (memo) => {
+    try {
+      await dispatch(deleteMemo(memo._id));
+      dispatch(fetchAllMemos());
+      setSelectedMemo(null);
+      handleClose();
+    } catch (error) {
+      console.error("Error deleting memo:", error);
     }
   };
 
@@ -230,7 +247,12 @@ const CompletedTasks = () => {
                   >
                     &#10003; Mark Complete
                   </button>
-                  <div style={{ color: "black", fontSize: "1rem" }}>...</div>
+                  <div
+                    onClick={clickEllipsis}
+                    style={{ color: "black", fontSize: "1rem" }}
+                  >
+                    ...
+                  </div>
                 </>
               ) : (
                 <>
@@ -242,8 +264,21 @@ const CompletedTasks = () => {
                   >
                     &#10003; Completed
                   </button>
-                  <div style={{ color: "black", fontSize: "1rem" }}>...</div>
+                  <div
+                    onClick={clickEllipsis}
+                    style={{ color: "black", fontSize: "1rem" }}
+                  >
+                    ...
+                  </div>
                 </>
+              )}
+              {showEllipsis && (
+                <div
+                  onClick={() => clickDeleteMemo(selectedMemo)}
+                  style={{ color: "black" }}
+                >
+                  Delete
+                </div>
               )}
             </Modal.Title>
           </Modal.Header>
