@@ -397,7 +397,7 @@ const UpcomingTasks = () => {
                   <textarea
                     style={{ color: "black" }}
                     placeholder="What is this memo about?"
-                    value={selectedMemo.notes}
+                    value={memoNotes}
                     onChange={(e) => setMemoNotes(e.target.value)}
                     onBlur={() => updateNotes(selectedMemo)}
                     onKeyDown={(e) => {
