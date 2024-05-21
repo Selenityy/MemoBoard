@@ -43,30 +43,48 @@ const allMemos = createSelector(
   }
 );
 
+const allProjects = createSelector(
+  [(state) => state.project.allIds, (state) => state.project.byId],
+  (allIds, byId) => {
+    return allIds.map((id) => byId[id]);
+  }
+);
+
 const AllMemos = () => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
+
   const [notStartedMemos, setNotStartedMemos] = useState([]);
   const [activeMemos, setActiveMemos] = useState([]);
   const [pendingMemos, setPendingMemos] = useState([]);
   const [completedMemos, setCompletedMemos] = useState([]);
   const [cancelledMemos, setCancelledMemos] = useState([]);
+
   const memos = useSelector(allMemos);
+  const projects = useSelector(allProjects);
+
   const [submemos, setSubmemos] = useState([]);
   const [newMemoLine, setNewMemoLine] = useState(false);
   const [newMemoText, setNewMemoText] = useState("");
   const [newSubMemoLine, setNewSubMemoLine] = useState(false);
   const [newSubMemoText, setNewSubMemoText] = useState("");
+
   const [showCalendar, setShowCalendar] = useState({});
   const [showBigCalendar, setShowBigCalendar] = useState({});
+
   const [showMemoModal, setShowMemoModal] = useState(false);
   const [selectedMemo, setSelectedMemo] = useState(null);
+
   const [memoNotes, setMemoNotes] = useState("");
   const [memoProgress, setMemoProgress] = useState("");
+  const [memoProjects, setMemoProjects] = useState([]);
+
   const [showEllipsis, setShowEllipsis] = useState(false);
+
   const inputRef = useRef(null);
   const submemoRef = useRef(null);
   const calendarRefs = useRef({});
+
   const options = [
     { value: "Not Started", label: "Not Started" },
     { value: "Active", label: "Active" },
@@ -74,10 +92,23 @@ const AllMemos = () => {
     { value: "Completed", label: "Completed" },
     { value: "Cancelled", label: "Cancelled" },
   ];
+  const [projectOptions, setProjectOptions] = useState([]);
+
+  //   console.log("memoProjects", memoProjects);
+  //   console.log("options:", options);
+  //   console.log("projectOptions:", projectOptions);
 
   useEffect(() => {
     dispatch(fetchAllMemos());
   }, [dispatch]);
+
+  useEffect(() => {
+    const projectList = projects.map((project) => ({
+      value: project._id,
+      label: project.name,
+    }));
+    setProjectOptions(projectList);
+  }, [projects]);
 
   useEffect(() => {
     const notStarted = [];
@@ -288,6 +319,32 @@ const AllMemos = () => {
     }
   };
 
+  const updateProject = async (selectedOption) => {
+    const updatedProjects = selectedOption.length
+      ? selectedOption.map((option) => option.value)
+      : null;
+    const updatedMemo = {
+      ...selectedMemo,
+      project: updatedProjects,
+    };
+    setMemoProjects(selectedOption);
+    try {
+      await dispatch(
+        updateMemo({
+          formData: updatedMemo,
+          memoId: selectedMemo._id,
+        })
+      );
+      dispatch(fetchAllMemos());
+      setSelectedMemo((prevMemo) => ({
+        ...prevMemo,
+        project: updatedProjects,
+      }));
+    } catch (error) {
+      console.error("Error updating project:", error);
+    }
+  };
+
   const toggleCalendar = (id) => {
     setShowCalendar((prevState) => {
       const newState = { ...prevState, [id]: !prevState[id] };
@@ -306,6 +363,11 @@ const AllMemos = () => {
     setSelectedMemo(memo);
     setMemoNotes(memo.notes);
     setMemoProgress(options.find((option) => option.value === memo.progress));
+    setMemoProjects(
+      memo.project
+        ? [{ value: memo.project._id, label: memo.project.name }]
+        : []
+    );
     setShowMemoModal(true);
     try {
       const res = await dispatch(fetchChildrenMemos(memo._id)).unwrap();
@@ -497,9 +559,15 @@ const AllMemos = () => {
                   <div style={{ color: "black" }}>Projects</div>
                 </Col>
                 <Col>
-                  <div style={{ color: "black" }}>
-                    list user project associated with the memo
-                  </div>
+                  <Select
+                    clearable
+                    style={{ color: "black" }}
+                    options={projectOptions}
+                    values={memoProjects}
+                    onChange={(selectedOption) => {
+                      updateProject(selectedOption);
+                    }}
+                  />
                 </Col>
               </Row>
               <Row>
