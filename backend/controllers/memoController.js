@@ -191,17 +191,28 @@ exports.createMemo = [
 exports.updateMemo = asyncHandler(async (req, res, next) => {
   const memoId = req.params.memoId;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
-  console.log("userId:", userId);
+  const { project, ...updateFields } = req.body;
 
   try {
-    const updatedMemo = await Memo.findOneAndUpdate(
-      { _id: memoId, user: userId },
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    // const updatedMemo = await Memo.findOneAndUpdate(
+    //   { _id: memoId, user: userId },
+    //   req.body,
+    //   {
+    //     new: true,
+    //     runValidators: true,
+    //   }
+    // );
+    const updateData = {
+      $set: {
+        ...updateFields,
+        project: project === null ? null : project,
+      },
+    };
+    const updatedMemo = await Memo.findByIdAndUpdate(memoId, updateData, {
+      new: true,
+      runValidators: true,
+    });
+    
     if (!updatedMemo) {
       return res.status(404).json({ message: "Updated memo not found" });
     }
