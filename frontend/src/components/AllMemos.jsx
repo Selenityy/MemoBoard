@@ -53,6 +53,8 @@ const AllMemos = () => {
   const [cancelledMemos, setCancelledMemos] = useState([]);
   const memos = useSelector(allMemos);
   const [submemos, setSubmemos] = useState([]);
+  const [newMemoLine, setNewMemoLine] = useState(false);
+  const [newMemoText, setNewMemoText] = useState("");
   const [newSubMemoLine, setNewSubMemoLine] = useState(false);
   const [newSubMemoText, setNewSubMemoText] = useState("");
   const [showCalendar, setShowCalendar] = useState({});
@@ -202,6 +204,11 @@ const AllMemos = () => {
     }
   };
 
+  const handleAddClick = () => {
+    setNewMemoLine(true);
+    setNewMemoText("");
+  };
+
   const handleSubMemoAddClick = () => {
     setNewSubMemoLine(true);
     setNewSubMemoText("");
@@ -311,11 +318,11 @@ const AllMemos = () => {
   const handleClose = () => {
     setShowMemoModal(false);
     setShowBigCalendar(false);
-    // setSelectedMemo(null);
+    setSelectedMemo(null);
   };
 
   const addMemoBtn = () => {
-    console.log("clicked");
+    toggleMemoModal();
   };
 
   return (
@@ -646,12 +653,27 @@ const AllMemos = () => {
                   borderRadius: "8px",
                   backgroundColor: "transparent",
                 }}
-                onClick={() => addMemoBtn()}
+                onClick={handleAddClick}
               >
                 + Add Memo
-              </button>{" "}
+              </button>
             </Col>
           </Row>
+          {newMemoLine && (
+            <Row>
+              <Col>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  vlue={newMemoText}
+                  onChange={(e) => setNewMemoText(e.target.value)}
+                  placeholder="Type new memo here..."
+                  className="form-control"
+                  onBlur={createMemoClick}
+                />
+              </Col>
+            </Row>
+          )}
           <Row>
             <Col>
               <ul>
@@ -741,7 +763,7 @@ const AllMemos = () => {
               </div>
             </Col>
           </Row>
-          <Row>
+          {/* <Row>
             <Col style={{ paddingBottom: "10px" }}>
               <button
                 style={{
@@ -749,12 +771,27 @@ const AllMemos = () => {
                   borderRadius: "8px",
                   backgroundColor: "transparent",
                 }}
-                onClick={() => addMemoBtn()}
+                onClick={handleAddClick}
               >
                 + Add Memo
-              </button>{" "}
+              </button>
             </Col>
-          </Row>
+          </Row> */}
+          {/* {newMemoLine && (
+            <Row>
+              <Col>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  vlue={newMemoText}
+                  onChange={(e) => setNewMemoText(e.target.value)}
+                  placeholder="Type new memo here..."
+                  className="form-control"
+                  onBlur={createMemoClick}
+                />
+              </Col>
+            </Row>
+          )} */}
           <Row>
             <Col>
               <ul>
@@ -844,7 +881,7 @@ const AllMemos = () => {
               </div>
             </Col>
           </Row>
-          <Row>
+          {/* <Row>
             <Col style={{ paddingBottom: "10px" }}>
               <button
                 style={{
@@ -852,12 +889,27 @@ const AllMemos = () => {
                   borderRadius: "8px",
                   backgroundColor: "transparent",
                 }}
-                onClick={() => addMemoBtn()}
+                onClick={handleAddClick}
               >
                 + Add Memo
               </button>
             </Col>
-          </Row>
+          </Row> */}
+          {/* {newMemoLine && (
+            <Row>
+              <Col>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  vlue={newMemoText}
+                  onChange={(e) => setNewMemoText(e.target.value)}
+                  placeholder="Type new memo here..."
+                  className="form-control"
+                  onBlur={createMemoClick}
+                />
+              </Col>
+            </Row>
+          )} */}
           <Row>
             <Col>
               <ul>
@@ -947,7 +999,7 @@ const AllMemos = () => {
               </div>
             </Col>
           </Row>
-          <Row>
+          {/* <Row>
             <Col style={{ paddingBottom: "10px" }}>
               <button
                 style={{
@@ -960,7 +1012,7 @@ const AllMemos = () => {
                 + Add Memo
               </button>
             </Col>
-          </Row>
+          </Row> */}
           <Row>
             <Col>
               <ul>
@@ -972,6 +1024,7 @@ const AllMemos = () => {
                       alignItems: "center",
                       gap: "10px",
                       width: "100%",
+                      textDecoration: "line-through",
                     }}
                   >
                     <MdCheckBoxOutlineBlank
