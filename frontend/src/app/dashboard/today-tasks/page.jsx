@@ -1,13 +1,25 @@
-"use client";
-
 import "../../../styles/main.scss";
 import { Col, Row } from "react-bootstrap";
-import { useTheme } from "@/context/ThemeContext";
 import React from "react";
+import TodaysMemos from "@/components/TodaysMemos";
 
 const TodayTasks = () => {
-  const { theme } = useTheme();
-  return <div>Today Tasks</div>;
+  return (
+    <>
+      <Row>
+        <Col
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: "700",
+            paddingBottom: "20px",
+          }}
+        >
+          <div>Today's Memos </div>
+        </Col>
+      </Row>
+      <TodaysMemos />
+    </>
+  );
 };
 
 export default TodayTasks;
