@@ -21,6 +21,7 @@ import { CiCalendar } from "react-icons/ci";
 import "react-calendar/dist/Calendar.css";
 import Modal from "react-bootstrap/Modal";
 import Select from "react-dropdown-select";
+// import Select from "react-select";
 
 const allMemos = createSelector(
   [(state) => state.memo.allIds, (state) => state.memo.byId],
@@ -49,6 +50,7 @@ const AllMemos = () => {
   const [activeMemos, setActiveMemos] = useState([]);
   const [pendingMemos, setPendingMemos] = useState([]);
   const [completedMemos, setCompletedMemos] = useState([]);
+  const [cancelledMemos, setCancelledMemos] = useState([]);
   const memos = useSelector(allMemos);
   const [submemos, setSubmemos] = useState([]);
   const [newSubMemoLine, setNewSubMemoLine] = useState(false);
@@ -59,7 +61,6 @@ const AllMemos = () => {
   const [selectedMemo, setSelectedMemo] = useState(null);
   const [memoNotes, setMemoNotes] = useState("");
   const [memoProgress, setMemoProgress] = useState("");
-  console.log("memo progress:", memoProgress);
   const [showEllipsis, setShowEllipsis] = useState(false);
   const inputRef = useRef(null);
   const submemoRef = useRef(null);
@@ -81,6 +82,7 @@ const AllMemos = () => {
     const active = [];
     const pending = [];
     const completed = [];
+    const cancelled = [];
 
     memos.forEach((memo) => {
       if (memo.progress === "Not Started") {
@@ -91,12 +93,15 @@ const AllMemos = () => {
         pending.push(memo);
       } else if (memo.progress === "Completed") {
         completed.push(memo);
+      } else if (memo.progress === "Cancelled") {
+        cancelled.push(memo);
       }
     });
     setNotStartedMemos(notStarted);
     setActiveMemos(active);
     setPendingMemos(pending);
     setCompletedMemos(completed);
+    setCancelledMemos(cancelled);
   }, [memos]);
 
   useEffect(() => {
@@ -293,7 +298,7 @@ const AllMemos = () => {
   const toggleMemoModal = async (memo) => {
     setSelectedMemo(memo);
     setMemoNotes(memo.notes);
-    await setMemoProgress(memo.progress);
+    setMemoProgress(options.find((option) => option.value === memo.progress));
     setShowMemoModal(true);
     try {
       const res = await dispatch(fetchChildrenMemos(memo._id)).unwrap();
@@ -306,7 +311,7 @@ const AllMemos = () => {
   const handleClose = () => {
     setShowMemoModal(false);
     setShowBigCalendar(false);
-    setSelectedMemo(null);
+    // setSelectedMemo(null);
   };
 
   const addMemoBtn = () => {
@@ -473,9 +478,7 @@ const AllMemos = () => {
                   <Select
                     style={{ color: "black" }}
                     options={options}
-                    value={options.find((option) => {
-                      option.value === memoProgress;
-                    })}
+                    values={[memoProgress]}
                     onChange={(selectedOption) => {
                       updateProgress(selectedOption);
                     }}
@@ -859,6 +862,109 @@ const AllMemos = () => {
             <Col>
               <ul>
                 {pendingMemos.map((memo) => (
+                  <li
+                    key={memo.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      width: "100%",
+                    }}
+                  >
+                    <MdCheckBoxOutlineBlank
+                      onClick={() => checkboxToggle(memo, memo._id)}
+                    />
+                    <ul
+                      style={{
+                        flex: 1,
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <li onClick={() => toggleMemoModal(memo)}>{memo.body}</li>
+                      {memo.dueDateTime && (
+                        <li
+                          onClick={(e) => {
+                            e.preventDefault();
+                            toggleCalendar(memo._id);
+                          }}
+                          style={{ color: "grey" }}
+                        >
+                          {format(parseISO(memo.dueDateTime), "MMM d")}
+                        </li>
+                      )}
+                    </ul>
+                    <div
+                      ref={(el) => (calendarRefs.current[memo._id] = el)}
+                      style={{ position: "relative" }}
+                    >
+                      {!memo.dueDateTime && (
+                        <CiCalendar onClick={() => toggleCalendar(memo._id)} />
+                      )}
+                      {showCalendar[memo._id] && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            zIndex: 1000,
+                            top: "100%",
+                            left: 0,
+                          }}
+                        >
+                          <Calendar
+                            onChange={(date) => {
+                              changeDueDate(date, memo);
+                              toggleCalendar(memo._id);
+                            }}
+                            value={
+                              memo.dueDateTime
+                                ? parseISO(memo.dueDateTime)
+                                : null
+                            }
+                            calendarType={"gregory"}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </Col>
+          </Row>
+        </Col>
+        <Col
+          style={{
+            padding: "10px 20px 20px 20px",
+            borderRadius: "12px",
+            background:
+              "linear-gradient(180deg, rgba(245,244,243,1) 0%, rgba(255,255,255,0) 100%)",
+            overflow: "scroll",
+          }}
+        >
+          <Row>
+            <Col style={{ paddingBottom: "10px" }}>
+              <div style={{ fontSize: "1.2rem", fontWeight: "600" }}>
+                Cancelled
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col style={{ paddingBottom: "10px" }}>
+              <button
+                style={{
+                  border: "1px solid",
+                  borderRadius: "8px",
+                  backgroundColor: "transparent",
+                }}
+                onClick={() => addMemoBtn()}
+              >
+                + Add Memo
+              </button>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <ul>
+                {cancelledMemos.map((memo) => (
                   <li
                     key={memo.id}
                     style={{
