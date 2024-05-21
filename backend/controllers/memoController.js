@@ -7,7 +7,7 @@ const { body, validationResult } = require("express-validator");
 exports.getAllMemos = asyncHandler(async (req, res, next) => {
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   try {
-    const memos = await Memo.find({ user: userId });
+    const memos = await Memo.find({ user: userId }).populate("project", "name");
     if (!memos) {
       return res.status(404).json({ message: "All memos not found" });
     }
