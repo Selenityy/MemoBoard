@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 import userReducer from "./features/userSlice";
@@ -6,16 +6,16 @@ import memoReducer from "./features/memoSlice";
 import tagReducer from "./features/tagsSlice";
 import projectReducer from "./features/projectSlice";
 
-const persistConfig = {
-  key: "root",
-  storage,
-};
-
-const rootReducer = {
+const rootReducer = combineReducers({
   user: userReducer,
   memo: memoReducer,
   tag: tagReducer,
   project: projectReducer,
+});
+
+const persistConfig = {
+  key: "root",
+  storage,
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
