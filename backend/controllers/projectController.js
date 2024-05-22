@@ -7,7 +7,15 @@ const { body, validationResult } = require("express-validator");
 exports.listProjects = asyncHandler(async (req, res, next) => {
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   try {
-    const projects = await Project.find({ user: userId });
+    const projects = await Project.find({ user: userId }).populate({
+      path: "memos",
+      select:
+        "body user dueDateTime progress tags priority notes parentId project", // specify all fields you need
+      populate: {
+        path: "tags",
+        select: "name", // populate tags within memos if needed
+      },
+    });
     if (!projects) {
       return res.status(404).json({ message: "All projects not found" });
     }
@@ -32,7 +40,15 @@ exports.getProject = asyncHandler(async (req, res, next) => {
       _id: projectId,
       user: userId,
     })
-      .populate("memos")
+      .populate({
+        path: "memos",
+        select:
+          "body user dueDateTime progress tags priority notes parentId project", // specify all fields you need
+        populate: {
+          path: "tags",
+          select: "name", // populate tags within memos if needed
+        },
+      })
       .exec();
     if (!project) {
       return res.status(404).json({ message: "Specific project not found" });
