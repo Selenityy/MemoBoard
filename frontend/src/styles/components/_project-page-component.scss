@@ -1,0 +1,21 @@
+@import "../utilities/helpers";
+@import "../utilities/variables";
+@import "../utilities/mixins";
+
+.scrollable-row {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.scrollable-row .row {
+  flex-wrap: nowrap;
+}
+
+.section-names {
+  font-size: 1.2rem;
+  font-weight: 600;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
