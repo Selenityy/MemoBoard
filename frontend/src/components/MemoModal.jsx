@@ -23,11 +23,21 @@ import "react-calendar/dist/Calendar.css";
 import Modal from "react-bootstrap/Modal";
 import Select from "react-dropdown-select";
 
+const allProjects = createSelector(
+  [(state) => state.project.allIds, (state) => state.project.byId],
+  (allIds, byId) => {
+    return allIds.map((id) => byId[id]);
+  }
+);
+
 const MemoModal = ({ project }) => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const projectId = project._id;
   const [projectMemos, setProjectMemos] = useState([]);
+  const projects = useSelector(allProjects);
+  const [allProjectMemos, setAllProjectMemos] = useState([]);
+  console.log(allProjectMemos);
 
   const submemoRef = useRef(null);
   const calendarRefs = useRef({});
@@ -56,18 +66,37 @@ const MemoModal = ({ project }) => {
     { value: "Completed", label: "Completed" },
     { value: "Cancelled", label: "Cancelled" },
   ];
+
   const [projectOptions, setProjectOptions] = useState([]);
+  console.log("memoProjects", memoProjects);
+  console.log("projectOptions:", projectOptions);
+  console.log("projectMemos:", projectMemos);
 
   useEffect(() => {
     dispatch(fetchMemos());
   }, [dispatch]);
 
   useEffect(() => {
+    const projectList = projects.map((project) => ({
+      value: project._id,
+      label: project.name,
+    }));
+    setProjectOptions(projectList);
+  }, [projects]);
+
+  useEffect(() => {
     const getProjectParentMemos = async () => {
       try {
-        const memos = await dispatch(fetchMemos()).unwrap();
+        const memos = await dispatch(fetchAllMemos()).unwrap();
+        const filteredProjectMemos = memos.filter(
+          (memo) => memo.project && memo.project.id === projectId
+        );
+        setAllProjectMemos(filteredProjectMemos);
         const filteredMemos = memos.filter(
-          (memo) => memo.project === projectId
+          (memo) =>
+            memo.parentId === null &&
+            memo.project &&
+            memo.project.id === projectId
         );
         setProjectMemos(filteredMemos);
         setProjectOptions(project);
@@ -80,6 +109,7 @@ const MemoModal = ({ project }) => {
 
   //MODAL TOGGLE
   const toggleMemoModal = async (memo) => {
+    console.log("memo:", memo);
     setSelectedMemo(memo);
     setMemoNotes(memo.notes);
     setMemoProgress(options.find((option) => option.value === memo.progress));
@@ -179,7 +209,10 @@ const MemoModal = ({ project }) => {
     };
     try {
       await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
-      dispatch(fetchMemos());
+      //   dispatch(fetchMemos());
+      const memos = await dispatch(fetchMemos()).unwrap();
+      const filteredMemos = memos.filter((memo) => memo.project === projectId);
+      setProjectMemos(filteredMemos);
       setSelectedMemo((prevMemo) => ({
         ...prevMemo,
         dueDateTime: null,
@@ -197,7 +230,10 @@ const MemoModal = ({ project }) => {
     };
     try {
       await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
-      dispatch(fetchMemos());
+      //   dispatch(fetchMemos());
+      const memos = await dispatch(fetchMemos()).unwrap();
+      const filteredMemos = memos.filter((memo) => memo.project === projectId);
+      setProjectMemos(filteredMemos);
       setSelectedMemo((prevMemo) => ({
         ...prevMemo,
         notes: memoNotes,
@@ -220,7 +256,10 @@ const MemoModal = ({ project }) => {
           memoId: selectedMemo._id,
         })
       );
-      dispatch(fetchMemos());
+      //   dispatch(fetchMemos());
+      const memos = await dispatch(fetchMemos()).unwrap();
+      const filteredMemos = memos.filter((memo) => memo.project === projectId);
+      setProjectMemos(filteredMemos);
       setSelectedMemo((prevMemo) => ({
         ...prevMemo,
         progress: selectedOption[0].value,
@@ -236,7 +275,10 @@ const MemoModal = ({ project }) => {
     const updatedMemo = { ...memo, progress: updatedProgress };
     try {
       await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
-      dispatch(fetchMemos());
+      //   dispatch(fetchMemos());
+      const memos = await dispatch(fetchMemos()).unwrap();
+      const filteredMemos = memos.filter((memo) => memo.project === projectId);
+      setProjectMemos(filteredMemos);
       setSelectedMemo((prevMemo) => ({
         ...prevMemo,
         progress: updatedProgress,
@@ -262,7 +304,10 @@ const MemoModal = ({ project }) => {
           memoId: selectedMemo._id,
         })
       );
-      dispatch(fetchMemos());
+      //   dispatch(fetchMemos());
+      const memos = await dispatch(fetchMemos()).unwrap();
+      const filteredMemos = memos.filter((memo) => memo.project === projectId);
+      setProjectMemos(filteredMemos);
       setSelectedMemo((prevMemo) => ({
         ...prevMemo,
         project: updatedProjects,
@@ -279,7 +324,11 @@ const MemoModal = ({ project }) => {
     } else {
       try {
         await dispatch(
-          createMemo({ body: newSubMemoText, parentId: memo._id })
+          createMemo({
+            body: newSubMemoText,
+            parentId: memo._id,
+            project: projectId,
+          })
         );
         await dispatch(fetchAllMemos());
         const res = await dispatch(fetchChildrenMemos(memo._id)).unwrap();
