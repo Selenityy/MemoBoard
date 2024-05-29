@@ -26,7 +26,10 @@ exports.getAllMemos = asyncHandler(async (req, res, next) => {
 exports.getAllParentMemos = asyncHandler(async (req, res, next) => {
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   try {
-    const parentMemos = await Memo.find({ user: userId, parentId: null });
+    const parentMemos = await Memo.find({
+      user: userId,
+      parentId: null,
+    }).populate("project", "name");
     if (!parentMemos) {
       return res.status(404).json({ message: "All parent memos not found" });
     }
@@ -52,7 +55,10 @@ exports.getAllChildrenMemosOfAParentMemo = asyncHandler(
     const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
 
     try {
-      const childMemos = await Memo.find({ parentId, user: userId });
+      const childMemos = await Memo.find({ parentId, user: userId }).populate(
+        "project",
+        "name"
+      );
       if (!childMemos) {
         return res.status(404).json({ message: "Child memo not found" });
       }
@@ -81,7 +87,7 @@ exports.getSpecifictParentMemo = asyncHandler(async (req, res, next) => {
     const specificParentMemo = await Memo.findOne({
       _id: parentMemoId,
       user: userId,
-    });
+    }).populate("project", "name");
     if (!specificParentMemo) {
       return res
         .status(404)
@@ -136,6 +142,7 @@ exports.createMemo = [
     .optional({ nullable: true, checkFalsy: true })
     .isMongoId()
     .withMessage("ParentId must be a valid MongoDB ObjectId."),
+  body("project").optional({ checkFalsy: true }).isMongoId(),
 
   // Controller logic
   asyncHandler(async (req, res, next) => {
@@ -212,7 +219,7 @@ exports.updateMemo = asyncHandler(async (req, res, next) => {
       new: true,
       runValidators: true,
     });
-    
+
     if (!updatedMemo) {
       return res.status(404).json({ message: "Updated memo not found" });
     }
