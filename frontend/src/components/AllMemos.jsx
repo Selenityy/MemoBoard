@@ -207,7 +207,11 @@ const AllMemos = () => {
     } else {
       try {
         await dispatch(
-          createMemo({ body: newSubMemoText, parentId: memo._id })
+          createMemo({
+            body: newSubMemoText,
+            parentId: memo._id,
+            project: memo.project._id,
+          })
         );
         await dispatch(fetchAllMemos());
         const res = await dispatch(fetchChildrenMemos(memo._id)).unwrap();
