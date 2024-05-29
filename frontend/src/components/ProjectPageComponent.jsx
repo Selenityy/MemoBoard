@@ -5,6 +5,7 @@ import { Row, Col, Button } from "react-bootstrap";
 import ContentEditable from "react-contenteditable";
 import uniqid from "uniqid";
 import "../styles/main.scss";
+import MemoModal from "./MemoModal";
 
 const ProjectPageComponent = ({ project }) => {
   const projectMemoArray = project.memos;
@@ -115,6 +116,9 @@ const ProjectPageComponent = ({ project }) => {
         ))}
         <Col xs={3}>
           <Button onClick={onAddSectionClick}>+ Add Section</Button>
+        </Col>
+        <Col>
+          <MemoModal project={project} />
         </Col>
       </Row>
     </div>
