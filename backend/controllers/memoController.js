@@ -199,7 +199,7 @@ exports.updateMemo = asyncHandler(async (req, res, next) => {
   const memoId = req.params.memoId;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   const { project, ...updateFields } = req.body;
-
+  
   try {
     // const updatedMemo = await Memo.findOneAndUpdate(
     //   { _id: memoId, user: userId },
