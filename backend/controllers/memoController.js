@@ -167,6 +167,14 @@ exports.createMemo = [
       project,
     } = req.body;
     try {
+      let parentProject = project;
+      if (!parentProject && parentId) {
+        const parentMemo = await Memo.findById(parentId);
+        if (parentMemo && parentMemo.project) {
+          parentProject = parentMemo.project;
+        }
+      }
+
       const newMemo = new Memo({
         body,
         user: userId,
@@ -176,9 +184,16 @@ exports.createMemo = [
         priority,
         notes,
         parentId,
-        project,
+        project: parentProject,
       });
       await newMemo.save();
+
+      if (parentProject) {
+        await Project.findByIdAndUpdate(parentProject, {
+          $push: { memos: newMemo._id },
+        });
+      }
+
       await Project.findByIdAndUpdate(project, {
         $push: { memos: newMemo._id },
       });
@@ -199,7 +214,7 @@ exports.updateMemo = asyncHandler(async (req, res, next) => {
   const memoId = req.params.memoId;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   const { project, ...updateFields } = req.body;
-  
+
   try {
     // const updatedMemo = await Memo.findOneAndUpdate(
     //   { _id: memoId, user: userId },
