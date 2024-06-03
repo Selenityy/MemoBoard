@@ -7,7 +7,9 @@ const { body, validationResult } = require("express-validator");
 exports.getAllMemos = asyncHandler(async (req, res, next) => {
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   try {
-    const memos = await Memo.find({ user: userId }).populate("project", "name");
+    const memos = await Memo.find({ user: userId })
+      .populate("project", "name")
+      .populate("parentId");
     if (!memos) {
       return res.status(404).json({ message: "All memos not found" });
     }
@@ -55,10 +57,29 @@ exports.getAllChildrenMemosOfAParentMemo = asyncHandler(
     const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
 
     try {
-      const childMemos = await Memo.find({ parentId, user: userId }).populate(
-        "project",
-        "name"
-      );
+      const childMemos = await Memo.find({ parentId, user: userId })
+        .populate({
+          path: "parentId",
+          model: "Memo",
+          populate: [
+            {
+              path: "parentId",
+              model: "Memo",
+              populate: [
+                { path: "parentId", model: "Memo" },
+                { path: "project", model: "Project" },
+              ],
+            },
+            {
+              path: "project",
+              model: "Project",
+            },
+          ],
+        })
+        .populate({
+          path: "project",
+          model: "Project",
+        });
       if (!childMemos) {
         return res.status(404).json({ message: "Child memo not found" });
       }
