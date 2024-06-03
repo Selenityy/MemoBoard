@@ -6,6 +6,7 @@ import ContentEditable from "react-contenteditable";
 import uniqid from "uniqid";
 import "../styles/main.scss";
 import MemoListing from "./MemoListing";
+import MemosListed from "./MemosListed";
 
 const ProjectPageComponent = ({ project }) => {
   const projectMemoArray = project.memos;
@@ -118,7 +119,7 @@ const ProjectPageComponent = ({ project }) => {
           <Button onClick={onAddSectionClick}>+ Add Section</Button>
         </Col>
         <Col>
-          <MemoListing project={project} />
+          <MemosListed project={project} />
         </Col>
       </Row>
     </div>
