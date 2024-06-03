@@ -32,11 +32,18 @@ const allProjects = createSelector(
   }
 );
 
-const MemosListed = ({ project }) => {
+const MemosListed = ({
+  project,
+  setProjectMemos,
+  projectMemos,
+  setMemoProjects,
+  memoProjects,
+}) => {
+  console.log("passed memo projects:", memoProjects);
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const projectId = project._id;
-  const [projectMemos, setProjectMemos] = useState([]);
+  //   const [projectMemos, setProjectMemos] = useState([]);
 
   const submemoRef = useRef(null);
   const calendarRefs = useRef({});
@@ -50,7 +57,7 @@ const MemosListed = ({ project }) => {
   const [memoDueDate, setMemoDueDate] = useState();
   const [memoNotes, setMemoNotes] = useState("");
   const [memoProgress, setMemoProgress] = useState("");
-  const [memoProjects, setMemoProjects] = useState([]);
+  //   const [memoProjects, setMemoProjects] = useState([]);
   const [memoParentId, setMemoParentId] = useState("");
 
   const [showEllipsis, setShowEllipsis] = useState(false);
@@ -72,6 +79,8 @@ const MemosListed = ({ project }) => {
   ];
   const [projectOptions, setProjectOptions] = useState([]);
 
+  console.log("selected memo:", selectedMemo);
+
   //   useEffect(() => {
   //     dispatch(fetchMemos());
   //   }, [dispatch]);
@@ -86,22 +95,22 @@ const MemosListed = ({ project }) => {
   }, [projects]);
 
   // grab all memos for the specific project
-  useEffect(() => {
-    const getProjectParentMemos = async () => {
-      try {
-        const memos = await dispatch(fetchMemos()).unwrap();
-        const filteredMemos = memos.filter(
-          (memo) => memo.project && memo.project._id === projectId
-        );
-        setProjectMemos(filteredMemos);
-        setMemoProjects(project);
-        // setProjectOptions(projects);
-      } catch (error) {
-        console.error("Error getting a project's parent memos:", error);
-      }
-    };
-    getProjectParentMemos();
-  }, [dispatch, projectId]);
+  //   useEffect(() => {
+  //     const getProjectParentMemos = async () => {
+  //       try {
+  //         const memos = await dispatch(fetchMemos()).unwrap();
+  //         const filteredMemos = memos.filter(
+  //           (memo) => memo.project && memo.project._id === projectId
+  //         );
+  //         setProjectMemos(filteredMemos);
+  //         setMemoProjects(project);
+  //         // setProjectOptions(projects);
+  //       } catch (error) {
+  //         console.error("Error getting a project's parent memos:", error);
+  //       }
+  //     };
+  //     getProjectParentMemos();
+  //   }, [dispatch, projectId]);
 
   //MODAL TOGGLE
   const toggleMemoModal = async (memo) => {
