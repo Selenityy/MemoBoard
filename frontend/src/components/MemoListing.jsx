@@ -75,7 +75,7 @@ const MemoListing = ({ project }) => {
   }, [dispatch, projectId]);
 
   //MODAL TOGGLE
-  const toggleMemoModal = async (memo, project) => {
+  const handleMemoSelect = async (memo) => {
     setSelectedMemo(memo);
   };
 
@@ -87,7 +87,6 @@ const MemoListing = ({ project }) => {
 
   const handleClose = () => {
     setShowMemoModal(false);
-    // setShowBigCalendar(false);
     setSelectedMemo(null);
   };
 
@@ -215,7 +214,7 @@ const MemoListing = ({ project }) => {
                 justifyContent: "space-between",
               }}
             >
-              <li onClick={() => toggleMemoModal(memo)}>{memo.body}</li>
+              <li onClick={() => handleMemoSelect(memo)}>{memo.body}</li>
               {memo.dueDateTime && (
                 <li
                   onClick={(e) => {
