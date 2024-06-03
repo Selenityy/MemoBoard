@@ -8,7 +8,11 @@ exports.getAllMemos = asyncHandler(async (req, res, next) => {
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   try {
     const memos = await Memo.find({ user: userId })
-      .populate("project", "name")
+      .populate({
+        path: "project",
+        model: "Project",
+        select: "name description user memos color _id",
+      })
       .populate("parentId");
     if (!memos) {
       return res.status(404).json({ message: "All memos not found" });
@@ -31,7 +35,11 @@ exports.getAllParentMemos = asyncHandler(async (req, res, next) => {
     const parentMemos = await Memo.find({
       user: userId,
       parentId: null,
-    }).populate("project", "name");
+    }).populate({
+      path: "project",
+      model: "Project",
+      select: "name description user memos color _id",
+    });
     if (!parentMemos) {
       return res.status(404).json({ message: "All parent memos not found" });
     }
@@ -67,18 +75,24 @@ exports.getAllChildrenMemosOfAParentMemo = asyncHandler(
               model: "Memo",
               populate: [
                 { path: "parentId", model: "Memo" },
-                { path: "project", model: "Project" },
+                {
+                  path: "project",
+                  model: "Project",
+                  select: "name description user memos color _id",
+                },
               ],
             },
             {
               path: "project",
               model: "Project",
+              select: "name description user memos color _id",
             },
           ],
         })
         .populate({
           path: "project",
           model: "Project",
+          select: "name description user memos color _id",
         });
       if (!childMemos) {
         return res.status(404).json({ message: "Child memo not found" });
@@ -108,7 +122,11 @@ exports.getSpecifictParentMemo = asyncHandler(async (req, res, next) => {
     const specificParentMemo = await Memo.findOne({
       _id: parentMemoId,
       user: userId,
-    }).populate("project", "name");
+    }).populate({
+      path: "project",
+      model: "Project",
+      select: "name description user memos color _id",
+    });
     if (!specificParentMemo) {
       return res
         .status(404)
