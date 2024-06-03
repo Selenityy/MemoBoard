@@ -50,6 +50,7 @@ const MemosListed = ({ project }) => {
   const [memoNotes, setMemoNotes] = useState("");
   const [memoProgress, setMemoProgress] = useState("");
   const [memoProjects, setMemoProjects] = useState([]);
+  const [memoParentId, setMemoParentId] = useState("");
 
   const [showEllipsis, setShowEllipsis] = useState(false);
 
@@ -69,9 +70,6 @@ const MemosListed = ({ project }) => {
     { value: "Cancelled", label: "Cancelled" },
   ];
   const [projectOptions, setProjectOptions] = useState([]);
-
-  console.log("selected memo:", selectedMemo);
-  console.log("selected memo project:", memoProjects);
 
   //   useEffect(() => {
   //     dispatch(fetchMemos());
@@ -106,17 +104,15 @@ const MemosListed = ({ project }) => {
 
   //MODAL TOGGLE
   const toggleMemoModal = async (memo) => {
-    // debugger;
-    console.log("Opening modal for memo:", memo);
     setSelectedMemo(memo);
     setMemoBody(memo.body);
     setMemoNotes(memo.notes || "");
     setMemoDueDate(memo.dueDateTime || "");
+    setMemoParentId(memo.parentId || "");
 
     const foundProgress = options.find(
       (option) => option.value === memo.progress
     );
-    console.log("found progress:", foundProgress);
     setMemoProgress(foundProgress || options[0]);
 
     // setMemoProgress(options.find((option) => option.value === memo.progress));
@@ -320,7 +316,6 @@ const MemosListed = ({ project }) => {
       ...selectedMemo,
       progress: selectedOption[0].value,
     };
-    console.log("update progress func:", updatedMemo);
     setMemoProgress({
       value: selectedOption[0].value,
       label: selectedOption[0].label,
@@ -550,6 +545,18 @@ const MemosListed = ({ project }) => {
           </Modal.Header>
           <Modal.Body>
             <Container>
+              <Row>
+                <Col>
+                  {selectedMemo.parentId && (
+                    <div
+                      onClick={() => toggleMemoModal(selectedMemo.parentId)}
+                      style={{ color: "black" }}
+                    >
+                      {selectedMemo.parentId.body}
+                    </div>
+                  )}
+                </Col>
+              </Row>
               <Row>
                 <Col>
                   <textarea
