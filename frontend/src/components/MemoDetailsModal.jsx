@@ -1,23 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
 import { Row, Col, Container } from "react-bootstrap";
-import { MdCheckBoxOutlineBlank } from "react-icons/md";
-import { MdCheckBox } from "react-icons/md";
-import { createSelector } from "reselect";
-import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "@/context/ThemeContext";
-import {
-  fetchAllMemos,
-  fetchMemo,
-  fetchChildrenMemos,
-  updateMemo,
-  createMemo,
-  deleteMemo,
-  fetchMemos,
-} from "@/redux/features/memoSlice";
-import { format, parseISO, isToday, isPast, compareAsc } from "date-fns";
-import { IoMdAdd } from "react-icons/io";
+import { format, parseISO, isToday } from "date-fns";
 import Calendar from "react-calendar";
 import { CiCalendar } from "react-icons/ci";
 import "react-calendar/dist/Calendar.css";
@@ -57,7 +42,6 @@ const MemoDetailsModal = ({
   submemos,
   createSubMemoClick,
 }) => {
-  // holds just the modal part
   return (
     <div>
       <Modal
