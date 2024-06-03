@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Row, Col, Container } from "react-bootstrap";
+import { Row, Col, Container, Button } from "react-bootstrap";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
 import { MdCheckBox } from "react-icons/md";
 import { createSelector } from "reselect";
@@ -28,10 +28,29 @@ const MemoModal = (props) => {
   const calendarRefs = useRef({});
   const submemoRef = useRef(null);
 
-  const [memoNotes, setMemoNotes] = useState("");
-  const [memoProgress, setMemoProgress] = useState("");
-  const [memoProjects, setMemoProjects] = useState([]);
+  const [memo, setMemo] = useState(props.memo);
+  const [memoBody, setMemoBody] = useState(props.memo.body);
+  const [memoNotes, setMemoNotes] = useState(props.memo.notes);
+  const [memoProgress, setMemoProgress] = useState(props.memo.progress);
+  const [memoProjects, setMemoProjects] = useState(props.memo.project);
   const [submemos, setSubmemos] = useState([]);
+
+  console.log(
+    "memo:",
+    memo,
+    "body:",
+    memoBody
+    // "notes:",
+    // memoNotes,
+    // "progress:",
+    // memoProgress,
+    // "project:",
+    // memoProjects,
+    // "submemos:",
+    // submemos
+  );
+
+  // const [submemos, setSubmemos] = useState([]);
   const [newSubMemoLine, setNewSubMemoLine] = useState(false);
   const [newSubMemoText, setNewSubMemoText] = useState("");
 
@@ -46,6 +65,10 @@ const MemoModal = (props) => {
     { value: "Cancelled", label: "Cancelled" },
   ];
   const [projectOptions, setProjectOptions] = useState([]);
+
+  // useEffect(() => {
+  //   setMemoBody(memo.body);
+  // }, [memo]);
 
   // USE EFFECTS
   useEffect(() => {
@@ -75,23 +98,22 @@ const MemoModal = (props) => {
       }
     };
     fetchSubMemos();
-  }, []);
+  }, [dispatch]);
 
   // UPDATES
-  const updateMemoBody = async (memoBody) => {
-    const updatedMemo = { ...props.memo, body: memoBody };
-    try {
-      await dispatch(
-        updateMemo({ formData: updatedMemo, memoId: props.memo._id })
-      );
-      dispatch(fetchAllMemos());
-      //   setSelectedMemo((prevMemo) => ({
-      //     ...prevMemo,
-      //     body: memoBody,
-      //   }));
-    } catch (error) {
-      console.error("Error updating memo body:", error);
-    }
+  const updateMemoBody = async (e) => {
+    console.log(e);
+    setMemoBody(e);
+    setMemo((memo) => ({ ...memo, body: memoBody }));
+    // setMemo({ ...memo, body: memoBody });
+    // const updatedMemo = { ...memo, body: memoBody };
+    // try {
+    //   await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
+    //   // dispatch(fetchAllMemos());
+    //   // setMemoBody(updatedMemo);
+    // } catch (error) {
+    //   console.error("Error updating memo body:", error);
+    // }
   };
 
   const toggleMemoProgress = async (memo, memoId) => {
@@ -275,6 +297,11 @@ const MemoModal = (props) => {
     }));
   };
 
+  const handleSave = () => {
+    dispatch(updateMemo({ formData: memo, memoId: memo._id }));
+    props.onHide();
+  };
+
   return (
     <Modal
       {...props}
@@ -347,7 +374,7 @@ const MemoModal = (props) => {
                   padding: "10px",
                   border: "none",
                 }}
-                value={props.memo.body}
+                value={memoBody}
                 onChange={(e) => updateMemoBody(e.target.value)}
               />
             </Col>
@@ -456,7 +483,7 @@ const MemoModal = (props) => {
             <Col>
               <div style={{ color: "black" }}>Descriptions</div>
             </Col>
-            {/* <Col>
+            <Col>
               <textarea
                 style={{ color: "black" }}
                 placeholder="What is this memo about?"
@@ -469,7 +496,7 @@ const MemoModal = (props) => {
                   }
                 }}
               ></textarea>
-            </Col> */}
+            </Col>
           </Row>
           <Row>
             {/* <Col>
@@ -563,6 +590,13 @@ const MemoModal = (props) => {
           </Row>
         </Container>
       </Modal.Body>
+      <Modal.Footer>
+        <Row>
+          <Col>
+            <Button onClick={() => handleSave(memo)}>Save</Button>
+          </Col>
+        </Row>
+      </Modal.Footer>
     </Modal>
   );
 };
