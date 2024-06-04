@@ -138,10 +138,21 @@ const ProjectPageSections = ({ project }) => {
     localStorage.setItem("sections", JSON.stringify(sections));
   }, [sections]);
 
-  const handleNameChange = (id) => {
-    const newName = sectionRefs.current[id].current.innerHTML;
-    setSections(
-      sections.map((section) =>
+  //   const handleNameChange = (id) => {
+  //     console.log("section id:", id);
+  //     const newName = sectionRefs.current[id].current.innerHTML;
+  //     console.log("new name:", newName);
+  //     setSections(
+  //       sections.map((section) =>
+  //         section.id === id ? { ...section, name: newName } : section
+  //       )
+  //     );
+  //   };
+
+  const handleSectionNameChange = (id, e) => {
+    const newName = e.target.value;
+    setSections((prevSections) =>
+      prevSections.map((section) =>
         section.id === id ? { ...section, name: newName } : section
       )
     );
@@ -593,7 +604,7 @@ const ProjectPageSections = ({ project }) => {
                   <ContentEditable
                     innerRef={sectionRefs.current[section.id]}
                     html={section.name}
-                    onBlur={() => handleNameChange(section.id)}
+                    onChange={(e) => handleSectionNameChange(section.id, e)}
                     tagName="div"
                     className="section-names"
                   />
