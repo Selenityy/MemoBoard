@@ -127,15 +127,23 @@ const ProjectPageSections = ({ project }) => {
       setSections((currentSections) => {
         return currentSections.map((section, index) => {
           if (index === 0) {
-            // Assuming the first section is where new memos should be added
-            const existingMemos = new Map(
-              section.memos.map((memo) => [memo.id, memo])
-            ); // Map of existing memos by id
-            const updatedMemos = [...section.memos];
+            // Assuming the first section is where updates should be reflected
+            const updatedMemosMap = new Map(
+              projectMemos.map((memo) => [memo.id, memo])
+            );
 
-            // Add only new memos that aren't already in the existing memos
+            // Create an updated memos array by either updating existing memos or adding new ones
+            const updatedMemos = section.memos.map((memo) =>
+              updatedMemosMap.has(memo.id) ? updatedMemosMap.get(memo.id) : memo
+            );
+
+            // Check for any new memos that aren't already in the section
             projectMemos.forEach((memo) => {
-              if (!existingMemos.has(memo.id)) {
+              if (
+                !section.memos.some(
+                  (existingMemo) => existingMemo.id === memo.id
+                )
+              ) {
                 updatedMemos.push(memo);
               }
             });
