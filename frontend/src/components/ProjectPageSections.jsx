@@ -114,6 +114,7 @@ const ProjectPageSections = ({ project }) => {
   };
 
   const [sections, setSections] = useState(getInitialSections);
+  console.log("sections changed:", sections);
   const sectionRefs = useRef(
     sections.reduce((acc, section) => {
       acc[section.id] = React.createRef();
@@ -126,8 +127,20 @@ const ProjectPageSections = ({ project }) => {
       setSections((currentSections) => {
         return currentSections.map((section, index) => {
           if (index === 0) {
-            // Assuming first section is the default one to populate
-            return { ...section, memos: projectMemos };
+            // Assuming the first section is where new memos should be added
+            const existingMemos = new Map(
+              section.memos.map((memo) => [memo.id, memo])
+            ); // Map of existing memos by id
+            const updatedMemos = [...section.memos];
+
+            // Add only new memos that aren't already in the existing memos
+            projectMemos.forEach((memo) => {
+              if (!existingMemos.has(memo.id)) {
+                updatedMemos.push(memo);
+              }
+            });
+
+            return { ...section, memos: updatedMemos };
           }
           return section;
         });
@@ -571,32 +584,44 @@ const ProjectPageSections = ({ project }) => {
       return;
     }
 
-    const section = sections[result.source.index];
-    if (!section) {
-      console.error("Section not found at index:", result.source.index);
-      return;
-    }
-    const draggableMemoObject = section.memos.find(
-      (memo) => memo.id === draggableId
+    const section = sections.find(
+      (section) =>
+        section.id === result.source.droppableId &&
+        result.destination.droppableId
     );
-    if (!draggableMemoObject) {
-      console.error("Draggable memo object not found:", draggableId);
+    console.log("section targetted:", section);
+
+    const sectionMemos = section.memos;
+    console.log("section memos:", sectionMemos);
+
+    const targetedMemo = sectionMemos[result.source.index];
+    console.log("targeted memo:", targetedMemo);
+    if (!targetedMemo) {
+      console.error("Targeted memo not found:", result.source.index);
       return;
     }
 
     // move memo id from old index to new index
-    const newMemoIds = Array.from(section.memos);
+    const newMemoIds = Array.from(sectionMemos);
     newMemoIds.splice(source.index, 1);
-    newMemoIds.splice(destination.index, 0, draggableMemoObject);
+    newMemoIds.splice(destination.index, 0, targetedMemo);
 
-    // update sections array
-    const newSections = sections.map((s, idx) =>
-      idx === result.source.index ? { ...s, memos: newMemoIds } : s
-    );
+    // create a new section with the same memo properties as the old one but with new memo array
+    const newSection = {
+      ...section,
+      memos: newMemoIds,
+    };
+    console.log("new section:", newSection);
+
+    const updateSections = (sections, newSection) => {
+      return sections.map((section) =>
+        section.id === newSection.id ? newSection : section
+      );
+    };
+    console.log("updated sectinos:", updateSections);
 
     // Update state
-    setSections(newSections);
-    localStorage.setItem("sections", JSON.stringify(newSections));
+    setSections((prevSections) => updateSections(prevSections, newSection));
   };
 
   return (
@@ -789,70 +814,6 @@ const ProjectPageSections = ({ project }) => {
           </Row>
         </div>
       </DragDropContext>
-      {/* <ul>
-        {projectMemos.map((memo) => (
-          <li
-            key={memo._id}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              width: "100%",
-            }}
-          >
-            <MdCheckBoxOutlineBlank
-              onClick={() => checkboxToggle(memo, memo._id)}
-            />
-            <ul
-              style={{
-                flex: 1,
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <li onClick={() => toggleMemoModal(memo)}>{memo.body}</li>
-              {memo.dueDateTime && (
-                <li
-                  onClick={(e) => {
-                    e.preventDefault();
-                    toggleCalendar(memo._id);
-                  }}
-                  style={{ color: "grey" }}
-                >
-                  {format(parseISO(memo.dueDateTime), "MMM d")}
-                </li>
-              )}
-            </ul>
-            <div
-              ref={(el) => (calendarRefs.current[memo._id] = el)}
-              style={{ position: "relative" }}
-            >
-              {!memo.dueDateTime && (
-                <CiCalendar onClick={() => toggleCalendar(memo._id)} />
-              )}
-              {showCalendar[memo._id] && (
-                <div
-                  style={{
-                    position: "absolute",
-                    zIndex: 1000,
-                    top: "100%",
-                    left: 0,
-                  }}
-                >
-                  <Calendar
-                    onChange={(date) => {
-                      changeDueDate(date, memo);
-                      toggleCalendar(memo._id);
-                    }}
-                    value={memo.dueDateTime ? parseISO(memo.dueDateTime) : null}
-                    calendarType={"gregory"}
-                  />
-                </div>
-              )}
-            </div>
-          </li>
-        ))}
-      </ul> */}
     </>
   );
 };
