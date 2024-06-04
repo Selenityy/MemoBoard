@@ -26,6 +26,7 @@ import Select from "react-dropdown-select";
 import MemoDetailsModal from "./MemoDetailsModal";
 import ContentEditable from "react-contenteditable";
 import uniqid from "uniqid";
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 
 const allProjects = createSelector(
   [(state) => state.project.allIds, (state) => state.project.byId],
@@ -558,6 +559,46 @@ const ProjectPageSections = ({ project }) => {
     }
   };
 
+  const onDragEnd = (result) => {
+    const { destination, source, draggableId } = result;
+    console.log("result:", result);
+    // if it was not moved or moved to the same location
+    if (
+      !destination ||
+      (destination.droppableId === source.droppableId &&
+        destination.index === source.index)
+    ) {
+      return;
+    }
+
+    const section = sections[result.source.index];
+    if (!section) {
+      console.error("Section not found at index:", result.source.index);
+      return;
+    }
+    const draggableMemoObject = section.memos.find(
+      (memo) => memo.id === draggableId
+    );
+    if (!draggableMemoObject) {
+      console.error("Draggable memo object not found:", draggableId);
+      return;
+    }
+
+    // move memo id from old index to new index
+    const newMemoIds = Array.from(section.memos);
+    newMemoIds.splice(source.index, 1);
+    newMemoIds.splice(destination.index, 0, draggableMemoObject);
+
+    // update sections array
+    const newSections = sections.map((s, idx) =>
+      idx === result.source.index ? { ...s, memos: newMemoIds } : s
+    );
+
+    // Update state
+    setSections(newSections);
+    localStorage.setItem("sections", JSON.stringify(newSections));
+  };
+
   return (
     <>
       {showMemoModal && selectedMemo && (
@@ -595,121 +636,159 @@ const ProjectPageSections = ({ project }) => {
           createSubMemoClick={createSubMemoClick}
         />
       )}
-      <div className="scrollable-row">
-        <Row className="mt-4 flex-nowrap">
-          {sections.map((section, index) => (
-            <Col key={section.id} xs={3}>
-              <Row className="mb-3">
-                <Col>
-                  <ContentEditable
-                    innerRef={sectionRefs.current[section.id]}
-                    html={section.name}
-                    onChange={(e) => handleSectionNameChange(section.id, e)}
-                    tagName="div"
-                    className="section-names"
-                  />
-                </Col>
-                {index !== 0 && (
-                  <Col xs="auto">
-                    <div onClick={() => onEllipsisClick(section.id)}>...</div>
-                    {ellipsisDropdown === section.id && (
-                      <Row>
-                        <Col>
-                          <div onClick={() => onDeleteSectionClick(section.id)}>
-                            Delete
-                          </div>
-                        </Col>
-                      </Row>
-                    )}
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="scrollable-row">
+          <Row className="mt-4 flex-nowrap">
+            {sections.map((section, index) => (
+              <Col key={section.id} xs={3}>
+                <Row className="mb-3">
+                  <Col>
+                    <ContentEditable
+                      innerRef={sectionRefs.current[section.id]}
+                      html={section.name}
+                      onChange={(e) => handleSectionNameChange(section.id, e)}
+                      tagName="div"
+                      className="section-names"
+                    />
                   </Col>
-                )}
-              </Row>
-              <Row>
-                <Col>
-                  {section.memos.map((memo) => (
-                    <li
-                      key={memo._id}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                        width: "100%",
-                      }}
-                    >
-                      <MdCheckBoxOutlineBlank
-                        onClick={() => checkboxToggle(memo, memo._id)}
-                      />
-                      <ul
-                        style={{
-                          flex: 1,
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <li onClick={() => toggleMemoModal(memo)}>
-                          {memo.body}
-                        </li>
-                        {memo.dueDateTime && (
-                          <li
-                            onClick={(e) => {
-                              e.preventDefault();
-                              toggleCalendar(memo._id);
-                            }}
-                            style={{ color: "grey" }}
-                          >
-                            {format(parseISO(memo.dueDateTime), "MMM d")}
-                          </li>
-                        )}
-                      </ul>
-                      <div
-                        ref={(el) => (calendarRefs.current[memo._id] = el)}
-                        style={{ position: "relative" }}
-                      >
-                        {!memo.dueDateTime && (
-                          <CiCalendar
-                            onClick={() => toggleCalendar(memo._id)}
-                          />
-                        )}
-                        {showCalendar[memo._id] && (
-                          <div
-                            style={{
-                              position: "absolute",
-                              zIndex: 1000,
-                              top: "100%",
-                              left: 0,
-                            }}
-                          >
-                            <Calendar
-                              onChange={(date) => {
-                                changeDueDate(date, memo);
-                                toggleCalendar(memo._id);
-                              }}
-                              value={
-                                memo.dueDateTime
-                                  ? parseISO(memo.dueDateTime)
-                                  : null
-                              }
-                              calendarType={"gregory"}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Button>+ Add Memo</Button>
-                </Col>
-              </Row>
+                  {index !== 0 && (
+                    <Col xs="auto">
+                      <div onClick={() => onEllipsisClick(section.id)}>...</div>
+                      {ellipsisDropdown === section.id && (
+                        <Row>
+                          <Col>
+                            <div
+                              onClick={() => onDeleteSectionClick(section.id)}
+                            >
+                              Delete
+                            </div>
+                          </Col>
+                        </Row>
+                      )}
+                    </Col>
+                  )}
+                </Row>
+                <Row>
+                  <Droppable droppableId={section.id}>
+                    {(provided) => (
+                      <Col>
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                          style={{ minHeight: "100px" }}
+                        >
+                          {section.memos.map((memo, memoIndex) => (
+                            <Draggable
+                              key={memo.id}
+                              draggableId={memo.id}
+                              index={memoIndex}
+                            >
+                              {(provided) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <li
+                                    key={memo._id}
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "10px",
+                                      width: "100%",
+                                    }}
+                                  >
+                                    <MdCheckBoxOutlineBlank
+                                      onClick={() =>
+                                        checkboxToggle(memo, memo._id)
+                                      }
+                                    />
+                                    <ul
+                                      style={{
+                                        flex: 1,
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <li onClick={() => toggleMemoModal(memo)}>
+                                        {memo.body}
+                                      </li>
+                                      {memo.dueDateTime && (
+                                        <li
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            toggleCalendar(memo._id);
+                                          }}
+                                          style={{ color: "grey" }}
+                                        >
+                                          {format(
+                                            parseISO(memo.dueDateTime),
+                                            "MMM d"
+                                          )}
+                                        </li>
+                                      )}
+                                    </ul>
+                                    <div
+                                      ref={(el) =>
+                                        (calendarRefs.current[memo._id] = el)
+                                      }
+                                      style={{ position: "relative" }}
+                                    >
+                                      {!memo.dueDateTime && (
+                                        <CiCalendar
+                                          onClick={() =>
+                                            toggleCalendar(memo._id)
+                                          }
+                                        />
+                                      )}
+                                      {showCalendar[memo._id] && (
+                                        <div
+                                          style={{
+                                            position: "absolute",
+                                            zIndex: 1000,
+                                            top: "100%",
+                                            left: 0,
+                                          }}
+                                        >
+                                          <Calendar
+                                            onChange={(date) => {
+                                              changeDueDate(date, memo);
+                                              toggleCalendar(memo._id);
+                                            }}
+                                            value={
+                                              memo.dueDateTime
+                                                ? parseISO(memo.dueDateTime)
+                                                : null
+                                            }
+                                            calendarType={"gregory"}
+                                          />
+                                        </div>
+                                      )}
+                                    </div>
+                                  </li>
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      </Col>
+                    )}
+                  </Droppable>
+                </Row>
+                <Row>
+                  <Col>
+                    <Button>+ Add Memo</Button>
+                  </Col>
+                </Row>
+              </Col>
+            ))}
+            <Col xs={3}>
+              <Button onClick={onAddSectionClick}>+ Add Section</Button>
             </Col>
-          ))}
-          <Col xs={3}>
-            <Button onClick={onAddSectionClick}>+ Add Section</Button>
-          </Col>
-        </Row>
-      </div>
+          </Row>
+        </div>
+      </DragDropContext>
       {/* <ul>
         {projectMemos.map((memo) => (
           <li
