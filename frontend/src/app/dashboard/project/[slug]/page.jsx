@@ -8,6 +8,7 @@ import { createSelector } from "reselect";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchProject, fetchProjects } from "@/redux/features/projectSlice";
 import ProjectPageComponent from "@/components/ProjectPageComponent";
+import ProjectPageSections from "@/components/ProjectPageSections";
 
 const makeGetProjectByDisplayName = () => {
   return createSelector(
@@ -72,7 +73,8 @@ const ProjectPage = ({ params: { slug } }) => {
           </div>
         </Col>
       </Row>
-      <ProjectPageComponent project={project} />
+      {/* <ProjectPageComponent project={project} /> */}
+      <ProjectPageSections project={project} />
     </>
   );
 };
