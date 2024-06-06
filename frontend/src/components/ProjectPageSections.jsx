@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Row, Col, Button, Container } from "react-bootstrap";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
 import { MdCheckBox } from "react-icons/md";
@@ -115,6 +115,8 @@ const ProjectPageSections = ({ project }) => {
 
   const [sections, setSections] = useState(getInitialSections);
   console.log("sections changed:", sections);
+  console.log("project memos:", projectMemos);
+
   const sectionRefs = useRef(
     sections.reduce((acc, section) => {
       acc[section.id] = React.createRef();
@@ -125,33 +127,35 @@ const ProjectPageSections = ({ project }) => {
   useEffect(() => {
     if (projectMemos.length > 0) {
       setSections((currentSections) => {
-        return currentSections.map((section, index) => {
-          if (index === 0) {
-            // Assuming the first section is where updates should be reflected
-            const updatedMemosMap = new Map(
-              projectMemos.map((memo) => [memo.id, memo])
-            );
+        // Create a map for quick lookup
+        const memoMap = new Map(projectMemos.map((memo) => [memo.id, memo]));
 
-            // Create an updated memos array by either updating existing memos or adding new ones
-            const updatedMemos = section.memos.map((memo) =>
-              updatedMemosMap.has(memo.id) ? updatedMemosMap.get(memo.id) : memo
-            );
+        // Transform all sections
+        const updatedSections = currentSections.map((section) => {
+          const updatedMemos = section.memos.map((memo) =>
+            memoMap.has(memo.id) ? memoMap.get(memo.id) : memo
+          );
 
-            // Check for any new memos that aren't already in the section
-            projectMemos.forEach((memo) => {
-              if (
-                !section.memos.some(
-                  (existingMemo) => existingMemo.id === memo.id
-                )
-              ) {
-                updatedMemos.push(memo);
-              }
-            });
-
-            return { ...section, memos: updatedMemos };
-          }
-          return section;
+          // Filter out memos that are no longer associated with this section
+          return {
+            ...section,
+            memos: updatedMemos.filter((memo) => memoMap.has(memo.id)),
+          };
         });
+
+        // Now handle any memos not already placed in any section
+        projectMemos.forEach((memo) => {
+          const isPlaced = updatedSections.some((section) =>
+            section.memos.some((existingMemo) => existingMemo.id === memo.id)
+          );
+
+          if (!isPlaced) {
+            // For simplicity, add unplaced memos to the first section or a specific "unassigned" section
+            updatedSections[0].memos.push(memo);
+          }
+        });
+
+        return updatedSections;
       });
     }
   }, [projectMemos]);
@@ -200,14 +204,23 @@ const ProjectPageSections = ({ project }) => {
   //     );
   //   };
 
-  const handleSectionNameChange = (id, e) => {
+  //   const handleSectionNameChange = (id, e) => {
+  //     const newName = e.target.value;
+  //     setSections((prevSections) =>
+  //       prevSections.map((section) =>
+  //         section.id === id ? { ...section, name: newName } : section
+  //       )
+  //     );
+  //   };
+
+  const handleSectionNameChange = useCallback((id, e) => {
     const newName = e.target.value;
     setSections((prevSections) =>
       prevSections.map((section) =>
         section.id === id ? { ...section, name: newName } : section
       )
     );
-  };
+  }, []);
 
   const onAddSectionClick = () => {
     const newSection = { id: uniqid(), name: "Section Name", memos: [] };
