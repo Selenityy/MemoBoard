@@ -115,7 +115,6 @@ const ProjectPageSections = ({ project }) => {
 
   const [sections, setSections] = useState(getInitialSections);
   console.log("sections changed:", sections);
-  console.log("project memos:", projectMemos);
 
   const sectionRefs = useRef(
     sections.reduce((acc, section) => {
@@ -160,58 +159,9 @@ const ProjectPageSections = ({ project }) => {
     }
   }, [projectMemos]);
 
-  // potential use effect for multiple columns, test this tomorrow:
-  //   useEffect(() => {
-  //     if (projectMemos.length > 0) {
-  //       setSections((currentSections) => {
-  //         // Create a map of updated memos for quick lookup
-  //         const updatedMemosMap = new Map(projectMemos.map(memo => [memo.id, memo]));
-
-  //         // Transform each section
-  //         return currentSections.map((section, index) => {
-  //           // Update existing memos or keep them if no update is available
-  //           const updatedMemos = section.memos.map(memo =>
-  //             updatedMemosMap.has(memo.id) ? updatedMemosMap.get(memo.id) : memo
-  //           );
-
-  //           // Add new memos only to the first section
-  //           if (index === 0) {
-  //             projectMemos.forEach(memo => {
-  //               if (!section.memos.some(existingMemo => existingMemo.id === memo.id)) {
-  //                 updatedMemos.push(memo);
-  //               }
-  //             });
-  //           }
-
-  //           return { ...section, memos: updatedMemos };
-  //         });
-  //       });
-  //     }
-  //   }, [projectMemos]);
-
   useEffect(() => {
     localStorage.setItem("sections", JSON.stringify(sections));
   }, [sections]);
-
-  //   const handleNameChange = (id) => {
-  //     console.log("section id:", id);
-  //     const newName = sectionRefs.current[id].current.innerHTML;
-  //     console.log("new name:", newName);
-  //     setSections(
-  //       sections.map((section) =>
-  //         section.id === id ? { ...section, name: newName } : section
-  //       )
-  //     );
-  //   };
-
-  //   const handleSectionNameChange = (id, e) => {
-  //     const newName = e.target.value;
-  //     setSections((prevSections) =>
-  //       prevSections.map((section) =>
-  //         section.id === id ? { ...section, name: newName } : section
-  //       )
-  //     );
-  //   };
 
   const handleSectionNameChange = useCallback((id, e) => {
     const newName = e.target.value;
@@ -623,95 +573,112 @@ const ProjectPageSections = ({ project }) => {
   };
 
   const onDragEnd = (result) => {
-    const { destination, source, draggableId } = result;
+    console.log("Before updating state:", sections);
+    const { destination, source, draggableId, type } = result;
     console.log("result:", result);
-    // if it was not moved or moved to the same location
-    if (
-      !destination ||
-      (destination.droppableId === source.droppableId &&
-        destination.index === source.index)
-    ) {
-      return;
+
+    // MOVING SECTIONS/COLUMNS
+    if (type === "COLUMN" && destination) {
+      console.log("inside column reorder");
+      const newColumnOrder = Array.from(sections);
+      const [removed] = newColumnOrder.splice(source.index, 1);
+      newColumnOrder.splice(destination.index, 0, removed);
+      console.log("new column order:", newColumnOrder);
+
+      setSections(newColumnOrder);
     }
 
-    const startSection = sections.find(
-      (section) => section.id === result.source.droppableId
-    );
-    const finishSection = sections.find(
-      (section) => section.id === result.destination.droppableId
-    );
-
-    if (startSection === finishSection) {
-      const sectionMemos = startSection.memos;
-      console.log("section memos:", sectionMemos);
-
-      const targetedMemo = sectionMemos[result.source.index];
-      console.log("targeted memo:", targetedMemo);
-      if (!targetedMemo) {
-        console.error("Targeted memo not found:", result.source.index);
+    // MOVING MEMOS
+    if (type === "MEMO") {
+      // if it was not moved or moved to the same location
+      if (
+        !destination ||
+        (destination.droppableId === source.droppableId &&
+          destination.index === source.index)
+      ) {
         return;
       }
 
-      // move memo id from old index to new index
-      const newMemoIds = Array.from(sectionMemos);
-      newMemoIds.splice(source.index, 1);
-      newMemoIds.splice(destination.index, 0, targetedMemo);
+      const startSection = sections.find(
+        (section) => section.id === result.source.droppableId
+      );
+      const finishSection = sections.find(
+        (section) => section.id === result.destination.droppableId
+      );
 
-      // create a new section with the same memo properties as the old one but with new memo array
-      const newSection = {
+      if (startSection === finishSection) {
+        const sectionMemos = startSection.memos;
+        console.log("section memos:", sectionMemos);
+
+        const targetedMemo = sectionMemos[result.source.index];
+        console.log("targeted memo:", targetedMemo);
+        if (!targetedMemo) {
+          console.error("Targeted memo not found:", result.source.index);
+          return;
+        }
+
+        // move memo id from old index to new index
+        const newMemoIds = Array.from(sectionMemos);
+        newMemoIds.splice(source.index, 1);
+        newMemoIds.splice(destination.index, 0, targetedMemo);
+
+        // create a new section with the same memo properties as the old one but with new memo array
+        const newSection = {
+          ...startSection,
+          memos: newMemoIds,
+        };
+        console.log("new section:", newSection);
+
+        const updateSections = (sections, newSection) => {
+          return sections.map((section) =>
+            section.id === newSection.id ? newSection : section
+          );
+        };
+        console.log("updated sectinos:", updateSections);
+
+        // Update state
+        setSections((prevSections) => updateSections(prevSections, newSection));
+      }
+
+      // moving memo from one section to another
+      const startMemoIds = Array.from(startSection.memos);
+      startMemoIds.splice(source.index, 1);
+      const newStart = {
         ...startSection,
-        memos: newMemoIds,
+        memos: startMemoIds,
       };
-      console.log("new section:", newSection);
+      console.log("new start:", newStart);
 
-      const updateSections = (sections, newSection) => {
-        return sections.map((section) =>
-          section.id === newSection.id ? newSection : section
-        );
+      const finishMemoIds = Array.from(finishSection.memos);
+      const targetedMemo = startSection.memos[result.source.index];
+      finishMemoIds.splice(destination.index, 0, targetedMemo);
+      const newFinish = {
+        ...finishSection,
+        memos: finishMemoIds,
       };
-      console.log("updated sectinos:", updateSections);
+      console.log("new finish:", newFinish);
+
+      const startSectionId = result.source.droppableId;
+      const startSectionIndex = sections.findIndex(
+        (section) => section.id === startSectionId
+      );
+      const finishSectionId = result.destination.droppableId;
+      const finishSectionIndex = sections.findIndex(
+        (section) => section.id === finishSectionId
+      );
+
+      const newSections = sections.map((section, index) => {
+        if (index === startSectionIndex) return newStart;
+        if (index === finishSectionIndex) return newFinish;
+        return section;
+      });
+
+      console.log("new section cols:", newSections);
 
       // Update state
-      setSections((prevSections) => updateSections(prevSections, newSection));
+      setSections(newSections);
     }
-
-    // moving memo from one section to another
-    const startMemoIds = Array.from(startSection.memos);
-    startMemoIds.splice(source.index, 1);
-    const newStart = {
-      ...startSection,
-      memos: startMemoIds,
-    };
-    console.log("new start:", newStart);
-
-    const finishMemoIds = Array.from(finishSection.memos);
-    const targetedMemo = startSection.memos[result.source.index];
-    finishMemoIds.splice(destination.index, 0, targetedMemo);
-    const newFinish = {
-      ...finishSection,
-      memos: finishMemoIds,
-    };
-    console.log("new finish:", newFinish);
-
-    const startSectionId = result.source.droppableId;
-    const startSectionIndex = sections.findIndex(
-      (section) => section.id === startSectionId
-    );
-    const finishSectionId = result.destination.droppableId;
-    const finishSectionIndex = sections.findIndex(
-      (section) => section.id === finishSectionId
-    );
-
-    const newSections = sections.map((section, index) => {
-      if (index === startSectionIndex) return newStart;
-      if (index === finishSectionIndex) return newFinish;
-      return section;
-    });
-
-    console.log("new section cols:", newSections);
-
-    // Update state
-    setSections(newSections);
+    console.log("After updating state:", sections);
   };
 
   return (
@@ -751,158 +718,235 @@ const ProjectPageSections = ({ project }) => {
           createSubMemoClick={createSubMemoClick}
         />
       )}
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="scrollable-row">
-          <Row className="mt-4 flex-nowrap">
-            {sections.map((section, index) => (
-              <Col key={section.id} xs={3}>
-                <Row className="mb-3">
-                  <Col>
-                    <ContentEditable
-                      innerRef={sectionRefs.current[section.id]}
-                      html={section.name}
-                      onChange={(e) => handleSectionNameChange(section.id, e)}
-                      tagName="div"
-                      className="section-names"
-                    />
-                  </Col>
-                  {index !== 0 && (
-                    <Col xs="auto">
-                      <div onClick={() => onEllipsisClick(section.id)}>...</div>
-                      {ellipsisDropdown === section.id && (
-                        <Row>
-                          <Col>
-                            <div
-                              onClick={() => onDeleteSectionClick(section.id)}
-                            >
-                              Delete
-                            </div>
-                          </Col>
-                        </Row>
-                      )}
-                    </Col>
-                  )}
-                </Row>
-                <Row>
-                  <Droppable droppableId={section.id}>
-                    {(provided) => (
-                      <Col>
+      <DragDropContext
+        onDragEnd={onDragEnd}
+        onDragStart={() => console.log("Drag started")}
+        onDragUpdate={() => console.log("Dragging...")}
+      >
+        <Droppable
+          droppableId="all-columns"
+          direction="horizontal"
+          type="COLUMN"
+        >
+          {(provided) => (
+            <div
+              className="scrollable-row"
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              style={{ backgroundColor: "lightblue" }}
+            >
+              <Row className="mt-4 flex-nowrap">
+                {sections.map((section, index) => (
+                  <Col key={section.id} xs={3}>
+                    <Draggable
+                      key={section.id}
+                      draggableId={`${section.id}-${index}`}
+                      index={index}
+                    >
+                      {(provided) => (
                         <div
+                          {...provided.draggableProps}
                           ref={provided.innerRef}
-                          {...provided.droppableProps}
-                          style={{ minHeight: "100px" }}
+                          style={{
+                            backgroundColor: "orange",
+                            border: "1px solid black",
+                          }}
                         >
-                          {section.memos.map((memo, memoIndex) => (
-                            <Draggable
-                              key={memo.id}
-                              draggableId={memo.id}
-                              index={memoIndex}
-                            >
-                              {(provided) => (
+                          <Row className="mb-3">
+                            <Col>
+                              <div
+                                {...provided.dragHandleProps}
+                                style={{
+                                  backgroundColor: "pink",
+                                  border: "1px solid black",
+                                }}
+                              >
+                                Drag Me!
+                              </div>
+                              <ContentEditable
+                                innerRef={sectionRefs.current[section.id]}
+                                html={section.name}
+                                onChange={(e) =>
+                                  handleSectionNameChange(section.id, e)
+                                }
+                                tagName="div"
+                                className="section-names"
+                              />
+                            </Col>
+                            {index !== 0 && (
+                              <Col xs="auto">
                                 <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
+                                  onClick={() => onEllipsisClick(section.id)}
                                 >
-                                  <li
-                                    key={memo._id}
+                                  ...
+                                </div>
+                                {ellipsisDropdown === section.id && (
+                                  <Row>
+                                    <Col>
+                                      <div
+                                        onClick={() =>
+                                          onDeleteSectionClick(section.id)
+                                        }
+                                      >
+                                        Delete
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                )}
+                              </Col>
+                            )}
+                          </Row>
+                          <Row>
+                            <Droppable droppableId={section.id} type="MEMO">
+                              {(provided) => (
+                                <Col>
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.droppableProps}
                                     style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      gap: "10px",
-                                      width: "100%",
+                                      minHeight: "100px",
+                                      backgroundColor: "yellow",
                                     }}
                                   >
-                                    <MdCheckBoxOutlineBlank
-                                      onClick={() =>
-                                        checkboxToggle(memo, memo._id)
-                                      }
-                                    />
-                                    <ul
-                                      style={{
-                                        flex: 1,
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                      }}
-                                    >
-                                      <li onClick={() => toggleMemoModal(memo)}>
-                                        {memo.body}
-                                      </li>
-                                      {memo.dueDateTime && (
-                                        <li
-                                          onClick={(e) => {
-                                            e.preventDefault();
-                                            toggleCalendar(memo._id);
-                                          }}
-                                          style={{ color: "grey" }}
-                                        >
-                                          {format(
-                                            parseISO(memo.dueDateTime),
-                                            "MMM d"
-                                          )}
-                                        </li>
-                                      )}
-                                    </ul>
-                                    <div
-                                      ref={(el) =>
-                                        (calendarRefs.current[memo._id] = el)
-                                      }
-                                      style={{ position: "relative" }}
-                                    >
-                                      {!memo.dueDateTime && (
-                                        <CiCalendar
-                                          onClick={() =>
-                                            toggleCalendar(memo._id)
-                                          }
-                                        />
-                                      )}
-                                      {showCalendar[memo._id] && (
-                                        <div
-                                          style={{
-                                            position: "absolute",
-                                            zIndex: 1000,
-                                            top: "100%",
-                                            left: 0,
-                                          }}
-                                        >
-                                          <Calendar
-                                            onChange={(date) => {
-                                              changeDueDate(date, memo);
-                                              toggleCalendar(memo._id);
+                                    {section.memos.map((memo, memoIndex) => (
+                                      <Draggable
+                                        key={memo.id}
+                                        draggableId={memo.id}
+                                        index={memoIndex}
+                                      >
+                                        {(provided) => (
+                                          <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            style={{
+                                              backgroundColor: "teal",
+                                              width: "max-content",
                                             }}
-                                            value={
-                                              memo.dueDateTime
-                                                ? parseISO(memo.dueDateTime)
-                                                : null
-                                            }
-                                            calendarType={"gregory"}
-                                          />
-                                        </div>
-                                      )}
-                                    </div>
-                                  </li>
-                                </div>
+                                          >
+                                            <li
+                                              key={memo._id}
+                                              style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: "10px",
+                                                width: "100%",
+                                              }}
+                                            >
+                                              <MdCheckBoxOutlineBlank
+                                                onClick={() =>
+                                                  checkboxToggle(memo, memo._id)
+                                                }
+                                              />
+                                              <ul
+                                                style={{
+                                                  flex: 1,
+                                                  display: "flex",
+                                                  justifyContent:
+                                                    "space-between",
+                                                }}
+                                              >
+                                                <li
+                                                  onClick={() =>
+                                                    toggleMemoModal(memo)
+                                                  }
+                                                >
+                                                  {memo.body}
+                                                </li>
+                                                {memo.dueDateTime && (
+                                                  <li
+                                                    onClick={(e) => {
+                                                      e.preventDefault();
+                                                      toggleCalendar(memo._id);
+                                                    }}
+                                                    style={{ color: "grey" }}
+                                                  >
+                                                    {format(
+                                                      parseISO(
+                                                        memo.dueDateTime
+                                                      ),
+                                                      "MMM d"
+                                                    )}
+                                                  </li>
+                                                )}
+                                              </ul>
+                                              <div
+                                                ref={(el) =>
+                                                  (calendarRefs.current[
+                                                    memo._id
+                                                  ] = el)
+                                                }
+                                                style={{
+                                                  position: "relative",
+                                                }}
+                                              >
+                                                {!memo.dueDateTime && (
+                                                  <CiCalendar
+                                                    onClick={() =>
+                                                      toggleCalendar(memo._id)
+                                                    }
+                                                  />
+                                                )}
+                                                {showCalendar[memo._id] && (
+                                                  <div
+                                                    style={{
+                                                      position: "absolute",
+                                                      zIndex: 1000,
+                                                      top: "100%",
+                                                      left: 0,
+                                                    }}
+                                                  >
+                                                    <Calendar
+                                                      onChange={(date) => {
+                                                        changeDueDate(
+                                                          date,
+                                                          memo
+                                                        );
+                                                        toggleCalendar(
+                                                          memo._id
+                                                        );
+                                                      }}
+                                                      value={
+                                                        memo.dueDateTime
+                                                          ? parseISO(
+                                                              memo.dueDateTime
+                                                            )
+                                                          : null
+                                                      }
+                                                      calendarType={"gregory"}
+                                                    />
+                                                  </div>
+                                                )}
+                                              </div>
+                                            </li>
+                                          </div>
+                                        )}
+                                      </Draggable>
+                                    ))}
+                                    {provided.placeholder}
+                                  </div>
+                                </Col>
                               )}
-                            </Draggable>
-                          ))}
-                          {provided.placeholder}
+                            </Droppable>
+                          </Row>
+                          <Row>
+                            <Col>
+                              <Button>+ Add Memo</Button>
+                            </Col>
+                          </Row>
                         </div>
-                      </Col>
-                    )}
-                  </Droppable>
-                </Row>
-                <Row>
-                  <Col>
-                    <Button>+ Add Memo</Button>
+                      )}
+                    </Draggable>
                   </Col>
-                </Row>
-              </Col>
-            ))}
-            <Col xs={3}>
-              <Button onClick={onAddSectionClick}>+ Add Section</Button>
-            </Col>
-          </Row>
-        </div>
+                ))}
+                <Col xs={3}>
+                  <Button onClick={onAddSectionClick}>+ Add Section</Button>
+                </Col>
+              </Row>
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
       </DragDropContext>
     </>
   );
