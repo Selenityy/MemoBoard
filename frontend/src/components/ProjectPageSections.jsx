@@ -156,6 +156,35 @@ const ProjectPageSections = ({ project }) => {
     }
   }, [projectMemos]);
 
+  // potential use effect for multiple columns, test this tomorrow:
+  //   useEffect(() => {
+  //     if (projectMemos.length > 0) {
+  //       setSections((currentSections) => {
+  //         // Create a map of updated memos for quick lookup
+  //         const updatedMemosMap = new Map(projectMemos.map(memo => [memo.id, memo]));
+
+  //         // Transform each section
+  //         return currentSections.map((section, index) => {
+  //           // Update existing memos or keep them if no update is available
+  //           const updatedMemos = section.memos.map(memo =>
+  //             updatedMemosMap.has(memo.id) ? updatedMemosMap.get(memo.id) : memo
+  //           );
+
+  //           // Add new memos only to the first section
+  //           if (index === 0) {
+  //             projectMemos.forEach(memo => {
+  //               if (!section.memos.some(existingMemo => existingMemo.id === memo.id)) {
+  //                 updatedMemos.push(memo);
+  //               }
+  //             });
+  //           }
+
+  //           return { ...section, memos: updatedMemos };
+  //         });
+  //       });
+  //     }
+  //   }, [projectMemos]);
+
   useEffect(() => {
     localStorage.setItem("sections", JSON.stringify(sections));
   }, [sections]);
@@ -592,44 +621,84 @@ const ProjectPageSections = ({ project }) => {
       return;
     }
 
-    const section = sections.find(
-      (section) =>
-        section.id === result.source.droppableId &&
-        result.destination.droppableId
+    const startSection = sections.find(
+      (section) => section.id === result.source.droppableId
     );
-    console.log("section targetted:", section);
+    const finishSection = sections.find(
+      (section) => section.id === result.destination.droppableId
+    );
 
-    const sectionMemos = section.memos;
-    console.log("section memos:", sectionMemos);
+    if (startSection === finishSection) {
+      const sectionMemos = startSection.memos;
+      console.log("section memos:", sectionMemos);
 
-    const targetedMemo = sectionMemos[result.source.index];
-    console.log("targeted memo:", targetedMemo);
-    if (!targetedMemo) {
-      console.error("Targeted memo not found:", result.source.index);
-      return;
+      const targetedMemo = sectionMemos[result.source.index];
+      console.log("targeted memo:", targetedMemo);
+      if (!targetedMemo) {
+        console.error("Targeted memo not found:", result.source.index);
+        return;
+      }
+
+      // move memo id from old index to new index
+      const newMemoIds = Array.from(sectionMemos);
+      newMemoIds.splice(source.index, 1);
+      newMemoIds.splice(destination.index, 0, targetedMemo);
+
+      // create a new section with the same memo properties as the old one but with new memo array
+      const newSection = {
+        ...startSection,
+        memos: newMemoIds,
+      };
+      console.log("new section:", newSection);
+
+      const updateSections = (sections, newSection) => {
+        return sections.map((section) =>
+          section.id === newSection.id ? newSection : section
+        );
+      };
+      console.log("updated sectinos:", updateSections);
+
+      // Update state
+      setSections((prevSections) => updateSections(prevSections, newSection));
     }
 
-    // move memo id from old index to new index
-    const newMemoIds = Array.from(sectionMemos);
-    newMemoIds.splice(source.index, 1);
-    newMemoIds.splice(destination.index, 0, targetedMemo);
-
-    // create a new section with the same memo properties as the old one but with new memo array
-    const newSection = {
-      ...section,
-      memos: newMemoIds,
+    // moving memo from one section to another
+    const startMemoIds = Array.from(startSection.memos);
+    startMemoIds.splice(source.index, 1);
+    const newStart = {
+      ...startSection,
+      memos: startMemoIds,
     };
-    console.log("new section:", newSection);
+    console.log("new start:", newStart);
 
-    const updateSections = (sections, newSection) => {
-      return sections.map((section) =>
-        section.id === newSection.id ? newSection : section
-      );
+    const finishMemoIds = Array.from(finishSection.memos);
+    const targetedMemo = startSection.memos[result.source.index];
+    finishMemoIds.splice(destination.index, 0, targetedMemo);
+    const newFinish = {
+      ...finishSection,
+      memos: finishMemoIds,
     };
-    console.log("updated sectinos:", updateSections);
+    console.log("new finish:", newFinish);
+
+    const startSectionId = result.source.droppableId;
+    const startSectionIndex = sections.findIndex(
+      (section) => section.id === startSectionId
+    );
+    const finishSectionId = result.destination.droppableId;
+    const finishSectionIndex = sections.findIndex(
+      (section) => section.id === finishSectionId
+    );
+
+    const newSections = sections.map((section, index) => {
+      if (index === startSectionIndex) return newStart;
+      if (index === finishSectionIndex) return newFinish;
+      return section;
+    });
+
+    console.log("new section cols:", newSections);
 
     // Update state
-    setSections((prevSections) => updateSections(prevSections, newSection));
+    setSections(newSections);
   };
 
   return (
