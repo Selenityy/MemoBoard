@@ -33,6 +33,7 @@ const DashboardLayout = ({ children }) => {
           className={`w-100% px-4 pt-3 ${
             theme === "dark" ? "body-dark" : "body-light"
           }`}
+          style={{ overflowX: "auto" }}
         >
           {children}
         </Col>
