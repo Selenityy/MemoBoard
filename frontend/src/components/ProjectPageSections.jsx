@@ -27,6 +27,7 @@ import MemoDetailsModal from "./MemoDetailsModal";
 import ContentEditable from "react-contenteditable";
 import uniqid from "uniqid";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
+import NewMemoModal from "./NewMemoModal";
 
 const allProjects = createSelector(
   [(state) => state.project.allIds, (state) => state.project.byId],
@@ -49,6 +50,9 @@ const ProjectPageSections = ({ project }) => {
 
   const [showMemoModal, setShowMemoModal] = useState(false);
   const [selectedMemo, setSelectedMemo] = useState(null);
+
+  const [showNewMemoModal, setShowNewMemoModal] = useState(false);
+
   const [memoBody, setMemoBody] = useState("");
   const [memoDueDate, setMemoDueDate] = useState();
   const [memoNotes, setMemoNotes] = useState("");
@@ -74,6 +78,15 @@ const ProjectPageSections = ({ project }) => {
     { value: "Cancelled", label: "Cancelled" },
   ];
   const [projectOptions, setProjectOptions] = useState([]);
+
+  const [newMemoTemplate, setNewMemoTemplate] = useState({
+    body: "",
+    dueDateTime: null,
+    notes: "",
+    progress: "Not Started",
+    project: null,
+    parentId: null,
+  });
 
   // set all the ongoing projects as the options for the dropdown
   useEffect(() => {
@@ -114,7 +127,6 @@ const ProjectPageSections = ({ project }) => {
   };
 
   const [sections, setSections] = useState(getInitialSections);
-  console.log("sections changed:", sections);
 
   const sectionRefs = useRef(
     sections.reduce((acc, section) => {
@@ -158,35 +170,6 @@ const ProjectPageSections = ({ project }) => {
       });
     }
   }, [projectMemos]);
-
-  // potential use effect for multiple columns, test this tomorrow:
-  //   useEffect(() => {
-  //     if (projectMemos.length > 0) {
-  //       setSections((currentSections) => {
-  //         // Create a map of updated memos for quick lookup
-  //         const updatedMemosMap = new Map(projectMemos.map(memo => [memo.id, memo]));
-
-  //         // Transform each section
-  //         return currentSections.map((section, index) => {
-  //           // Update existing memos or keep them if no update is available
-  //           const updatedMemos = section.memos.map(memo =>
-  //             updatedMemosMap.has(memo.id) ? updatedMemosMap.get(memo.id) : memo
-  //           );
-
-  //           // Add new memos only to the first section
-  //           if (index === 0) {
-  //             projectMemos.forEach(memo => {
-  //               if (!section.memos.some(existingMemo => existingMemo.id === memo.id)) {
-  //                 updatedMemos.push(memo);
-  //               }
-  //             });
-  //           }
-
-  //           return { ...section, memos: updatedMemos };
-  //         });
-  //       });
-  //     }
-  //   }, [projectMemos]);
 
   useEffect(() => {
     localStorage.setItem("sections", JSON.stringify(sections));
@@ -248,7 +231,7 @@ const ProjectPageSections = ({ project }) => {
   //MODAL TOGGLE
   const toggleMemoModal = async (memo) => {
     setSelectedMemo(memo);
-    setMemoBody(memo.body);
+    setMemoBody(memo.body || "");
     setMemoNotes(memo.notes || "");
     setMemoDueDate(memo.dueDateTime || "");
     setMemoParentId(memo.parentId || "");
@@ -258,7 +241,6 @@ const ProjectPageSections = ({ project }) => {
     );
     setMemoProgress(foundProgress || options[0]);
 
-    // setMemoProgress(options.find((option) => option.value === memo.progress));
     setMemoProjects(
       memo.project
         ? [{ value: memo.project._id, label: memo.project.name }]
@@ -272,6 +254,33 @@ const ProjectPageSections = ({ project }) => {
       setSubmemos(res.children || []);
     } catch (error) {
       console.error("Error fetching children memos:", error);
+    }
+  };
+
+  const toggleNewMemoModal = async (newMemoTemplate) => {
+    setSelectedMemo(newMemoTemplate);
+    setMemoBody(newMemoTemplate.body || "");
+    setMemoNotes(newMemoTemplate.notes || "");
+    setMemoDueDate(newMemoTemplate.dueDateTime || "");
+    setMemoParentId(newMemoTemplate.parentId || "");
+
+    const foundProgress = options.find(
+      (option) => option.value === newMemoTemplate.progress
+    );
+    setMemoProgress(foundProgress || options[0]);
+
+    setMemoProjects(
+      newMemoTemplate.project
+        ? [
+            {
+              value: newMemoTemplate.project._id,
+              label: newMemoTemplate.project.name,
+            },
+          ]
+        : []
+    );
+    if (showNewMemoModal === false) {
+      setShowNewMemoModal(true);
     }
   };
 
@@ -602,8 +611,46 @@ const ProjectPageSections = ({ project }) => {
 
   //MEMO CRUD
   const handleAddClick = () => {
-    setNewMemoLine(true);
-    setNewMemoText("");
+    toggleNewMemoModal(newMemoTemplate);
+  };
+
+  const handleNewMemoSave = async () => {
+    // use the section it was clicked in as well
+    const projectId = projects.find(
+      (project) => project.name === memoProjects[0].label
+    );
+    try {
+      const newMemo = await dispatch(
+        createMemo({
+          body: memoBody,
+          dueDateTime: memoDueDate,
+          notes: memoNotes,
+          progress: memoProgress.label,
+          project: projectId._id,
+          parentId: memoParentId || null,
+        })
+      ).unwrap();
+      const adjustedMemo = {
+        ...newMemo,
+        id: newMemo._id,
+        project: {
+          // Standardize the project field format
+          _id: newMemo.project,
+          name: memoProjects[0].label,
+        },
+      };
+      console.log("adjusted Memo:", adjustedMemo);
+      setProjectMemos((prevMemos) => {
+        const updatedMemos = [...prevMemos, adjustedMemo];
+        console.log("Updated memos:", updatedMemos);
+        return updatedMemos;
+      });
+      setShowNewMemoModal(false);
+      setShowBigCalendar(false);
+      setSelectedMemo(null);
+    } catch (error) {
+      console.error("Error creating memo:", error);
+    }
   };
 
   const clickEllipsis = () => {
@@ -686,6 +733,43 @@ const ProjectPageSections = ({ project }) => {
 
   return (
     <>
+      {showNewMemoModal && selectedMemo && (
+        <NewMemoModal
+          selectedMemo={selectedMemo}
+          showNewMemoModal={showNewMemoModal}
+          handleClose={handleClose}
+          toggleMemoProgress={toggleMemoProgress}
+          clickEllipsis={clickEllipsis}
+          showEllipsis={showEllipsis}
+          clickDeleteMemo={clickDeleteMemo}
+          toggleMemoModal={toggleMemoModal}
+          setMemoBody={setMemoBody}
+          updateBody={updateBody}
+          toggleBigCalendar={toggleBigCalendar}
+          showBigCalendar={showBigCalendar}
+          clearDueDate={clearDueDate}
+          calendarRefs={calendarRefs}
+          changeDueDate={changeDueDate}
+          updateProgress={updateProgress}
+          projectOptions={projectOptions}
+          memoProjects={memoProjects}
+          updateProject={updateProject}
+          setMemoProjects={setMemoProjects}
+          memoNotes={memoNotes}
+          memoBody={memoBody}
+          setMemoNotes={setMemoNotes}
+          updateNotes={updateNotes}
+          options={options}
+          memoProgress={memoProgress}
+          handleSubMemoAddClick={handleSubMemoAddClick}
+          newSubMemoLine={newSubMemoLine}
+          submemoRef={submemoRef}
+          setNewSubMemoText={setNewSubMemoText}
+          submemos={submemos}
+          createSubMemoClick={createSubMemoClick}
+          handleNewMemoSave={handleNewMemoSave}
+        />
+      )}
       {showMemoModal && selectedMemo && (
         <MemoDetailsModal
           selectedMemo={selectedMemo}
@@ -942,7 +1026,9 @@ const ProjectPageSections = ({ project }) => {
                               </Row>
                               <Row>
                                 <Col>
-                                  <Button>+ Add Memo</Button>
+                                  <Button onClick={handleAddClick}>
+                                    + Add Memo
+                                  </Button>
                                 </Col>
                               </Row>
                             </div>
