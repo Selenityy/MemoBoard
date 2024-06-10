@@ -159,7 +159,7 @@ export const deleteProject = createAsyncThunk(
       const response = await fetch(
         `http://locahlhost:3000/dashboard/projects/${projectId}/delete`,
         {
-          method: "PUT",
+          method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
