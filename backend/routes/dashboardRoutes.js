@@ -44,10 +44,5 @@ router.use(
   passport.authenticate("jwt", { session: false }),
   projectRoutes
 );
-router.use(
-  "/sections",
-  passport.authenticate("jwt", { session: false }),
-  sectionRoutes
-);
 
 module.exports = router;

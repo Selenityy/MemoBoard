@@ -8,4 +8,10 @@ router.post("/create", projectController.createProject);
 router.put("/:projectId/update", projectController.updateProject);
 router.delete("/:projectId/delete", projectController.deleteProject);
 
+router.use(
+  "/:projectId/sections",
+  passport.authenticate("jwt", { session: false }),
+  sectionRoutes
+);
+
 module.exports = router;
