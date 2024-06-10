@@ -918,6 +918,9 @@ const ProjectPageSections = ({ project }) => {
                                                   {...provided.draggableProps}
                                                   {...provided.dragHandleProps}
                                                   className="memo-box"
+                                                  onClick={() =>
+                                                    toggleMemoModal(memo)
+                                                  }
                                                 >
                                                   <li
                                                     key={memo._id}
@@ -945,9 +948,9 @@ const ProjectPageSections = ({ project }) => {
                                                       }}
                                                     >
                                                       <li
-                                                        onClick={() =>
-                                                          toggleMemoModal(memo)
-                                                        }
+                                                      // onClick={() =>
+                                                      //   toggleMemoModal(memo)
+                                                      // }
                                                       >
                                                         {memo.body}
                                                       </li>
