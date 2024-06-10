@@ -289,6 +289,7 @@ const ProjectPageSections = ({ project }) => {
 
   const handleClose = () => {
     setShowMemoModal(false);
+    setShowNewMemoModal(false);
     setShowBigCalendar(false);
     setSelectedMemo(null);
   };
@@ -790,6 +791,8 @@ const ProjectPageSections = ({ project }) => {
           createSubMemoClick={createSubMemoClick}
           handleNewMemoSave={handleNewMemoSave}
           newMemoSection={newMemoSection}
+          projectId={projectId}
+          projects={projects}
         />
       )}
       {showMemoModal && selectedMemo && (
@@ -947,13 +950,7 @@ const ProjectPageSections = ({ project }) => {
                                                           "space-between",
                                                       }}
                                                     >
-                                                      <li
-                                                      // onClick={() =>
-                                                      //   toggleMemoModal(memo)
-                                                      // }
-                                                      >
-                                                        {memo.body}
-                                                      </li>
+                                                      <li>{memo.body}</li>
                                                       {memo.dueDateTime && (
                                                         <li
                                                           onClick={(e) => {
