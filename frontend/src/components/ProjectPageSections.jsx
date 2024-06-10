@@ -679,7 +679,9 @@ const ProjectPageSections = ({ project }) => {
   const clickDeleteMemo = async (memo) => {
     try {
       await dispatch(deleteMemo(memo._id));
-      dispatch(fetchAllMemos());
+      setProjectMemos((prevMemos) =>
+        prevMemos.filter((m) => m._id !== memo._id)
+      );
       setSelectedMemo(null);
       handleClose();
     } catch (error) {
