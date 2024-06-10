@@ -62,8 +62,18 @@ const NewMemoModal = ({
   submemos,
   createSubMemoClick,
   handleNewMemoSave,
+  projectId,
+  projects,
 }) => {
   // console.log("selected memo:", selectedMemo);
+
+  useEffect(() => {
+    const project = projectOptions.find(
+      (project) => project.value === projectId
+    );
+    setMemoProjects([project]);
+  }, [projectId]);
+
   return (
     <div>
       <Modal
