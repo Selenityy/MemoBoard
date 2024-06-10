@@ -88,6 +88,8 @@ const ProjectPageSections = ({ project }) => {
     parentId: null,
   });
 
+  const [newMemoSection, setNewMemoSection] = useState("");
+
   // set all the ongoing projects as the options for the dropdown
   useEffect(() => {
     const projectList = projects.map((project) => ({
@@ -127,6 +129,7 @@ const ProjectPageSections = ({ project }) => {
   };
 
   const [sections, setSections] = useState(getInitialSections);
+  // console.log("sections:", sections);
 
   const sectionRefs = useRef(
     sections.reduce((acc, section) => {
@@ -610,7 +613,8 @@ const ProjectPageSections = ({ project }) => {
   };
 
   //MEMO CRUD
-  const handleAddClick = () => {
+  const handleAddClick = (sectionId) => {
+    setNewMemoSection(sectionId);
     toggleNewMemoModal(newMemoTemplate);
   };
 
@@ -639,12 +643,27 @@ const ProjectPageSections = ({ project }) => {
           name: memoProjects[0].label,
         },
       };
-      console.log("adjusted Memo:", adjustedMemo);
+      // console.log("adjusted Memo:", adjustedMemo);
       setProjectMemos((prevMemos) => {
         const updatedMemos = [...prevMemos, adjustedMemo];
         console.log("Updated memos:", updatedMemos);
         return updatedMemos;
       });
+
+      // put the new memo in the section that matches the newMemoSection
+      setSections((prevSections) => {
+        return prevSections.map((section) => {
+          if (section.id === newMemoSection) {
+            // Only update the section where the memo should be added
+            return {
+              ...section,
+              memos: [...section.memos, adjustedMemo],
+            };
+          }
+          return section;
+        });
+      });
+
       setShowNewMemoModal(false);
       setShowBigCalendar(false);
       setSelectedMemo(null);
@@ -768,6 +787,7 @@ const ProjectPageSections = ({ project }) => {
           submemos={submemos}
           createSubMemoClick={createSubMemoClick}
           handleNewMemoSave={handleNewMemoSave}
+          newMemoSection={newMemoSection}
         />
       )}
       {showMemoModal && selectedMemo && (
@@ -828,18 +848,9 @@ const ProjectPageSections = ({ project }) => {
                             {...provided.draggableProps}
                             style={provided.draggableProps.style}
                           >
-                            <div
-                              {...provided.dragHandleProps}
-                              style={{
-                                border: "1px solid black",
-                                padding: "10px",
-                                width: "400px",
-                                minHeight: "100px",
-                                backgroundColor: "white",
-                              }}
-                            >
+                            <div className="drag-handle">
                               <Row className="mb-3">
-                                <Col>
+                                <Col {...provided.dragHandleProps}>
                                   <ContentEditable
                                     innerRef={sectionRefs.current[section.id]}
                                     html={section.name}
@@ -887,7 +898,10 @@ const ProjectPageSections = ({ project }) => {
                                       <div
                                         ref={provided.innerRef}
                                         {...provided.droppableProps}
-                                        style={{ minHeight: "100px" }}
+                                        style={{
+                                          minHeight: "20px",
+                                          paddingBottom: "20px",
+                                        }}
                                       >
                                         {section.memos.map(
                                           (memo, memoIndex) => (
@@ -901,6 +915,7 @@ const ProjectPageSections = ({ project }) => {
                                                   ref={provided.innerRef}
                                                   {...provided.draggableProps}
                                                   {...provided.dragHandleProps}
+                                                  className="memo-box"
                                                 >
                                                   <li
                                                     key={memo._id}
@@ -1026,7 +1041,9 @@ const ProjectPageSections = ({ project }) => {
                               </Row>
                               <Row>
                                 <Col>
-                                  <Button onClick={handleAddClick}>
+                                  <Button
+                                    onClick={() => handleAddClick(section.id)}
+                                  >
                                     + Add Memo
                                   </Button>
                                 </Col>
