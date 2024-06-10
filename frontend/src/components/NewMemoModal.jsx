@@ -63,7 +63,7 @@ const NewMemoModal = ({
   createSubMemoClick,
   handleNewMemoSave,
 }) => {
-  console.log("selected memo:", selectedMemo);
+  // console.log("selected memo:", selectedMemo);
   return (
     <div>
       <Modal
