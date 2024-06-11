@@ -28,6 +28,7 @@ import ContentEditable from "react-contenteditable";
 import uniqid from "uniqid";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import NewMemoModal from "./NewMemoModal";
+import { fetchAllSections } from "@/redux/features/sectionSlice";
 
 const allProjects = createSelector(
   [(state) => state.project.allIds, (state) => state.project.byId],
@@ -88,6 +89,8 @@ const ProjectPageSections = ({ project }) => {
     parentId: null,
   });
 
+  const [projectSections, setProjectSections] = useState([]);
+  console.log("project sections:", projectSections);
   const [newMemoSection, setNewMemoSection] = useState("");
 
   // set all the ongoing projects as the options for the dropdown
@@ -115,6 +118,22 @@ const ProjectPageSections = ({ project }) => {
       }
     };
     getProjectParentMemos();
+  }, [dispatch, projectId]);
+
+  // grab all sections for the specific project
+  useEffect(() => {
+    const getProjectSections = async () => {
+      try {
+        const sections = await dispatch(fetchAllSections(projectId)).unwrap();
+        const filteredSections = sections.filter(
+          (section) => section.project && section.project._id === projectId
+        );
+        setProjectSections(filteredSections);
+      } catch (error) {
+        console.error("Error getting a project's sections:", error);
+      }
+    };
+    getProjectSections();
   }, [dispatch, projectId]);
 
   // SECTIONS
