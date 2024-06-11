@@ -5,7 +5,7 @@ const SectionSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   name: { type: String, required: true, maxLength: 100 },
   memos: [{ type: Schema.Types.ObjectId, ref: "Memo" }],
-  index: { type: Number, required: true, default: 0 },
+  index: { type: Number },
   project: { type: Schema.Types.ObjectId, ref: "Project", required: true },
 });
 
