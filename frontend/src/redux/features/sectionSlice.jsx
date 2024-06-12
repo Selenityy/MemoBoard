@@ -116,6 +116,83 @@ export const createSection = createAsyncThunk(
   }
 );
 
+// ADD ONE MEMO TO A SECTION
+export const addMemoToSection = createAsyncThunk(
+  "section/addMemo",
+  async ({ sectionId, projectId, memoId }, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:3000/dashboard/projects/${projectId}/sections/${sectionId}/memos/${memoId}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      console.log("slice section add memo:", data);
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to update section memo");
+      }
+      if (data.updatedSectionMemo) {
+        return data.updatedSectionMemo;
+      } else {
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+// ADD MULTIPLE MEMOS TO A SECTION
+export const addAllMemosToSection = createAsyncThunk(
+  "section/addAllMemo",
+  async ({ sectionId, projectId, selectedMemos }, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:3000/dashboard/projects/${projectId}/sections/${sectionId}/memos`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ memoIds: selectedMemos }),
+        }
+      );
+      const data = await response.json();
+      console.log("slice section add all memos:", data);
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to update section memos");
+      }
+      if (data.updatedSectionMemos) {
+        return data.updatedSectionMemos;
+      } else {
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 // UPDATE A SECTION
 export const updateSection = createAsyncThunk(
   "/projects/section/update",
@@ -197,7 +274,13 @@ const initialState = {
 export const sectionSlice = createSlice({
   name: "section",
   initialState,
-  reducers: {},
+  reducers: {
+    removeAllSections: (state) => {
+      state.byId = {};
+      state.allIds = [];
+      console.log("removed");
+    },
+  },
   extraReducers: (builder) => {
     builder
       // FETCH ALL SECTIONS
@@ -245,12 +328,62 @@ export const sectionSlice = createSlice({
         if (!state.allIds.includes(newSection._id)) {
           state.allIds.push(newSection._id);
         }
-        state.byId[newSection] = newSection;
+        state.byId[newSection._id] = newSection;
         state.currentSection = newSection._id;
         state.status = "succeeded";
         state.error = null;
       })
       .addCase(createSection.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // ADD MEMO TO SECTION
+      .addCase(addMemoToSection.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(addMemoToSection.fulfilled, (state, action) => {
+        const updatedSection = action.payload;
+        // check is section already exists
+        if (state.byId[updatedSection._id]) {
+          // update the section directly
+          state.byId[updatedSection._id].memos = updatedSection.memos;
+        } else {
+          state.byId[updatedSection._id] = updatedSection;
+          if (!state.allIds.includes(updatedSection._id)) {
+            state.allIds.push(updatedSection._id);
+          }
+        }
+        state.currentSection = updatedSection._id;
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(addMemoToSection.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // ADD ALL MEMOS TO A SECTION
+      .addCase(addAllMemosToSection.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(addAllMemosToSection.fulfilled, (state, action) => {
+        const updatedSection = action.payload;
+        // check is section already exists
+        if (state.byId[updatedSection._id]) {
+          // update the section directly
+          state.byId[updatedSection._id].memos = updatedSection.memos;
+        } else {
+          state.byId[updatedSection._id] = updatedSection;
+          if (!state.allIds.includes(updatedSection._id)) {
+            state.allIds.push(updatedSection._id);
+          }
+        }
+        state.currentSection = updatedSection._id;
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(addAllMemosToSection.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
@@ -295,5 +428,5 @@ export const sectionSlice = createSlice({
   },
 });
 
-export const {} = sectionSlice.actions;
+export const { removeAllSections } = sectionSlice.actions;
 export default sectionSlice.reducer;
