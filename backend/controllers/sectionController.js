@@ -119,6 +119,71 @@ exports.createSection = [
   }),
 ];
 
+// Add one memo to section
+exports.addMemoToSection = asyncHandler(async (req, res, next) => {
+  const projectId = req.params.projectId;
+  const sectionId = req.params.sectionId;
+  const memoId = req.params.memoId;
+  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
+  try {
+    const updatedSectionMemo = await Section.findOneAndUpdate(
+      { _id: sectionId, user: userId, project: projectId },
+      { $push: { memos: memoId } },
+      { new: true }
+    );
+    console.log("backend updated section memo:", updatedSectionMemo);
+    if (!updatedSectionMemo) {
+      return res
+        .status(404)
+        .json({ message: "Updated section memo not found" });
+    }
+    res.json({
+      message: "Successfully updated section with memo",
+      updatedSectionMemo: updatedSectionMemo,
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Server error, cannot add memo to specific section" });
+  }
+});
+
+// Add multiple memos to a section
+exports.addMultipleMemosToSection = asyncHandler(async (req, res, next) => {
+  const projectId = req.params.projectId;
+  const sectionId = req.params.sectionId;
+  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
+  const memoIdsToAdd = req.body.memoIds;
+  if (!Array.isArray(memoIdsToAdd)) {
+    return res
+      .status(400)
+      .json({ message: "Invalid memo IDs provided, must be an array." });
+  }
+  try {
+    const updatedSectionMemos = await Section.findOneAndUpdate(
+      { _id: sectionId, user: userId, project: projectId },
+      { $push: { memos: { $each: memoIdsToAdd } } },
+      { new: true }
+    );
+    console.log("backend updated section all memos:", updatedSectionMemos);
+    if (!updatedSectionMemos) {
+      return res
+        .status(404)
+        .json({ message: "Updated section all memos not found" });
+    }
+    res.json({
+      message: "Successfully updated section with all memos",
+      updatedSectionMemos: updatedSectionMemos,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Server error, cannot add all memos to specific section",
+    });
+  }
+});
+
 // Update a section within a project
 exports.updateSection = asyncHandler(async (req, res, next) => {
   const projectId = req.params.projectId;
