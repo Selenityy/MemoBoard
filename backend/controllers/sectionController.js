@@ -155,17 +155,18 @@ exports.addMultipleMemosToSection = asyncHandler(async (req, res, next) => {
   const sectionId = req.params.sectionId;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   const memoIdsToAdd = req.body.memoIds;
-  if (!Array.isArray(memoIdsToAdd)) {
-    return res
-      .status(400)
-      .json({ message: "Invalid memo IDs provided, must be an array." });
-  }
+  console.log("memo ids to add:", memoIdsToAdd);
+  //   if (!Array.isArray(memoIdsToAdd)) {
+  //     return res
+  //       .status(400)
+  //       .json({ message: "Invalid memo IDs provided, must be an array." });
+  //   }
   try {
     const updatedSectionMemos = await Section.findOneAndUpdate(
       { _id: sectionId, user: userId, project: projectId },
       { $push: { memos: { $each: memoIdsToAdd } } },
-      { new: true }
-    );
+      { new: true, runValidators: true }
+    ).populate("memos");
     console.log("backend updated section all memos:", updatedSectionMemos);
     if (!updatedSectionMemos) {
       return res
