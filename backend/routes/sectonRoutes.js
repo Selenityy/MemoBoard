@@ -6,8 +6,8 @@ const sectionController = require("../controllers/sectionController");
 router.get("/", sectionController.getAllSections);
 router.get("/:sectionId", sectionController.getSpecificSection);
 router.post("/create", sectionController.createSection);
-router.post("/:sectionId/memos/:memoId", sectionController.addMemoToSection);
-router.post("/:sectionId/memos", sectionController.addMultipleMemosToSection);
+router.put("/:sectionId/memos/:memoId", sectionController.addMemoToSection);
+router.put("/:sectionId/memos", sectionController.addMultipleMemosToSection);
 router.put("/:sectionId/update", sectionController.updateSection);
 router.delete("/:sectionId/delete", sectionController.deleteSection);
 
