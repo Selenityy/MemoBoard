@@ -45,7 +45,7 @@ exports.getSpecificSection = asyncHandler(async (req, res, next) => {
           "body user dueDateTime progress tags priority notes parentId project",
       })
       .exec();
-    console.log("backend section:", section);
+    // console.log("backend section:", section);
     if (!section) {
       return res.status(404).json({ message: "Specific section not found" });
     }
@@ -98,7 +98,7 @@ exports.createSection = [
         index,
         project: projectId,
       });
-      console.log("backend new section:", newSection);
+    //   console.log("backend new section:", newSection);
       await newSection.save();
 
       // update project with the section
@@ -131,7 +131,7 @@ exports.addMemoToSection = asyncHandler(async (req, res, next) => {
       { $push: { memos: memoId } },
       { new: true }
     );
-    console.log("backend updated section memo:", updatedSectionMemo);
+    // console.log("backend updated section memo:", updatedSectionMemo);
     if (!updatedSectionMemo) {
       return res
         .status(404)
@@ -155,7 +155,7 @@ exports.addMultipleMemosToSection = asyncHandler(async (req, res, next) => {
   const sectionId = req.params.sectionId;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   const memoIdsToAdd = req.body.memoIds;
-  console.log("memo ids to add:", memoIdsToAdd);
+//   console.log("memo ids to add:", memoIdsToAdd);
   //   if (!Array.isArray(memoIdsToAdd)) {
   //     return res
   //       .status(400)
@@ -167,7 +167,7 @@ exports.addMultipleMemosToSection = asyncHandler(async (req, res, next) => {
       { $push: { memos: { $each: memoIdsToAdd } } },
       { new: true, runValidators: true }
     ).populate("memos");
-    console.log("backend updated section all memos:", updatedSectionMemos);
+    // console.log("backend updated section all memos:", updatedSectionMemos);
     if (!updatedSectionMemos) {
       return res
         .status(404)
@@ -190,6 +190,8 @@ exports.updateSection = asyncHandler(async (req, res, next) => {
   const projectId = req.params.projectId;
   const sectionId = req.params.sectionId;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
+
+//   console.log("controller sectionId:", sectionId);
   try {
     const updatedSection = await Section.findOneAndUpdate(
       {
@@ -200,7 +202,7 @@ exports.updateSection = asyncHandler(async (req, res, next) => {
       req.body,
       { new: true, runValidators: true }
     );
-    console.log("backend updated section:", updatedSection);
+    // console.log("backend updated section:", updatedSection);
     if (!updatedSection) {
       return res.status(404).json({ message: "Updated section not found" });
     }
@@ -227,7 +229,7 @@ exports.deleteSection = asyncHandler(async (req, res, next) => {
       user: userId,
       project: projectId,
     });
-    console.log("backend deleted section:", deletedSection);
+    // console.log("backend deleted section:", deletedSection);
     if (!deletedSection) {
       return res.status(404).json({ message: "Deleted section not found" });
     }
