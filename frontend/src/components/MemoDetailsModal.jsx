@@ -28,7 +28,7 @@ const MemoDetailsModal = ({
   updateProgress,
   projectOptions,
   memoProjects,
-  updateProject,
+  updateProjectMemos,
   memoNotes,
   memoBody,
   setMemoNotes,
@@ -238,7 +238,7 @@ const MemoDetailsModal = ({
                   options={projectOptions}
                   values={memoProjects}
                   onChange={(selectedOption) => {
-                    updateProject(selectedOption);
+                    updateProjectMemos(selectedOption);
                   }}
                 />
               </Col>

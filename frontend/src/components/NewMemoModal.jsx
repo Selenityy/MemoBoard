@@ -47,7 +47,7 @@ const NewMemoModal = ({
   updateProgress,
   projectOptions,
   memoProjects,
-  updateProject,
+  updateProjectMemos,
   setMemoProjects,
   memoNotes,
   memoBody,
