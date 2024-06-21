@@ -255,7 +255,7 @@ export const deleteMemo = createAsyncThunk(
       );
       // const data = response.json();
       const data = JSON.parse(response);
-      console.log("data:", data);
+      // console.log("data:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to delete memo");
       }

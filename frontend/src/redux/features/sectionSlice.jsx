@@ -21,7 +21,7 @@ export const fetchAllSections = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("slice all sections:", data);
+    //   console.log("slice all sections:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch sections");
       }
@@ -59,7 +59,7 @@ export const fetchSection = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("slice one section:", data);
+    //   console.log("slice one section:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch section");
       }
@@ -98,7 +98,7 @@ export const createSection = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("slice data created section", data);
+    //   console.log("slice data created section", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to create a section");
       }
@@ -136,7 +136,7 @@ export const addMemoToSection = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("slice section add memo:", data);
+    //   console.log("slice section add memo:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to update section memo");
       }
@@ -175,7 +175,7 @@ export const addAllMemosToSection = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("slice section add all memos:", data);
+    //   console.log("slice section add all memos:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to update section memos");
       }
@@ -213,12 +213,13 @@ export const updateSection = createAsyncThunk(
           body: JSON.stringify(sectionData),
         }
       );
-      const data = response.json();
-      console.log("slice section update:", data);
+      const data = await response.json();
+    //   console.log("slice section update:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to update section");
       }
       if (data.updatedSection) {
+        // console.log("we found updated section");
         return data.updatedSection;
       } else {
         return thunkAPI.rejectWithValue({
@@ -252,7 +253,7 @@ export const deleteSection = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("slice deleted section:", data);
+    //   console.log("slice deleted section:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to delete section");
       }
