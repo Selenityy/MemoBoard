@@ -28,7 +28,10 @@ import {
   addMemoToSection,
   createSection,
   fetchAllSections,
+  updateSection,
 } from "@/redux/features/sectionSlice";
+import { updateProject } from "@/redux/features/projectSlice";
+import { debounce } from "lodash";
 
 const allProjects = createSelector(
   [(state) => state.project.allIds, (state) => state.project.byId],
@@ -48,10 +51,10 @@ const ProjectPageSections = ({ project }) => {
   const dispatch = useDispatch();
   // const reduxSections = useSelector(sectionsFromSlice);
   const projectSections = useSelector(sectionsFromSlice);
-
-  console.log("redux", projectSections);
+  console.log("redux project sections", projectSections);
 
   const projectId = project._id;
+  console.log("project id:", projectId);
   const [projectMemos, setProjectMemos] = useState([]);
   console.log("are there project memos:", projectMemos);
 
@@ -76,6 +79,7 @@ const ProjectPageSections = ({ project }) => {
   const [showEllipsis, setShowEllipsis] = useState(false);
 
   const projects = useSelector(allProjects);
+  console.log("all projects selector", projects);
 
   const [submemos, setSubmemos] = useState([]);
   const [newSubMemoLine, setNewSubMemoLine] = useState(false);
@@ -132,7 +136,7 @@ const ProjectPageSections = ({ project }) => {
     getProjectParentMemos();
   }, [dispatch, projectId]);
 
-  // useEffect to fetch section
+  // useEffect to fetch sections
   useEffect(() => {
     if (projectSections.length > 2) {
       const fetchSections = async () => {
@@ -172,6 +176,16 @@ const ProjectPageSections = ({ project }) => {
               selectedMemos,
             })
           ).unwrap();
+
+          // Update project redux
+          const projectData = { sections: [newSection._id] };
+          console.log("projectData:", projectData);
+          await dispatch(
+            updateProject({
+              projectId,
+              projectData,
+            })
+          ).unwrap();
         } catch (error) {
           console.error("Error during section initialization:", error);
         }
@@ -203,22 +217,39 @@ const ProjectPageSections = ({ project }) => {
         index: newIndex,
         project: projectId,
       };
-      await dispatch(
+      const newSection = await dispatch(
         createSection({ projectId, formData })
+      ).unwrap();
+      const projectData = { sections: [newSection._id] };
+      await dispatch(
+        updateProject({
+          projectId,
+          projectData,
+        })
       ).unwrap();
     } catch (error) {
       console.error("Error adding a section:", error);
     }
   };
 
-  const handleSectionNameChange = useCallback((id, e) => {
-    const newName = e.target.value;
-    // setProjectSections((prevSections) =>
-    //   prevSections.map((section) =>
-    //     section.id === id ? { ...section, name: newName } : section
-    //   )
-    // );
-  }, []);
+  const handleSectionNameChange = useCallback(
+    debounce(async (id, e) => {
+      const newName = e.target.value;
+      try {
+        await dispatch(
+          updateSection({
+            projectId: project._id,
+            sectionId: id,
+            sectionData: { name: newName },
+          })
+        ).unwrap();
+        console.log("Section updated successfully");
+      } catch (error) {
+        console.error("Error updating section name:", error);
+      }
+    }, 500),
+    [dispatch, project._id]
+  );
 
   const onEllipsisClick = (sectionId) => {
     setEllipsisDropdown(ellipsisDropdown === sectionId ? null : sectionId);
@@ -538,7 +569,7 @@ const ProjectPageSections = ({ project }) => {
     }
   };
 
-  const updateProject = async (selectedOption) => {
+  const updateProjectMemos = async (selectedOption) => {
     // set up the updated memo structure to pass to the backend
     const memoId = selectedMemo._id;
     const originalProjectId = selectedMemo.project._id;
@@ -779,7 +810,7 @@ const ProjectPageSections = ({ project }) => {
           updateProgress={updateProgress}
           projectOptions={projectOptions}
           memoProjects={memoProjects}
-          updateProject={updateProject}
+          updateProjectMemos={updateProjectMemos}
           setMemoProjects={setMemoProjects}
           memoNotes={memoNotes}
           memoBody={memoBody}
@@ -819,7 +850,7 @@ const ProjectPageSections = ({ project }) => {
           updateProgress={updateProgress}
           projectOptions={projectOptions}
           memoProjects={memoProjects}
-          updateProject={updateProject}
+          updateProjectMemos={updateProjectMemos}
           memoNotes={memoNotes}
           memoBody={memoBody}
           setMemoNotes={setMemoNotes}
