@@ -138,7 +138,7 @@ const ProjectPageSections = ({ project }) => {
 
   // useEffect to fetch sections
   useEffect(() => {
-    if (projectSections.length > 2) {
+    if (projectSections.length >= 2) {
       const fetchSections = async () => {
         try {
           await dispatch(fetchAllSections(projectId)).unwrap();
@@ -686,19 +686,25 @@ const ProjectPageSections = ({ project }) => {
         return updatedMemos;
       });
 
-      // put the new memo in the section that matches the newMemoSection
-      // setProjectSections((prevSections) => {
-      //   return prevSections.map((section) => {
-      //     if (section.id === newMemoSection) {
-      //       // Only update the section where the memo should be added
-      //       return {
-      //         ...section,
-      //         memos: [...section.memos, adjustedMemo],
-      //       };
-      //     }
-      //     return section;
-      //   });
-      // });
+      if (newMemoSection) {
+        console.log("newMemoSection:", newMemoSection);
+        console.log("project Id:", projectId);
+        const updatedSectionData = {
+          memos: [
+            ...projectSections.find((section) => section._id === newMemoSection)
+              .memos,
+            adjustedMemo._id,
+          ],
+        };
+
+        await dispatch(
+          updateSection({
+            sectionId: newMemoSection,
+            projectId: projectId._id,
+            sectionData: updatedSectionData,
+          })
+        ).unwrap();
+      }
 
       setShowNewMemoModal(false);
       setShowBigCalendar(false);
@@ -725,8 +731,9 @@ const ProjectPageSections = ({ project }) => {
     }
   };
 
-  const onDragEnd = (result) => {
+  const onDragEnd = async (result) => {
     const { source, destination, draggableId, type } = result;
+    console.log("result", result);
 
     // Do nothing if there's no destination or the item is dropped in the same place it was dragged from
     if (
@@ -747,10 +754,10 @@ const ProjectPageSections = ({ project }) => {
     } else if (type === "memo") {
       // Handling memo reordering within and between sections
       const startSectionIndex = projectSections.findIndex(
-        (section) => section.id === source.droppableId
+        (section) => section._id === source.droppableId
       );
       const finishSectionIndex = projectSections.findIndex(
-        (section) => section.id === destination.droppableId
+        (section) => section._id === destination.droppableId
       );
 
       if (startSectionIndex === finishSectionIndex) {
@@ -778,12 +785,40 @@ const ProjectPageSections = ({ project }) => {
 
         const newStartSection = { ...startSection, memos: newStartMemos };
         const newFinishSection = { ...finishSection, memos: newFinishMemos };
+        console.log("start", newStartSection);
+        console.log("finish", newFinishSection);
 
-        const updatedSections = Array.from(projectSections);
-        updatedSections[startSectionIndex] = newStartSection;
-        updatedSections[finishSectionIndex] = newFinishSection;
+        try {
+          // Update start section
+          await dispatch(
+            updateSection({
+              sectionId: newStartSection._id,
+              projectId: newStartSection.project,
+              sectionData: {
+                memos: newStartSection.memos.map((memo) => memo._id),
+              },
+            })
+          ).unwrap();
 
-        // setProjectSections(updatedSections);
+          // Update finish section
+          await dispatch(
+            updateSection({
+              sectionId: newFinishSection._id,
+              projectId: newFinishSection.project,
+              sectionData: {
+                memos: newFinishSection.memos.map((memo) => memo._id),
+              },
+            })
+          ).unwrap();
+          console.log("sections updated successfully");
+        } catch (error) {
+          console.error("Error updating sections:", error);
+        }
+
+        // const updatedSections = Array.from(projectSections);
+        // updatedSections[startSectionIndex] = newStartSection;
+        // updatedSections[finishSectionIndex] = newFinishSection;
+        // console.log(updatedSections);
       }
     }
   };
