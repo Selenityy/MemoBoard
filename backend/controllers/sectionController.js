@@ -9,7 +9,10 @@ exports.getAllSections = asyncHandler(async (req, res, next) => {
   const projectId = req.params.projectId;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   try {
-    const sections = await Section.find({ user: userId, project: projectId });
+    const sections = await Section.find({
+      user: userId,
+      project: projectId,
+    }).populate("memos");
     if (!sections) {
       return res.status(404).json({ message: "All sections not found" });
     }
@@ -98,7 +101,7 @@ exports.createSection = [
         index,
         project: projectId,
       });
-    //   console.log("backend new section:", newSection);
+      //   console.log("backend new section:", newSection);
       await newSection.save();
 
       // update project with the section
@@ -155,7 +158,7 @@ exports.addMultipleMemosToSection = asyncHandler(async (req, res, next) => {
   const sectionId = req.params.sectionId;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   const memoIdsToAdd = req.body.memoIds;
-//   console.log("memo ids to add:", memoIdsToAdd);
+  //   console.log("memo ids to add:", memoIdsToAdd);
   //   if (!Array.isArray(memoIdsToAdd)) {
   //     return res
   //       .status(400)
@@ -191,7 +194,7 @@ exports.updateSection = asyncHandler(async (req, res, next) => {
   const sectionId = req.params.sectionId;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
 
-//   console.log("controller sectionId:", sectionId);
+  //   console.log("controller sectionId:", sectionId);
   try {
     const updatedSection = await Section.findOneAndUpdate(
       {
@@ -201,7 +204,7 @@ exports.updateSection = asyncHandler(async (req, res, next) => {
       },
       req.body,
       { new: true, runValidators: true }
-    );
+    ).populate("memos");
     // console.log("backend updated section:", updatedSection);
     if (!updatedSection) {
       return res.status(404).json({ message: "Updated section not found" });
