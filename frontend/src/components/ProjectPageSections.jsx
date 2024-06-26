@@ -75,6 +75,7 @@ const ProjectPageSections = ({ project }) => {
   const [memoNotes, setMemoNotes] = useState("");
   const [memoProgress, setMemoProgress] = useState("");
   const [memoProjects, setMemoProjects] = useState([]);
+  console.log("memoProjects:", memoProjects);
   const [memoParentId, setMemoParentId] = useState("");
 
   const [showEllipsis, setShowEllipsis] = useState(false);
@@ -94,6 +95,7 @@ const ProjectPageSections = ({ project }) => {
     { value: "Cancelled", label: "Cancelled" },
   ];
   const [projectOptions, setProjectOptions] = useState([]);
+  console.log("project options:", projectOptions);
 
   const [newMemoTemplate, setNewMemoTemplate] = useState({
     body: "",
@@ -319,11 +321,16 @@ const ProjectPageSections = ({ project }) => {
     );
     setMemoProgress(foundProgress || options[0]);
 
-    setMemoProjects(
-      memo.project
-        ? [{ value: memo.project._id, label: memo.project.name }]
-        : []
+    const foundProject = projects.find(
+      (p) => p._id === (memo.project._id || memo.project)
     );
+    setMemoProjects([{ value: foundProject._id, label: foundProject.name }]);
+
+    // setMemoProjects(
+    //   memo.project
+    //     ? [{ value: memo.project._id, label: memo.project.name }]
+    //     : []
+    // );
     if (showMemoModal === false) {
       setShowMemoModal(true);
     }
