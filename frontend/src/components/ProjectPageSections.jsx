@@ -27,6 +27,7 @@ import {
   addAllMemosToSection,
   addMemoToSection,
   createSection,
+  deleteSection,
   fetchAllSections,
   updateSection,
 } from "@/redux/features/sectionSlice";
@@ -223,7 +224,12 @@ const ProjectPageSections = ({ project }) => {
       const newSection = await dispatch(
         createSection({ projectId, formData })
       ).unwrap();
-      const projectData = { sections: [newSection._id] };
+
+      const updatedSectionIds = [
+        ...currentSections.map((section) => section._id),
+        newSection._id,
+      ];
+      const projectData = { sections: updatedSectionIds };
       await dispatch(
         updateProject({
           projectId,
@@ -257,15 +263,47 @@ const ProjectPageSections = ({ project }) => {
     setEllipsisDropdown(ellipsisDropdown === sectionId ? null : sectionId);
   };
 
-  const onDeleteSectionClick = (sectionId) => {
-    // const section = projectSections.find((section) => section.id === sectionId);
-    // if (section.memos.length === 0) {
-    //   setProjectSections(
-    //     projectSections.filter((section) => section.id !== sectionId)
-    //   );
-    // } else {
-    //   console.log("delete or move the memos first");
-    // }
+  const onDeleteSectionClick = async (sectionId) => {
+    // find the section to delete
+    const sectionToDelete = projectSections.find(
+      (section) => section._id === sectionId
+    );
+
+    // check if there are no memos in the section
+    if (sectionToDelete.memos.length > 0) {
+      alert("Please remove all memos from the section before deleting it.");
+      console.error(
+        "Please remove all memos from the section before deleting it."
+      );
+      return;
+    }
+
+    try {
+      // remove the section from the backend logic
+      await dispatch(
+        deleteSection({
+          sectionId,
+          projectId: sectionToDelete.project,
+        })
+      ).unwrap();
+
+      // update the project redux to sections without the deleted one
+      const updatedSections = projectSections.filter(
+        (section) => section._id !== sectionId
+      );
+      await dispatch(
+        updateProject({
+          projectId: sectionToDelete.project,
+          projectData: {
+            sections: updatedSections.map((section) => section._id),
+          },
+        })
+      ).unwrap();
+
+      setLastUpdate(Date.now());
+    } catch (error) {
+      console.error("Error deleteing section:", error);
+    }
   };
 
   //MODAL TOGGLE
@@ -766,7 +804,7 @@ const ProjectPageSections = ({ project }) => {
             memos: updatedProjectMemos.map((memo) => memo._id),
           },
         })
-      );
+      ).unwrap();
 
       // UI clean up
       setSelectedMemo(null);
