@@ -54,7 +54,7 @@ const ProjectPageSections = ({ project }) => {
   console.log("redux project sections", projectSections);
 
   const projectId = project._id;
-  console.log("project id:", projectId);
+  // console.log("project id:", projectId);
   const [projectMemos, setProjectMemos] = useState([]);
   console.log("are there project memos:", projectMemos);
 
@@ -79,7 +79,7 @@ const ProjectPageSections = ({ project }) => {
   const [showEllipsis, setShowEllipsis] = useState(false);
 
   const projects = useSelector(allProjects);
-  console.log("all projects selector", projects);
+  // console.log("all projects selector", projects);
 
   const [submemos, setSubmemos] = useState([]);
   const [newSubMemoLine, setNewSubMemoLine] = useState(false);
@@ -109,6 +109,9 @@ const ProjectPageSections = ({ project }) => {
   // console.log("project memos:", projectMemos);
   const [newMemoSection, setNewMemoSection] = useState("");
 
+  const [lastUpdate, setLastUpdate] = useState(Date.now());
+  // console.log("lastUpdate:", lastUpdate);
+
   // set all the ongoing projects as the options for the dropdown
   useEffect(() => {
     const projectList = projects.map((project) => ({
@@ -128,13 +131,14 @@ const ProjectPageSections = ({ project }) => {
         );
         setProjectMemos(filteredMemos);
         setMemoProjects(project);
+        console.log("got all the parent memos");
         // setProjectOptions(projects);
       } catch (error) {
         console.error("Error getting a project's parent memos:", error);
       }
     };
     getProjectParentMemos();
-  }, [dispatch, projectId]);
+  }, [dispatch, projectId, lastUpdate]);
 
   // useEffect to fetch sections
   useEffect(() => {
@@ -148,7 +152,7 @@ const ProjectPageSections = ({ project }) => {
       };
       fetchSections();
     }
-  }, [dispatch, projectSections.length, projectId]);
+  }, [dispatch, projectSections.length, projectId, lastUpdate]);
 
   useEffect(() => {
     async function handleSectionInitialization() {
@@ -465,6 +469,7 @@ const ProjectPageSections = ({ project }) => {
           return m;
         });
       });
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating memo body:", error);
     }
@@ -495,6 +500,7 @@ const ProjectPageSections = ({ project }) => {
           return m;
         });
       });
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating memo notes:", error);
     }
@@ -535,6 +541,7 @@ const ProjectPageSections = ({ project }) => {
           return m;
         });
       });
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating progress:", error);
     }
@@ -564,6 +571,7 @@ const ProjectPageSections = ({ project }) => {
           return m;
         });
       });
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating memo:", error);
     }
@@ -614,6 +622,7 @@ const ProjectPageSections = ({ project }) => {
       );
 
       setProjectMemos(filteredMemos);
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating project:", error);
     }
