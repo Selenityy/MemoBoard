@@ -49,14 +49,12 @@ const sectionsFromSlice = createSelector(
 const ProjectPageSections = ({ project }) => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
-  // const reduxSections = useSelector(sectionsFromSlice);
   const projectSections = useSelector(sectionsFromSlice).sort(
     (a, b) => a.index - b.index
   );
   console.log("redux project sections", projectSections);
 
   const projectId = project._id;
-  // console.log("project id:", projectId);
   const [projectMemos, setProjectMemos] = useState([]);
   console.log("are there project memos:", projectMemos);
 
@@ -134,8 +132,6 @@ const ProjectPageSections = ({ project }) => {
         );
         setProjectMemos(filteredMemos);
         setMemoProjects(project);
-        console.log("got all the parent memos");
-        // setProjectOptions(projects);
       } catch (error) {
         console.error("Error getting a project's parent memos:", error);
       }
@@ -250,7 +246,6 @@ const ProjectPageSections = ({ project }) => {
             sectionData: { name: newName },
           })
         ).unwrap();
-        console.log("Section updated successfully");
       } catch (error) {
         console.error("Error updating section name:", error);
       }
@@ -670,57 +665,55 @@ const ProjectPageSections = ({ project }) => {
   };
 
   const handleNewMemoSave = async () => {
-    // use the section it was clicked in as well
-    const projectId = projects.find(
+    // find the project label
+    const selectedProject = projects.find(
       (project) => project.name === memoProjects[0].label
     );
-    try {
-      const newMemo = await dispatch(
-        createMemo({
-          body: memoBody,
-          dueDateTime: memoDueDate,
-          notes: memoNotes,
-          progress: memoProgress.label,
-          project: projectId._id,
-          parentId: memoParentId || null,
-        })
-      ).unwrap();
-      const adjustedMemo = {
-        ...newMemo,
-        id: newMemo._id,
-        project: {
-          // Standardize the project field format
-          _id: newMemo.project,
-          name: memoProjects[0].label,
-        },
-      };
-      // console.log("adjusted Memo:", adjustedMemo);
-      setProjectMemos((prevMemos) => {
-        const updatedMemos = [...prevMemos, adjustedMemo];
-        console.log("Updated memos:", updatedMemos);
-        return updatedMemos;
-      });
 
+    const formData = {
+      body: memoBody,
+      dueDateTime: memoDueDate,
+      notes: memoNotes,
+      progress: memoProgress.label,
+      project: selectedProject._id,
+      parentId: memoParentId || null,
+    };
+
+    try {
+      // create new memo in redux & backend
+      const newMemo = await dispatch(createMemo(formData)).unwrap();
+
+      // find the section it was clicked in
       if (newMemoSection) {
-        console.log("newMemoSection:", newMemoSection);
-        console.log("project Id:", projectId);
         const updatedSectionData = {
           memos: [
             ...projectSections.find((section) => section._id === newMemoSection)
               .memos,
-            adjustedMemo._id,
+            newMemo._id,
           ],
         };
 
+        // update the section in redux & backend
         await dispatch(
           updateSection({
             sectionId: newMemoSection,
-            projectId: projectId._id,
+            projectId: selectedProject._id,
             sectionData: updatedSectionData,
+          })
+        ).unwrap();
+
+        // update the project in redux & backend
+        await dispatch(
+          updateProject({
+            projectId: selectedProject._id,
+            projectData: {
+              memos: selectedProject.memos.map((memo) => memo._id),
+            },
           })
         ).unwrap();
       }
 
+      // reset for next new memo
       setShowNewMemoModal(false);
       setShowBigCalendar(false);
       setSelectedMemo(null);
@@ -735,10 +728,46 @@ const ProjectPageSections = ({ project }) => {
 
   const clickDeleteMemo = async (memo) => {
     try {
+      // delete memo from backend
       await dispatch(deleteMemo(memo._id));
+
+      // update section redux
+      const sectionToUpdate = projectSections.find((section) =>
+        section.memos.includes(memo._id)
+      );
+      if (sectionToUpdate) {
+        const updatedSectionMemos = sectionToUpdate.memos.filter(
+          (id) => id !== memo._id
+        );
+
+        await dispatch(
+          updateSection({
+            sectionId: sectionToUpdate._id,
+            projectId: projectId,
+            sectionData: { memos: updatedSectionMemos },
+          })
+        );
+      }
+
+      // remove memo from redux state
       setProjectMemos((prevMemos) =>
         prevMemos.filter((m) => m._id !== memo._id)
       );
+
+      // update project
+      const updatedProjectMemos = projectMemos.filter(
+        (m) => m._id !== memo._id
+      );
+      await dispatch(
+        updateProject({
+          projectId: projectId,
+          projectData: {
+            memos: updatedProjectMemos.map((memo) => memo._id),
+          },
+        })
+      );
+
+      // UI clean up
       setSelectedMemo(null);
       handleClose();
     } catch (error) {
@@ -748,7 +777,6 @@ const ProjectPageSections = ({ project }) => {
 
   const onDragEnd = async (result) => {
     const { source, destination, draggableId, type } = result;
-    console.log("result", result);
 
     // Do nothing if there's no destination or the item is dropped in the same place it was dragged from
     if (
@@ -841,8 +869,6 @@ const ProjectPageSections = ({ project }) => {
 
         const newStartSection = { ...startSection, memos: newStartMemos };
         const newFinishSection = { ...finishSection, memos: newFinishMemos };
-        console.log("start", newStartSection);
-        console.log("finish", newFinishSection);
 
         try {
           // Update start section
@@ -866,7 +892,6 @@ const ProjectPageSections = ({ project }) => {
               },
             })
           ).unwrap();
-          console.log("sections updated successfully");
         } catch (error) {
           console.error("Error updating sections:", error);
         }
