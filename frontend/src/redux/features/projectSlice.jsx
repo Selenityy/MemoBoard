@@ -130,7 +130,6 @@ export const updateProject = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("data:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to update project");
       }

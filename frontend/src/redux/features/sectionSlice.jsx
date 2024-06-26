@@ -214,7 +214,7 @@ export const updateSection = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("slice section update:", data);
+      //   console.log("slice section update:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to update section");
       }
