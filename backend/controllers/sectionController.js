@@ -232,11 +232,11 @@ exports.deleteSection = asyncHandler(async (req, res, next) => {
       user: userId,
       project: projectId,
     });
-    // console.log("backend deleted section:", deletedSection);
+    console.log("backend deleted section:", deletedSection);
     if (!deletedSection) {
       return res.status(404).json({ message: "Deleted section not found" });
     }
-    res.status(204).json({ message: "Successfully deleted section" });
+    res.status(200).json({ message: "Successfully deleted section" });
   } catch (error) {
     console.error(error);
     res
