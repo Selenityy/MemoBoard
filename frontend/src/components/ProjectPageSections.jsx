@@ -727,13 +727,14 @@ const ProjectPageSections = ({ project }) => {
   };
 
   const clickDeleteMemo = async (memo) => {
+    const memoId = memo._id;
     try {
       // delete memo from backend
       await dispatch(deleteMemo(memo._id));
 
       // update section redux
       const sectionToUpdate = projectSections.find((section) =>
-        section.memos.includes(memo._id)
+        section.memos.some((memo) => memo._id === memoId)
       );
       if (sectionToUpdate) {
         const updatedSectionMemos = sectionToUpdate.memos.filter(
@@ -746,7 +747,7 @@ const ProjectPageSections = ({ project }) => {
             projectId: projectId,
             sectionData: { memos: updatedSectionMemos },
           })
-        );
+        ).unwrap();
       }
 
       // remove memo from redux state
