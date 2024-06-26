@@ -113,13 +113,18 @@ exports.createProject = [
 exports.updateProject = asyncHandler(async (req, res, next) => {
   const projectId = req.params.projectId;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
-  console.log("req:", req.body);
 
   const updateObject = {};
   Object.keys(req.body).forEach((key) => {
     if (["sections", "memos"].includes(key)) {
       // Use $addToSet for array fields to ensure no duplicates
-      updateObject.$addToSet = { [key]: { $each: req.body[key] } };
+      // updateObject.$addToSet = { [key]: { $each: req.body[key] } };
+
+      // Replace the array to maintain the new order
+      if (!updateObject.$set) {
+        updateObject.$set = {};
+      }
+      updateObject.$set[key] = req.body[key];
     } else {
       // Use $set for all other fields to replace their values
       if (!updateObject.$set) {
@@ -128,7 +133,6 @@ exports.updateProject = asyncHandler(async (req, res, next) => {
       updateObject.$set[key] = req.body[key];
     }
   });
-  console.log("update obj:", updateObject);
 
   try {
     const updatedProject = await Project.findOneAndUpdate(
