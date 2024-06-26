@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { createSelector } from "reselect";
 import { fetchProjects } from "@/redux/features/projectSlice";
+import { removeAllSections } from "@/redux/features/sectionSlice";
 
 const selectAllProjects = createSelector(
   [(state) => state.project.allIds, (state) => state.project.byId],
@@ -28,6 +29,11 @@ const ProjectsWidget = () => {
     router.push(`/dashboard/project/${formattedProjectName}`);
   };
 
+  // const massWipe = () => {
+  //   dispatch(removeAllSections());
+  //   console.log("deleted");
+  // };
+
   return (
     <Container
       style={{
@@ -39,6 +45,11 @@ const ProjectsWidget = () => {
         margin: "0px",
       }}
     >
+      {/* <Row>
+        <Col>
+          <div onClick={massWipe}>DELETE SECTIONS</div>
+        </Col>
+      </Row> */}
       <Row
         style={{
           marginLeft: "-16px",
