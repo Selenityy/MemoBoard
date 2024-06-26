@@ -50,7 +50,9 @@ const ProjectPageSections = ({ project }) => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
   // const reduxSections = useSelector(sectionsFromSlice);
-  const projectSections = useSelector(sectionsFromSlice);
+  const projectSections = useSelector(sectionsFromSlice).sort(
+    (a, b) => a.index - b.index
+  );
   console.log("redux project sections", projectSections);
 
   const projectId = project._id;
@@ -79,7 +81,7 @@ const ProjectPageSections = ({ project }) => {
   const [showEllipsis, setShowEllipsis] = useState(false);
 
   const projects = useSelector(allProjects);
-  // console.log("all projects selector", projects);
+  console.log("all projects selector", projects);
 
   const [submemos, setSubmemos] = useState([]);
   const [newSubMemoLine, setNewSubMemoLine] = useState(false);
@@ -101,6 +103,7 @@ const ProjectPageSections = ({ project }) => {
     progress: "Not Started",
     project: null,
     parentId: null,
+    submemos: [],
   });
 
   const [ellipsisDropdown, setEllipsisDropdown] = useState(null);
@@ -305,6 +308,7 @@ const ProjectPageSections = ({ project }) => {
     setMemoNotes(newMemoTemplate.notes || "");
     setMemoDueDate(newMemoTemplate.dueDateTime || "");
     setMemoParentId(newMemoTemplate.parentId || "");
+    setSubmemos(newMemoTemplate.submemos || "");
 
     const foundProgress = options.find(
       (option) => option.value === newMemoTemplate.progress
@@ -408,6 +412,7 @@ const ProjectPageSections = ({ project }) => {
           return m;
         });
       });
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating memo due date/time:", error);
     }
@@ -438,6 +443,7 @@ const ProjectPageSections = ({ project }) => {
           return m;
         });
       });
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error clearing memo due date/time:", error);
     }
@@ -759,7 +765,37 @@ const ProjectPageSections = ({ project }) => {
       const [movedSection] = newSections.splice(source.index, 1);
       newSections.splice(destination.index, 0, movedSection);
 
-      // setProjectSections(newSections);
+      // Prepare updated sections with new indexes
+      const updatedSections = newSections.map((section, index) => ({
+        ...section,
+        index: index,
+      }));
+
+      updatedSections.forEach(async (section) => {
+        try {
+          await dispatch(
+            updateSection({
+              sectionId: section._id,
+              projectId: section.project,
+              sectionData: { index: section.index },
+            })
+          ).unwrap();
+        } catch (error) {
+          console.error("Error updating section index:", error);
+        }
+      });
+
+      try {
+        const updatedSectionIds = updatedSections.map((section) => section._id);
+        await dispatch(
+          updateProject({
+            projectId: projectId,
+            projectData: { sections: updatedSectionIds },
+          })
+        ).unwrap();
+      } catch (error) {
+        console.error("Error updating project with new sections:", error);
+      }
     } else if (type === "memo") {
       // Handling memo reordering within and between sections
       const startSectionIndex = projectSections.findIndex(
@@ -776,11 +812,22 @@ const ProjectPageSections = ({ project }) => {
         const [movedMemo] = newMemos.splice(source.index, 1);
         newMemos.splice(destination.index, 0, movedMemo);
 
-        const newSection = { ...projectSections, memos: newMemos };
-        const updatedSections = Array.from(projectSections);
-        updatedSections[startSectionIndex] = newSection;
+        const updatedSection = { ...section, memos: newMemos };
 
-        // setProjectSections(updatedSections);
+        try {
+          // Update the section with the new memos order
+          await dispatch(
+            updateSection({
+              sectionId: section._id,
+              projectId: section.project,
+              sectionData: {
+                memos: updatedSection.memos.map((memo) => memo._id),
+              },
+            })
+          ).unwrap();
+        } catch (error) {
+          console.error("Error updating memo order within section:", error);
+        }
       } else {
         // Moving memos between different sections
         const startSection = projectSections[startSectionIndex];
@@ -823,11 +870,6 @@ const ProjectPageSections = ({ project }) => {
         } catch (error) {
           console.error("Error updating sections:", error);
         }
-
-        // const updatedSections = Array.from(projectSections);
-        // updatedSections[startSectionIndex] = newStartSection;
-        // updatedSections[finishSectionIndex] = newFinishSection;
-        // console.log(updatedSections);
       }
     }
   };
@@ -1066,11 +1108,11 @@ const ProjectPageSections = ({ project }) => {
                                                     >
                                                       {!memo.dueDateTime && (
                                                         <CiCalendar
-                                                          onClick={() =>
-                                                            toggleCalendar(
-                                                              memo._id
-                                                            )
-                                                          }
+                                                        // onClick={() =>
+                                                        //   toggleCalendar(
+                                                        //     memo._id
+                                                        //   )
+                                                        // }
                                                         />
                                                       )}
                                                       {showCalendar[
