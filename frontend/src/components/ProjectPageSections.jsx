@@ -33,6 +33,7 @@ import {
 } from "@/redux/features/sectionSlice";
 import { updateProject } from "@/redux/features/projectSlice";
 import { debounce } from "lodash";
+import { synchronizeMemos } from "@/redux/features/memoSlice";
 
 const allProjects = createSelector(
   [(state) => state.project.allIds, (state) => state.project.byId],
@@ -47,6 +48,13 @@ const sectionsFromSlice = createSelector(
   }
 );
 
+const memosFromSlice = createSelector(
+  [(state) => state.memo.allIds, (state) => state.memo.byId],
+  (allIds, byId) => {
+    return allIds.map((id) => byId[id]);
+  }
+);
+
 const ProjectPageSections = ({ project }) => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
@@ -54,6 +62,9 @@ const ProjectPageSections = ({ project }) => {
     (a, b) => a.index - b.index
   );
   console.log("redux project sections", projectSections);
+
+  const allMemos = useSelector(memosFromSlice);
+  console.log("all memos:", allMemos);
 
   const projectId = project._id;
   const [projectMemos, setProjectMemos] = useState([]);
@@ -75,7 +86,6 @@ const ProjectPageSections = ({ project }) => {
   const [memoNotes, setMemoNotes] = useState("");
   const [memoProgress, setMemoProgress] = useState("");
   const [memoProjects, setMemoProjects] = useState([]);
-  console.log("memoProjects:", memoProjects);
   const [memoParentId, setMemoParentId] = useState("");
 
   const [showEllipsis, setShowEllipsis] = useState(false);
@@ -945,6 +955,10 @@ const ProjectPageSections = ({ project }) => {
     }
   };
 
+  const handleSync = () => {
+    dispatch(synchronizeMemos());
+  };
+
   return (
     <>
       {showNewMemoModal && selectedMemo && (
@@ -1022,6 +1036,7 @@ const ProjectPageSections = ({ project }) => {
           createSubMemoClick={createSubMemoClick}
         />
       )}
+      {/* <button onClick={handleSync}>Synchronize Memos</button> */}
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="scrollable-row">
           <Droppable

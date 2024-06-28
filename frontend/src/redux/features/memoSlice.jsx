@@ -253,13 +253,43 @@ export const deleteMemo = createAsyncThunk(
           },
         }
       );
+      const data = await response.json();
       // const data = response.json();
-      const data = JSON.parse(response);
-      // console.log("data:", data);
+      // const data = JSON.parse(response);
+      console.log("data:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to delete memo");
       }
       return data.message;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const synchronizeMemos = createAsyncThunk(
+  "memos/synchronizeMemos",
+  async (_, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch(
+        "http://localhost:3000/dashboard/memos/all-memos",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to synchronize memos");
+      }
+      return data.memos; // Assuming the backend returns an array of all current memos
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -435,35 +465,90 @@ export const memoSlice = createSlice({
         state.status = "loading";
       })
       .addCase(deleteMemo.fulfilled, (state, action) => {
+        console.log("it was fulfilled:", action.meta.arg);
         const memoId = action.meta.arg;
-        const memo = state.byId[memoId];
 
-        if (memo) {
-          // If it's a parent memo, remove from parentMemos list
-          if (!memo.parentId) {
-            state.parentMemos = state.parentMemos.filter((id) => id !== memoId);
-          } else {
-            // If it's a child memo, remove from the respective parent's children list
-            const siblings = state.childrenMemos[memo.parentId];
-            if (siblings) {
-              state.childrenMemos[memo.parentId] = siblings.filter(
-                (id) => id !== memoId
-              );
-            }
-          }
-          // Remove from allIds and byId
-          state.allIds = state.allIds.filter((id) => id !== memoId);
-          delete state.byId[memoId];
-          // Reset currentMemo if it was the deleted memo
-          if (state.currentMemo === memoId) {
-            state.currentMemo = defaultMemo;
-          }
+        // Remove the memo from allIds array
+        state.allIds = state.allIds.filter((id) => id !== memoId);
+
+        // Remove the memo from the byId object
+        delete state.byId[memoId];
+
+        // If it's a parent memo, remove it from the parentMemos list
+        state.parentMemos = state.parentMemos.filter((id) => id !== memoId);
+
+        // Remove from childrenMemos lists if it's a child memo
+        Object.keys(state.childrenMemos).forEach((parentId) => {
+          state.childrenMemos[parentId] = state.childrenMemos[parentId].filter(
+            (id) => id !== memoId
+          );
+        });
+
+        // Reset currentMemo if it was the deleted memo
+        if (state.currentMemo === memoId) {
+          state.currentMemo = defaultMemo; // Reset to default or null based on your initial state setup
         }
+
+        // if (memoIndex > -1) {
+        //   state.allIds.splice(memoIndex, 1);
+        //   delete state.byId[memoId];
+        //   // If it's a parent memo, remove from parentMemos list
+        //   if (!memo.parentId) {
+        //     state.parentMemos = state.parentMemos.filter((id) => id !== memoId);
+        //   } else {
+        //     // If it's a child memo, remove from the respective parent's children list
+        //     const siblings = state.childrenMemos[memo.parentId];
+        //     if (siblings) {
+        //       state.childrenMemos[memo.parentId] = siblings.filter(
+        //         (id) => id !== memoId
+        //       );
+        //     }
+        //   }
+        //   // Remove from allIds and byId
+        //   state.allIds = state.allIds.filter((id) => id !== memoId);
+        //   delete state.byId[memoId];
+        //   // Reset currentMemo if it was the deleted memo
+        //   if (state.currentMemo === memoId) {
+        //     state.currentMemo = defaultMemo;
+        //   }
+        // }
 
         state.status = "succeeded";
         state.error = null;
       })
       .addCase(deleteMemo.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      .addCase(synchronizeMemos.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(synchronizeMemos.fulfilled, (state, action) => {
+        // Reset the state
+        state.byId = {};
+        state.allIds = [];
+        state.parentMemos = [];
+        state.childrenMemos = {};
+
+        // Fill state with fresh data from the backend
+        action.payload.forEach((memo) => {
+          state.byId[memo._id] = memo;
+          state.allIds.push(memo._id);
+          if (memo.parentId === null) {
+            state.parentMemos.push(memo._id);
+          } else {
+            if (!state.childrenMemos[memo.parentId]) {
+              state.childrenMemos[memo.parentId] = [];
+            }
+            state.childrenMemos[memo.parentId].push(memo._id);
+          }
+        });
+
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(synchronizeMemos.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
