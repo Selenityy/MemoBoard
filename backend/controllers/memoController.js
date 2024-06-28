@@ -310,7 +310,7 @@ exports.deleteMemo = asyncHandler(async (req, res, next) => {
     // delete sub memos with the parent id matching the deleted memo
     await Memo.deleteMany({ parentId: memoId });
 
-    res.status(204).json({ message: "Successfully deleted memo" });
+    res.status(200).json({ message: "Successfully deleted memo" });
   } catch (error) {
     console.error(error);
     return res
