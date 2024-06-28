@@ -45,11 +45,11 @@ const NavBar = () => {
   };
 
   const todayMemoClick = () => {
-    router.push("/dashboard/today-tasks");
+    // router.push("/dashboard/today-tasks");
   };
 
   const weekMemoClick = () => {
-    router.push("/dashboard/week-tasks");
+    // router.push("/dashboard/week-tasks");
   };
 
   const projectClick = (project) => {
