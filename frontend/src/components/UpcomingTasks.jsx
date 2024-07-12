@@ -59,7 +59,7 @@ const UpcomingTasks = () => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const memos = useSelector(selectedMemos);
-  console.log("memos:", memos);
+  // console.log("memos:", memos);
   const [submemos, setSubmemos] = useState([]);
   const [newMemoLine, setNewMemoLine] = useState(false);
   const [newMemoText, setNewMemoText] = useState("");
@@ -69,7 +69,7 @@ const UpcomingTasks = () => {
   const [showBigCalendar, setShowBigCalendar] = useState({});
   const [showMemoModal, setShowMemoModal] = useState(false);
   const [selectedMemo, setSelectedMemo] = useState(null);
-  console.log("selected memo:", selectedMemo);
+  // console.log("selected memo:", selectedMemo);
   const [memoNotes, setMemoNotes] = useState("");
   const [showEllipsis, setShowEllipsis] = useState(false);
 
@@ -87,6 +87,9 @@ const UpcomingTasks = () => {
     { value: "Cancelled", label: "Cancelled" },
   ];
   const [projectOptions, setProjectOptions] = useState([]);
+  const [projectMemos, setProjectMemos] = useState([]);
+  const [lastUpdate, setLastUpdate] = useState(Date.now());
+  console.log("selected memo:", selectedMemo);
 
   const inputRef = useRef(null);
   const submemoRef = useRef(null);
