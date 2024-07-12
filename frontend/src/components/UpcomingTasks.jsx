@@ -97,7 +97,7 @@ const UpcomingTasks = () => {
 
   useEffect(() => {
     dispatch(fetchAllMemos());
-  }, [dispatch]);
+  }, [dispatch, lastUpdate]);
 
   useEffect(() => {
     if (newMemoLine && inputRef.current) {
