@@ -32,7 +32,7 @@ import {
   updateSection,
 } from "@/redux/features/sectionSlice";
 import { updateProject } from "@/redux/features/projectSlice";
-import { debounce } from "lodash";
+import { debounce, filter } from "lodash";
 import { synchronizeMemos } from "@/redux/features/memoSlice";
 
 const allProjects = createSelector(
@@ -61,14 +61,14 @@ const ProjectPageSections = ({ project }) => {
   const projectSections = useSelector(sectionsFromSlice).sort(
     (a, b) => a.index - b.index
   );
-  console.log("redux project sections", projectSections);
+  // console.log("redux project sections", projectSections);
 
   const allMemos = useSelector(memosFromSlice);
-  console.log("all memos:", allMemos);
+  // console.log("all memos:", allMemos);
 
   const projectId = project._id;
   const [projectMemos, setProjectMemos] = useState([]);
-  console.log("are there project memos:", projectMemos);
+  // console.log("are there project memos:", projectMemos);
 
   const submemoRef = useRef(null);
   const calendarRefs = useRef({});
@@ -87,11 +87,12 @@ const ProjectPageSections = ({ project }) => {
   const [memoProgress, setMemoProgress] = useState("");
   const [memoProjects, setMemoProjects] = useState([]);
   const [memoParentId, setMemoParentId] = useState("");
-
+  console.log("memo progress page selection:", memoProgress);
+  console.log("memo projects page seletcion:", memoProjects);
   const [showEllipsis, setShowEllipsis] = useState(false);
 
   const projects = useSelector(allProjects);
-  console.log("all projects selector", projects);
+  // console.log("all projects selector", projects);
 
   const [submemos, setSubmemos] = useState([]);
   const [newSubMemoLine, setNewSubMemoLine] = useState(false);
@@ -105,7 +106,7 @@ const ProjectPageSections = ({ project }) => {
     { value: "Cancelled", label: "Cancelled" },
   ];
   const [projectOptions, setProjectOptions] = useState([]);
-  console.log("project options:", projectOptions);
+  // console.log("project options:", projectOptions);
 
   const [newMemoTemplate, setNewMemoTemplate] = useState({
     body: "",
@@ -169,7 +170,7 @@ const ProjectPageSections = ({ project }) => {
   useEffect(() => {
     async function handleSectionInitialization() {
       if (projectSections.length === 0 && projectMemos.length > 0) {
-        console.log("Initializing new section...");
+        // console.log("Initializing new section...");
         try {
           const formData = {
             user: project.user,
@@ -181,7 +182,7 @@ const ProjectPageSections = ({ project }) => {
           const newSection = await dispatch(
             createSection({ projectId, formData })
           ).unwrap();
-          console.log("New section created:", newSection);
+          // console.log("New section created:", newSection);
 
           // Add memos to newly created section if applicable
           const selectedMemos = projectMemos.map((memo) => memo.id);
@@ -195,7 +196,7 @@ const ProjectPageSections = ({ project }) => {
 
           // Update project redux
           const projectData = { sections: [newSection._id] };
-          console.log("projectData:", projectData);
+          // console.log("projectData:", projectData);
           await dispatch(
             updateProject({
               projectId,
@@ -219,7 +220,7 @@ const ProjectPageSections = ({ project }) => {
   );
 
   const onAddSectionClick = async () => {
-    console.log("inside add section");
+    // console.log("inside add section");
     const currentSections = projectSections; // Assuming this is up to date with all current sections
     const newIndex =
       currentSections.length > 0
@@ -563,12 +564,14 @@ const ProjectPageSections = ({ project }) => {
   };
 
   const updateProgress = async (selectedOption) => {
+    console.log("selected option progress:", selectedOption);
     // set up the updated memo structure to pass to the backend
     const memoId = selectedMemo._id;
     const updatedMemo = {
       ...selectedMemo,
       progress: selectedOption[0].value,
     };
+    console.log("progress updated memo:", updatedMemo);
     setMemoProgress({
       value: selectedOption[0].value,
       label: selectedOption[0].label,
@@ -580,7 +583,7 @@ const ProjectPageSections = ({ project }) => {
           formData: updatedMemo,
           memoId,
         })
-      );
+      ).unwrap();
 
       // then update the selected memo within the modal
       setSelectedMemo((prevMemo) => ({
@@ -635,7 +638,9 @@ const ProjectPageSections = ({ project }) => {
 
   const updateProjectMemos = async (selectedOption) => {
     // set up the updated memo structure to pass to the backend
+    console.log("selected option project memos:", selectedOption);
     const memoId = selectedMemo._id;
+    console.log("memo id:", memoId);
     const originalProjectId = selectedMemo.project._id;
     const updatedProject = selectedOption.length
       ? {
@@ -643,11 +648,13 @@ const ProjectPageSections = ({ project }) => {
           name: selectedOption[0].label,
         }
       : null;
+    console.log("updated project value:", updatedProject);
 
     const updatedMemo = {
       ...selectedMemo,
       project: updatedProject ? updatedProject._id : null,
     };
+    console.log("updated memo value:", updatedMemo);
     setMemoProjects({
       _id: selectedOption[0].value,
       name: selectedOption[0].label,
@@ -676,6 +683,7 @@ const ProjectPageSections = ({ project }) => {
           memo.project._id === originalProjectId &&
           memo._id !== memoId
       );
+      console.log("filtered memos:", filteredMemos);
 
       setProjectMemos(filteredMemos);
       setLastUpdate(Date.now());
