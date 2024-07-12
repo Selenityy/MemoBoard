@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Row, Col, Button, Container } from "react-bootstrap";
-import { MdCheckBoxOutlineBlank } from "react-icons/md";
+import { MdCheckBoxOutlineBlank, MdCheckBox } from "react-icons/md";
 import { createSelector } from "reselect";
 import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "@/context/ThemeContext";
@@ -1152,14 +1152,29 @@ const ProjectPageSections = ({ project }) => {
                                                       width: "100%",
                                                     }}
                                                   >
-                                                    <MdCheckBoxOutlineBlank
-                                                      onClick={() =>
-                                                        checkboxToggle(
-                                                          memo,
-                                                          memo._id
-                                                        )
-                                                      }
-                                                    />
+                                                    {memo.progress ===
+                                                    "Completed" ? (
+                                                      <MdCheckBox
+                                                        onClick={() =>
+                                                          checkboxToggle(
+                                                            memo,
+                                                            memo._id
+                                                          )
+                                                        }
+                                                        style={{
+                                                          color: "green",
+                                                        }}
+                                                      />
+                                                    ) : (
+                                                      <MdCheckBoxOutlineBlank
+                                                        onClick={() =>
+                                                          checkboxToggle(
+                                                            memo,
+                                                            memo._id
+                                                          )
+                                                        }
+                                                      />
+                                                    )}
                                                     <ul
                                                       style={{
                                                         flex: 1,
