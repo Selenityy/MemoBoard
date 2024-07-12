@@ -5,12 +5,14 @@ import userReducer from "./features/userSlice";
 import memoReducer from "./features/memoSlice";
 import tagReducer from "./features/tagsSlice";
 import projectReducer from "./features/projectSlice";
+import sectionReducer from "./features/sectionSlice";
 
 const rootReducer = combineReducers({
   user: userReducer,
   memo: memoReducer,
   tag: tagReducer,
   project: projectReducer,
+  section: sectionReducer,
 });
 
 const persistConfig = {

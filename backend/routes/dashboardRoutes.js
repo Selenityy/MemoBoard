@@ -8,6 +8,7 @@ const dashboardController = require("../controllers/dashboardController");
 const memoRoutes = require("../routes/memoRoutes");
 const tagRoutes = require("../routes/tagRoutes");
 const projectRoutes = require("../routes/projectRoutes");
+const sectionRoutes = require("../routes/sectonRoutes");
 
 // Apply JWT authentication middleware to all routes in this router
 router.use(passport.authenticate("jwt", { session: false }));

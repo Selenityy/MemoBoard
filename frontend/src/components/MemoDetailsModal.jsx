@@ -28,7 +28,7 @@ const MemoDetailsModal = ({
   updateProgress,
   projectOptions,
   memoProjects,
-  updateProject,
+  updateProjectMemos,
   memoNotes,
   memoBody,
   setMemoNotes,
@@ -42,6 +42,8 @@ const MemoDetailsModal = ({
   submemos,
   createSubMemoClick,
 }) => {
+  console.log("memo progress modal:", memoProgress, options);
+  console.log("memo projects modal:", memoProjects, projectOptions);
   return (
     <div>
       <Modal
@@ -238,7 +240,7 @@ const MemoDetailsModal = ({
                   options={projectOptions}
                   values={memoProjects}
                   onChange={(selectedOption) => {
-                    updateProject(selectedOption);
+                    updateProjectMemos(selectedOption);
                   }}
                 />
               </Col>

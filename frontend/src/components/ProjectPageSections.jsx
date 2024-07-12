@@ -3,7 +3,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Row, Col, Button, Container } from "react-bootstrap";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
-import { MdCheckBox } from "react-icons/md";
 import { createSelector } from "reselect";
 import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "@/context/ThemeContext";
@@ -16,21 +15,41 @@ import {
   deleteMemo,
   fetchMemos,
 } from "@/redux/features/memoSlice";
-import { format, parseISO, isToday, isPast, compareAsc } from "date-fns";
-import { IoMdAdd } from "react-icons/io";
+import { format, parseISO } from "date-fns";
 import Calendar from "react-calendar";
 import { CiCalendar } from "react-icons/ci";
 import "react-calendar/dist/Calendar.css";
-import Modal from "react-bootstrap/Modal";
-import Select from "react-dropdown-select";
 import MemoDetailsModal from "./MemoDetailsModal";
 import ContentEditable from "react-contenteditable";
-import uniqid from "uniqid";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import NewMemoModal from "./NewMemoModal";
+import {
+  addAllMemosToSection,
+  addMemoToSection,
+  createSection,
+  deleteSection,
+  fetchAllSections,
+  updateSection,
+} from "@/redux/features/sectionSlice";
+import { updateProject } from "@/redux/features/projectSlice";
+import { debounce, filter } from "lodash";
+import { synchronizeMemos } from "@/redux/features/memoSlice";
 
 const allProjects = createSelector(
   [(state) => state.project.allIds, (state) => state.project.byId],
+  (allIds, byId) => {
+    return allIds.map((id) => byId[id]);
+  }
+);
+const sectionsFromSlice = createSelector(
+  [(state) => state.section.allIds, (state) => state.section.byId],
+  (allIds, byId) => {
+    return allIds.map((id) => byId[id]);
+  }
+);
+
+const memosFromSlice = createSelector(
+  [(state) => state.memo.allIds, (state) => state.memo.byId],
   (allIds, byId) => {
     return allIds.map((id) => byId[id]);
   }
@@ -39,8 +58,17 @@ const allProjects = createSelector(
 const ProjectPageSections = ({ project }) => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
+  const projectSections = useSelector(sectionsFromSlice).sort(
+    (a, b) => a.index - b.index
+  );
+  // console.log("redux project sections", projectSections);
+
+  const allMemos = useSelector(memosFromSlice);
+  // console.log("all memos:", allMemos);
+
   const projectId = project._id;
   const [projectMemos, setProjectMemos] = useState([]);
+  // console.log("are there project memos:", projectMemos);
 
   const submemoRef = useRef(null);
   const calendarRefs = useRef({});
@@ -59,14 +87,14 @@ const ProjectPageSections = ({ project }) => {
   const [memoProgress, setMemoProgress] = useState("");
   const [memoProjects, setMemoProjects] = useState([]);
   const [memoParentId, setMemoParentId] = useState("");
-
+  console.log("memo progress page selection:", memoProgress);
+  console.log("memo projects page seletcion:", memoProjects);
   const [showEllipsis, setShowEllipsis] = useState(false);
 
   const projects = useSelector(allProjects);
+  // console.log("all projects selector", projects);
 
   const [submemos, setSubmemos] = useState([]);
-  const [newMemoLine, setNewMemoLine] = useState(false);
-  const [newMemoText, setNewMemoText] = useState("");
   const [newSubMemoLine, setNewSubMemoLine] = useState(false);
   const [newSubMemoText, setNewSubMemoText] = useState("");
 
@@ -78,6 +106,7 @@ const ProjectPageSections = ({ project }) => {
     { value: "Cancelled", label: "Cancelled" },
   ];
   const [projectOptions, setProjectOptions] = useState([]);
+  // console.log("project options:", projectOptions);
 
   const [newMemoTemplate, setNewMemoTemplate] = useState({
     body: "",
@@ -86,9 +115,17 @@ const ProjectPageSections = ({ project }) => {
     progress: "Not Started",
     project: null,
     parentId: null,
+    submemos: [],
   });
 
+  const [ellipsisDropdown, setEllipsisDropdown] = useState(null);
+  // const [projectSections, setProjectSections] = useState(reduxSections);
+  // console.log("project sections listed:", projectSections);
+  // console.log("project memos:", projectMemos);
   const [newMemoSection, setNewMemoSection] = useState("");
+
+  const [lastUpdate, setLastUpdate] = useState(Date.now());
+  // console.log("lastUpdate:", lastUpdate);
 
   // set all the ongoing projects as the options for the dropdown
   useEffect(() => {
@@ -109,127 +146,178 @@ const ProjectPageSections = ({ project }) => {
         );
         setProjectMemos(filteredMemos);
         setMemoProjects(project);
-        // setProjectOptions(projects);
       } catch (error) {
         console.error("Error getting a project's parent memos:", error);
       }
     };
     getProjectParentMemos();
-  }, [dispatch, projectId]);
+  }, [dispatch, projectId, lastUpdate]);
 
-  // SECTIONS
-  const [ellipsisDropdown, setEllipsisDropdown] = useState(null);
-
-  const getInitialSections = () => {
-    const savedSections = JSON.parse(localStorage.getItem("sections"));
-    if (savedSections) {
-      return savedSections;
+  // useEffect to fetch sections
+  useEffect(() => {
+    if (projectSections.length >= 2) {
+      const fetchSections = async () => {
+        try {
+          await dispatch(fetchAllSections(projectId)).unwrap();
+        } catch (error) {
+          console.error("Error creating a new project sections:", error);
+        }
+      };
+      fetchSections();
     }
-    return [{ id: uniqid(), name: "My Memos", memos: [] }];
-  };
+  }, [dispatch, projectSections.length, projectId, lastUpdate]);
 
-  const [sections, setSections] = useState(getInitialSections);
-  // console.log("sections:", sections);
+  useEffect(() => {
+    async function handleSectionInitialization() {
+      if (projectSections.length === 0 && projectMemos.length > 0) {
+        // console.log("Initializing new section...");
+        try {
+          const formData = {
+            user: project.user,
+            name: "To Do",
+            memo: [],
+            index: 0,
+            project: projectId,
+          };
+          const newSection = await dispatch(
+            createSection({ projectId, formData })
+          ).unwrap();
+          // console.log("New section created:", newSection);
+
+          // Add memos to newly created section if applicable
+          const selectedMemos = projectMemos.map((memo) => memo.id);
+          await dispatch(
+            addAllMemosToSection({
+              sectionId: newSection._id,
+              projectId,
+              selectedMemos,
+            })
+          ).unwrap();
+
+          // Update project redux
+          const projectData = { sections: [newSection._id] };
+          // console.log("projectData:", projectData);
+          await dispatch(
+            updateProject({
+              projectId,
+              projectData,
+            })
+          ).unwrap();
+        } catch (error) {
+          console.error("Error during section initialization:", error);
+        }
+      }
+    }
+
+    handleSectionInitialization();
+  }, [dispatch, projectId, project.user, projectSections, projectMemos]);
 
   const sectionRefs = useRef(
-    sections.reduce((acc, section) => {
+    projectSections.reduce((acc, section) => {
       acc[section.id] = React.createRef();
       return acc;
     }, {})
   );
 
-  useEffect(() => {
-    if (projectMemos.length > 0) {
-      setSections((currentSections) => {
-        // Create a map for quick lookup
-        const memoMap = new Map(projectMemos.map((memo) => [memo.id, memo]));
+  const onAddSectionClick = async () => {
+    // console.log("inside add section");
+    const currentSections = projectSections; // Assuming this is up to date with all current sections
+    const newIndex =
+      currentSections.length > 0
+        ? Math.max(...currentSections.map((s) => s.index)) + 1
+        : 0;
+    try {
+      const formData = {
+        user: project.user,
+        name: "New Section",
+        memos: [],
+        index: newIndex,
+        project: projectId,
+      };
+      const newSection = await dispatch(
+        createSection({ projectId, formData })
+      ).unwrap();
 
-        // Transform all sections
-        const updatedSections = currentSections.map((section) => {
-          const updatedMemos = section.memos.map((memo) =>
-            memoMap.has(memo.id) ? memoMap.get(memo.id) : memo
-          );
-
-          // Filter out memos that are no longer associated with this section
-          return {
-            ...section,
-            memos: updatedMemos.filter((memo) => memoMap.has(memo.id)),
-          };
-        });
-
-        // Now handle any memos not already placed in any section
-        projectMemos.forEach((memo) => {
-          const isPlaced = updatedSections.some((section) =>
-            section.memos.some((existingMemo) => existingMemo.id === memo.id)
-          );
-
-          if (!isPlaced) {
-            // For simplicity, add unplaced memos to the first section or a specific "unassigned" section
-            updatedSections[0].memos.push(memo);
-          }
-        });
-
-        return updatedSections;
-      });
+      const updatedSectionIds = [
+        ...currentSections.map((section) => section._id),
+        newSection._id,
+      ];
+      const projectData = { sections: updatedSectionIds };
+      await dispatch(
+        updateProject({
+          projectId,
+          projectData,
+        })
+      ).unwrap();
+    } catch (error) {
+      console.error("Error adding a section:", error);
     }
-  }, [projectMemos]);
-
-  useEffect(() => {
-    localStorage.setItem("sections", JSON.stringify(sections));
-  }, [sections]);
-
-  //   const handleNameChange = (id) => {
-  //     console.log("section id:", id);
-  //     const newName = sectionRefs.current[id].current.innerHTML;
-  //     console.log("new name:", newName);
-  //     setSections(
-  //       sections.map((section) =>
-  //         section.id === id ? { ...section, name: newName } : section
-  //       )
-  //     );
-  //   };
-
-  //   const handleSectionNameChange = (id, e) => {
-  //     const newName = e.target.value;
-  //     setSections((prevSections) =>
-  //       prevSections.map((section) =>
-  //         section.id === id ? { ...section, name: newName } : section
-  //       )
-  //     );
-  //   };
-
-  const handleSectionNameChange = useCallback((id, e) => {
-    const newName = e.target.value;
-    setSections((prevSections) =>
-      prevSections.map((section) =>
-        section.id === id ? { ...section, name: newName } : section
-      )
-    );
-  }, []);
-
-  const onAddSectionClick = () => {
-    const newSection = { id: uniqid(), name: "Section Name", memos: [] };
-    sectionRefs.current[newSection.id] = React.createRef();
-    setSections([...sections, newSection]);
-    // if there is no name and no memos, delete it
   };
+
+  const handleSectionNameChange = useCallback(
+    debounce(async (id, e) => {
+      const newName = e.target.value;
+      try {
+        await dispatch(
+          updateSection({
+            projectId: project._id,
+            sectionId: id,
+            sectionData: { name: newName },
+          })
+        ).unwrap();
+      } catch (error) {
+        console.error("Error updating section name:", error);
+      }
+    }, 500),
+    [dispatch, project._id]
+  );
 
   const onEllipsisClick = (sectionId) => {
     setEllipsisDropdown(ellipsisDropdown === sectionId ? null : sectionId);
   };
 
-  const onDeleteSectionClick = (sectionId) => {
-    const section = sections.find((section) => section.id === sectionId);
-    if (section.memos.length === 0) {
-      setSections(sections.filter((section) => section.id !== sectionId));
-    } else {
-      console.log("delete or move the memos first");
+  const onDeleteSectionClick = async (sectionId) => {
+    // find the section to delete
+    const sectionToDelete = projectSections.find(
+      (section) => section._id === sectionId
+    );
+
+    // check if there are no memos in the section
+    if (sectionToDelete.memos.length > 0) {
+      alert("Please remove all memos from the section before deleting it.");
+      console.error(
+        "Please remove all memos from the section before deleting it."
+      );
+      return;
+    }
+
+    try {
+      // remove the section from the backend logic
+      await dispatch(
+        deleteSection({
+          sectionId,
+          projectId: sectionToDelete.project,
+        })
+      ).unwrap();
+
+      // update the project redux to sections without the deleted one
+      const updatedSections = projectSections.filter(
+        (section) => section._id !== sectionId
+      );
+      await dispatch(
+        updateProject({
+          projectId: sectionToDelete.project,
+          projectData: {
+            sections: updatedSections.map((section) => section._id),
+          },
+        })
+      ).unwrap();
+
+      setLastUpdate(Date.now());
+    } catch (error) {
+      console.error("Error deleteing section:", error);
     }
   };
-
-  //   useEffect(() => {
-  //     dispatch(fetchMemos());
-  //   }, [dispatch]);
 
   //MODAL TOGGLE
   const toggleMemoModal = async (memo) => {
@@ -244,11 +332,16 @@ const ProjectPageSections = ({ project }) => {
     );
     setMemoProgress(foundProgress || options[0]);
 
-    setMemoProjects(
-      memo.project
-        ? [{ value: memo.project._id, label: memo.project.name }]
-        : []
+    const foundProject = projects.find(
+      (p) => p._id === (memo.project._id || memo.project)
     );
+    setMemoProjects([{ value: foundProject._id, label: foundProject.name }]);
+
+    // setMemoProjects(
+    //   memo.project
+    //     ? [{ value: memo.project._id, label: memo.project.name }]
+    //     : []
+    // );
     if (showMemoModal === false) {
       setShowMemoModal(true);
     }
@@ -266,6 +359,7 @@ const ProjectPageSections = ({ project }) => {
     setMemoNotes(newMemoTemplate.notes || "");
     setMemoDueDate(newMemoTemplate.dueDateTime || "");
     setMemoParentId(newMemoTemplate.parentId || "");
+    setSubmemos(newMemoTemplate.submemos || "");
 
     const foundProgress = options.find(
       (option) => option.value === newMemoTemplate.progress
@@ -369,6 +463,7 @@ const ProjectPageSections = ({ project }) => {
           return m;
         });
       });
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating memo due date/time:", error);
     }
@@ -399,6 +494,7 @@ const ProjectPageSections = ({ project }) => {
           return m;
         });
       });
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error clearing memo due date/time:", error);
     }
@@ -430,6 +526,7 @@ const ProjectPageSections = ({ project }) => {
           return m;
         });
       });
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating memo body:", error);
     }
@@ -460,18 +557,21 @@ const ProjectPageSections = ({ project }) => {
           return m;
         });
       });
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating memo notes:", error);
     }
   };
 
   const updateProgress = async (selectedOption) => {
+    console.log("selected option progress:", selectedOption);
     // set up the updated memo structure to pass to the backend
     const memoId = selectedMemo._id;
     const updatedMemo = {
       ...selectedMemo,
       progress: selectedOption[0].value,
     };
+    console.log("progress updated memo:", updatedMemo);
     setMemoProgress({
       value: selectedOption[0].value,
       label: selectedOption[0].label,
@@ -483,7 +583,7 @@ const ProjectPageSections = ({ project }) => {
           formData: updatedMemo,
           memoId,
         })
-      );
+      ).unwrap();
 
       // then update the selected memo within the modal
       setSelectedMemo((prevMemo) => ({
@@ -500,6 +600,7 @@ const ProjectPageSections = ({ project }) => {
           return m;
         });
       });
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating progress:", error);
     }
@@ -529,14 +630,17 @@ const ProjectPageSections = ({ project }) => {
           return m;
         });
       });
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating memo:", error);
     }
   };
 
-  const updateProject = async (selectedOption) => {
+  const updateProjectMemos = async (selectedOption) => {
     // set up the updated memo structure to pass to the backend
+    console.log("selected option project memos:", selectedOption);
     const memoId = selectedMemo._id;
+    console.log("memo id:", memoId);
     const originalProjectId = selectedMemo.project._id;
     const updatedProject = selectedOption.length
       ? {
@@ -544,11 +648,13 @@ const ProjectPageSections = ({ project }) => {
           name: selectedOption[0].label,
         }
       : null;
+    console.log("updated project value:", updatedProject);
 
     const updatedMemo = {
       ...selectedMemo,
       project: updatedProject ? updatedProject._id : null,
     };
+    console.log("updated memo value:", updatedMemo);
     setMemoProjects({
       _id: selectedOption[0].value,
       name: selectedOption[0].label,
@@ -577,8 +683,10 @@ const ProjectPageSections = ({ project }) => {
           memo.project._id === originalProjectId &&
           memo._id !== memoId
       );
+      console.log("filtered memos:", filteredMemos);
 
       setProjectMemos(filteredMemos);
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating project:", error);
     }
@@ -620,51 +728,55 @@ const ProjectPageSections = ({ project }) => {
   };
 
   const handleNewMemoSave = async () => {
-    // use the section it was clicked in as well
-    const projectId = projects.find(
+    // find the project label
+    const selectedProject = projects.find(
       (project) => project.name === memoProjects[0].label
     );
+
+    const formData = {
+      body: memoBody,
+      dueDateTime: memoDueDate,
+      notes: memoNotes,
+      progress: memoProgress.label,
+      project: selectedProject._id,
+      parentId: memoParentId || null,
+    };
+
     try {
-      const newMemo = await dispatch(
-        createMemo({
-          body: memoBody,
-          dueDateTime: memoDueDate,
-          notes: memoNotes,
-          progress: memoProgress.label,
-          project: projectId._id,
-          parentId: memoParentId || null,
-        })
-      ).unwrap();
-      const adjustedMemo = {
-        ...newMemo,
-        id: newMemo._id,
-        project: {
-          // Standardize the project field format
-          _id: newMemo.project,
-          name: memoProjects[0].label,
-        },
-      };
-      // console.log("adjusted Memo:", adjustedMemo);
-      setProjectMemos((prevMemos) => {
-        const updatedMemos = [...prevMemos, adjustedMemo];
-        console.log("Updated memos:", updatedMemos);
-        return updatedMemos;
-      });
+      // create new memo in redux & backend
+      const newMemo = await dispatch(createMemo(formData)).unwrap();
 
-      // put the new memo in the section that matches the newMemoSection
-      setSections((prevSections) => {
-        return prevSections.map((section) => {
-          if (section.id === newMemoSection) {
-            // Only update the section where the memo should be added
-            return {
-              ...section,
-              memos: [...section.memos, adjustedMemo],
-            };
-          }
-          return section;
-        });
-      });
+      // find the section it was clicked in
+      if (newMemoSection) {
+        const updatedSectionData = {
+          memos: [
+            ...projectSections.find((section) => section._id === newMemoSection)
+              .memos,
+            newMemo._id,
+          ],
+        };
 
+        // update the section in redux & backend
+        await dispatch(
+          updateSection({
+            sectionId: newMemoSection,
+            projectId: selectedProject._id,
+            sectionData: updatedSectionData,
+          })
+        ).unwrap();
+
+        // update the project in redux & backend
+        await dispatch(
+          updateProject({
+            projectId: selectedProject._id,
+            projectData: {
+              memos: selectedProject.memos.map((memo) => memo._id),
+            },
+          })
+        ).unwrap();
+      }
+
+      // reset for next new memo
       setShowNewMemoModal(false);
       setShowBigCalendar(false);
       setSelectedMemo(null);
@@ -678,11 +790,48 @@ const ProjectPageSections = ({ project }) => {
   };
 
   const clickDeleteMemo = async (memo) => {
+    const memoId = memo._id;
     try {
+      // delete memo from backend
       await dispatch(deleteMemo(memo._id));
+
+      // update section redux
+      const sectionToUpdate = projectSections.find((section) =>
+        section.memos.some((memo) => memo._id === memoId)
+      );
+      if (sectionToUpdate) {
+        const updatedSectionMemos = sectionToUpdate.memos.filter(
+          (id) => id !== memo._id
+        );
+
+        await dispatch(
+          updateSection({
+            sectionId: sectionToUpdate._id,
+            projectId: projectId,
+            sectionData: { memos: updatedSectionMemos },
+          })
+        ).unwrap();
+      }
+
+      // remove memo from redux state
       setProjectMemos((prevMemos) =>
         prevMemos.filter((m) => m._id !== memo._id)
       );
+
+      // update project
+      const updatedProjectMemos = projectMemos.filter(
+        (m) => m._id !== memo._id
+      );
+      await dispatch(
+        updateProject({
+          projectId: projectId,
+          projectData: {
+            memos: updatedProjectMemos.map((memo) => memo._id),
+          },
+        })
+      ).unwrap();
+
+      // UI clean up
       setSelectedMemo(null);
       handleClose();
     } catch (error) {
@@ -690,7 +839,7 @@ const ProjectPageSections = ({ project }) => {
     }
   };
 
-  const onDragEnd = (result) => {
+  const onDragEnd = async (result) => {
     const { source, destination, draggableId, type } = result;
 
     // Do nothing if there's no destination or the item is dropped in the same place it was dragged from
@@ -704,36 +853,77 @@ const ProjectPageSections = ({ project }) => {
 
     if (type === "column") {
       // Handling column (section) reordering
-      const newSections = Array.from(sections);
+      const newSections = Array.from(projectSections);
       const [movedSection] = newSections.splice(source.index, 1);
       newSections.splice(destination.index, 0, movedSection);
 
-      setSections(newSections);
+      // Prepare updated sections with new indexes
+      const updatedSections = newSections.map((section, index) => ({
+        ...section,
+        index: index,
+      }));
+
+      updatedSections.forEach(async (section) => {
+        try {
+          await dispatch(
+            updateSection({
+              sectionId: section._id,
+              projectId: section.project,
+              sectionData: { index: section.index },
+            })
+          ).unwrap();
+        } catch (error) {
+          console.error("Error updating section index:", error);
+        }
+      });
+
+      try {
+        const updatedSectionIds = updatedSections.map((section) => section._id);
+        await dispatch(
+          updateProject({
+            projectId: projectId,
+            projectData: { sections: updatedSectionIds },
+          })
+        ).unwrap();
+      } catch (error) {
+        console.error("Error updating project with new sections:", error);
+      }
     } else if (type === "memo") {
       // Handling memo reordering within and between sections
-      const startSectionIndex = sections.findIndex(
-        (section) => section.id === source.droppableId
+      const startSectionIndex = projectSections.findIndex(
+        (section) => section._id === source.droppableId
       );
-      const finishSectionIndex = sections.findIndex(
-        (section) => section.id === destination.droppableId
+      const finishSectionIndex = projectSections.findIndex(
+        (section) => section._id === destination.droppableId
       );
 
       if (startSectionIndex === finishSectionIndex) {
         // Moving memos within the same section
-        const section = sections[startSectionIndex];
+        const section = projectSections[startSectionIndex];
         const newMemos = Array.from(section.memos);
         const [movedMemo] = newMemos.splice(source.index, 1);
         newMemos.splice(destination.index, 0, movedMemo);
 
-        const newSection = { ...section, memos: newMemos };
-        const updatedSections = Array.from(sections);
-        updatedSections[startSectionIndex] = newSection;
+        const updatedSection = { ...section, memos: newMemos };
 
-        setSections(updatedSections);
+        try {
+          // Update the section with the new memos order
+          await dispatch(
+            updateSection({
+              sectionId: section._id,
+              projectId: section.project,
+              sectionData: {
+                memos: updatedSection.memos.map((memo) => memo._id),
+              },
+            })
+          ).unwrap();
+        } catch (error) {
+          console.error("Error updating memo order within section:", error);
+        }
       } else {
         // Moving memos between different sections
-        const startSection = sections[startSectionIndex];
-        const finishSection = sections[finishSectionIndex];
+        const startSection = projectSections[startSectionIndex];
+        const finishSection = projectSections[finishSectionIndex];
 
         const newStartMemos = Array.from(startSection.memos);
         const [movedMemo] = newStartMemos.splice(source.index, 1);
@@ -744,13 +934,37 @@ const ProjectPageSections = ({ project }) => {
         const newStartSection = { ...startSection, memos: newStartMemos };
         const newFinishSection = { ...finishSection, memos: newFinishMemos };
 
-        const updatedSections = Array.from(sections);
-        updatedSections[startSectionIndex] = newStartSection;
-        updatedSections[finishSectionIndex] = newFinishSection;
+        try {
+          // Update start section
+          await dispatch(
+            updateSection({
+              sectionId: newStartSection._id,
+              projectId: newStartSection.project,
+              sectionData: {
+                memos: newStartSection.memos.map((memo) => memo._id),
+              },
+            })
+          ).unwrap();
 
-        setSections(updatedSections);
+          // Update finish section
+          await dispatch(
+            updateSection({
+              sectionId: newFinishSection._id,
+              projectId: newFinishSection.project,
+              sectionData: {
+                memos: newFinishSection.memos.map((memo) => memo._id),
+              },
+            })
+          ).unwrap();
+        } catch (error) {
+          console.error("Error updating sections:", error);
+        }
       }
     }
+  };
+
+  const handleSync = () => {
+    dispatch(synchronizeMemos());
   };
 
   return (
@@ -775,7 +989,7 @@ const ProjectPageSections = ({ project }) => {
           updateProgress={updateProgress}
           projectOptions={projectOptions}
           memoProjects={memoProjects}
-          updateProject={updateProject}
+          updateProjectMemos={updateProjectMemos}
           setMemoProjects={setMemoProjects}
           memoNotes={memoNotes}
           memoBody={memoBody}
@@ -815,7 +1029,7 @@ const ProjectPageSections = ({ project }) => {
           updateProgress={updateProgress}
           projectOptions={projectOptions}
           memoProjects={memoProjects}
-          updateProject={updateProject}
+          updateProjectMemos={updateProjectMemos}
           memoNotes={memoNotes}
           memoBody={memoBody}
           setMemoNotes={setMemoNotes}
@@ -830,6 +1044,7 @@ const ProjectPageSections = ({ project }) => {
           createSubMemoClick={createSubMemoClick}
         />
       )}
+      {/* <button onClick={handleSync}>Synchronize Memos</button> */}
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="scrollable-row">
           <Droppable
@@ -840,11 +1055,11 @@ const ProjectPageSections = ({ project }) => {
             {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 <Row className="mt-4 flex-nowrap">
-                  {sections.map((section, index) => (
-                    <Col key={section.id} xs={3}>
+                  {projectSections.map((section, index) => (
+                    <Col key={section._id} xs={3}>
                       <Draggable
-                        key={section.id}
-                        draggableId={section.id}
+                        key={section._id}
+                        draggableId={section._id}
                         index={index}
                       >
                         {(provided) => (
@@ -857,10 +1072,10 @@ const ProjectPageSections = ({ project }) => {
                               <Row className="mb-3">
                                 <Col {...provided.dragHandleProps}>
                                   <ContentEditable
-                                    innerRef={sectionRefs.current[section.id]}
+                                    innerRef={sectionRefs.current[section._id]}
                                     html={section.name}
                                     onChange={(e) =>
-                                      handleSectionNameChange(section.id, e)
+                                      handleSectionNameChange(section._id, e)
                                     }
                                     tagName="div"
                                     className="section-names"
@@ -875,17 +1090,17 @@ const ProjectPageSections = ({ project }) => {
                                   <Col xs="auto">
                                     <div
                                       onClick={() =>
-                                        onEllipsisClick(section.id)
+                                        onEllipsisClick(section._id)
                                       }
                                     >
                                       ...
                                     </div>
-                                    {ellipsisDropdown === section.id && (
+                                    {ellipsisDropdown === section._id && (
                                       <Row>
                                         <Col>
                                           <div
                                             onClick={() =>
-                                              onDeleteSectionClick(section.id)
+                                              onDeleteSectionClick(section._id)
                                             }
                                           >
                                             Delete
@@ -897,7 +1112,10 @@ const ProjectPageSections = ({ project }) => {
                                 )}
                               </Row>
                               <Row>
-                                <Droppable droppableId={section.id} type="memo">
+                                <Droppable
+                                  droppableId={section._id}
+                                  type="memo"
+                                >
                                   {(provided) => (
                                     <Col>
                                       <div
@@ -911,8 +1129,8 @@ const ProjectPageSections = ({ project }) => {
                                         {section.memos.map(
                                           (memo, memoIndex) => (
                                             <Draggable
-                                              key={memo.id}
-                                              draggableId={memo.id}
+                                              key={memo._id}
+                                              draggableId={memo._id}
                                               index={memoIndex}
                                             >
                                               {(provided) => (
@@ -984,11 +1202,11 @@ const ProjectPageSections = ({ project }) => {
                                                     >
                                                       {!memo.dueDateTime && (
                                                         <CiCalendar
-                                                          onClick={() =>
-                                                            toggleCalendar(
-                                                              memo._id
-                                                            )
-                                                          }
+                                                        // onClick={() =>
+                                                        //   toggleCalendar(
+                                                        //     memo._id
+                                                        //   )
+                                                        // }
                                                         />
                                                       )}
                                                       {showCalendar[
@@ -1044,7 +1262,7 @@ const ProjectPageSections = ({ project }) => {
                               <Row>
                                 <Col>
                                   <Button
-                                    onClick={() => handleAddClick(section.id)}
+                                    onClick={() => handleAddClick(section._id)}
                                   >
                                     + Add Memo
                                   </Button>

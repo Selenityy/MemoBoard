@@ -10,7 +10,7 @@ exports.listProjects = asyncHandler(async (req, res, next) => {
     const projects = await Project.find({ user: userId }).populate({
       path: "memos",
       select:
-        "body user dueDateTime progress tags priority notes parentId project", // specify all fields you need
+        "body user dueDateTime progress tags priority notes parentId project sections", // specify all fields you need
       populate: {
         path: "tags",
         select: "name", // populate tags within memos if needed
@@ -113,13 +113,34 @@ exports.createProject = [
 exports.updateProject = asyncHandler(async (req, res, next) => {
   const projectId = req.params.projectId;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
+
+  const updateObject = {};
+  Object.keys(req.body).forEach((key) => {
+    if (["sections", "memos"].includes(key)) {
+      // Use $addToSet for array fields to ensure no duplicates
+      // updateObject.$addToSet = { [key]: { $each: req.body[key] } };
+
+      // Replace the array to maintain the new order
+      if (!updateObject.$set) {
+        updateObject.$set = {};
+      }
+      updateObject.$set[key] = req.body[key];
+    } else {
+      // Use $set for all other fields to replace their values
+      if (!updateObject.$set) {
+        updateObject.$set = {};
+      }
+      updateObject.$set[key] = req.body[key];
+    }
+  });
+
   try {
     const updatedProject = await Project.findOneAndUpdate(
       {
         _id: projectId,
         user: userId,
       },
-      req.body,
+      updateObject,
       { new: true, runValidators: true }
     );
     if (!updatedProject) {

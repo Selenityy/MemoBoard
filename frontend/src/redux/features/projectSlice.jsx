@@ -129,7 +129,7 @@ export const updateProject = createAsyncThunk(
           body: JSON.stringify(projectData),
         }
       );
-      const data = response.json();
+      const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Failed to update project");
       }
@@ -159,7 +159,7 @@ export const deleteProject = createAsyncThunk(
       const response = await fetch(
         `http://locahlhost:3000/dashboard/projects/${projectId}/delete`,
         {
-          method: "PUT",
+          method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",

@@ -8,6 +8,7 @@ const ProjectSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   memos: [{ type: Schema.Types.ObjectId, ref: "Memo" }],
   color: { type: String, required: true },
+  sections: [{ type: Schema.Types.ObjectId, ref: "Section" }],
 });
 
 module.exports = mongoose.model("Project", ProjectSchema);
