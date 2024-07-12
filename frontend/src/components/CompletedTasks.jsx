@@ -296,7 +296,7 @@ const CompletedTasks = () => {
                       padding: "10px",
                       border: "none",
                     }}
-                    value={selectedMemo.body}
+                    defaultValue={selectedMemo.body}
                   />
                 </Col>
               </Row>
