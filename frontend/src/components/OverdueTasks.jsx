@@ -432,7 +432,7 @@ const OverdueTasks = () => {
       }));
 
       // Fetch all memos again to reflect the updated project list
-      const memos = await dispatch(fetchMemos()).unwrap();
+      const memos = await dispatch(fetchAllMemos()).unwrap();
       const filteredMemos = memos.filter(
         (memo) =>
           memo.project &&
