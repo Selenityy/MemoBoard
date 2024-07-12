@@ -21,6 +21,8 @@ import { CiCalendar } from "react-icons/ci";
 import "react-calendar/dist/Calendar.css";
 import Modal from "react-bootstrap/Modal";
 import Select from "react-dropdown-select";
+import MemoDetailsModal from "./MemoDetailsModal";
+
 // import Select from "react-select";
 
 const allMemos = createSelector(
@@ -81,6 +83,12 @@ const AllMemos = () => {
 
   const [showEllipsis, setShowEllipsis] = useState(false);
 
+  const [lastUpdate, setLastUpdate] = useState(Date.now());
+  const [projectMemos, setProjectMemos] = useState([]);
+  const [memoBody, setMemoBody] = useState("");
+  const [memoDueDate, setMemoDueDate] = useState();
+  const [memoParentId, setMemoParentId] = useState("");
+
   const inputRef = useRef(null);
   const submemoRef = useRef(null);
   const calendarRefs = useRef({});
@@ -100,7 +108,7 @@ const AllMemos = () => {
 
   useEffect(() => {
     dispatch(fetchAllMemos());
-  }, [dispatch]);
+  }, [dispatch, lastUpdate]);
 
   useEffect(() => {
     const projectList = projects.map((project) => ({
@@ -170,17 +178,47 @@ const AllMemos = () => {
     }
   };
 
+  // const toggleMemoProgress = async (memo) => {
+  //   const updatedProgress =
+  //     memo.progress === "Completed" ? "Not Started" : "Completed";
+  //   const updatedMemo = { ...memo, progress: updatedProgress };
+  //   try {
+  //     await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
+  //     dispatch(fetchAllMemos());
+  //     setSelectedMemo((prevMemo) => ({
+  //       ...prevMemo,
+  //       progress: updatedProgress,
+  //     }));
+  //   } catch (error) {
+  //     console.error("Error updating memo:", error);
+  //   }
+  // };
+
   const toggleMemoProgress = async (memo) => {
+    // set up the updated memo structure to pass to the backend
     const updatedProgress =
       memo.progress === "Completed" ? "Not Started" : "Completed";
     const updatedMemo = { ...memo, progress: updatedProgress };
     try {
+      // update the selected memo via the backend
       await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
-      dispatch(fetchAllMemos());
+
+      // then update the selected memo within the modal
       setSelectedMemo((prevMemo) => ({
         ...prevMemo,
         progress: updatedProgress,
       }));
+
+      // then update the memos listed in the project page
+      setProjectMemos((prevMemos) => {
+        return prevMemos.map((m) => {
+          if (m._id === memo.id) {
+            return { ...m, progress: updatedProgress };
+          }
+          return m;
+        });
+      });
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating memo:", error);
     }
@@ -283,67 +321,225 @@ const AllMemos = () => {
     }
   };
 
+  // const updateNotes = async (memo) => {
+  //   const updatedMemo = {
+  //     ...memo,
+  //     notes: memoNotes,
+  //   };
+  //   try {
+  //     await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
+  //     dispatch(fetchAllMemos());
+  //     setSelectedMemo((prevMemo) => ({
+  //       ...prevMemo,
+  //       notes: memoNotes,
+  //     }));
+  //   } catch (error) {
+  //     console.error("Error updating memo notes:", error);
+  //   }
+  // };
+
+  // const updateProgress = async (selectedOption) => {
+  //   const updatedMemo = {
+  //     ...selectedMemo,
+  //     progress: selectedOption[0].value,
+  //   };
+  //   setMemoProgress(selectedOption[0].value);
+  //   try {
+  //     await dispatch(
+  //       updateMemo({
+  //         formData: updatedMemo,
+  //         memoId: selectedMemo._id,
+  //       })
+  //     );
+  //     dispatch(fetchAllMemos());
+  //     setSelectedMemo((prevMemo) => ({
+  //       ...prevMemo,
+  //       progress: selectedOption[0].value,
+  //     }));
+  //   } catch (error) {
+  //     console.error("Error updating progress:", error);
+  //   }
+  // };
+
+  // const updateProject = async (selectedOption) => {
+  //   const updatedProjects = selectedOption.length
+  //     ? selectedOption.map((option) => option.value)
+  //     : null;
+  //   const updatedMemo = {
+  //     ...selectedMemo,
+  //     project: updatedProjects,
+  //   };
+  //   setMemoProjects(selectedOption);
+  //   try {
+  //     await dispatch(
+  //       updateMemo({
+  //         formData: updatedMemo,
+  //         memoId: selectedMemo._id,
+  //       })
+  //     );
+  //     dispatch(fetchAllMemos());
+  //     setSelectedMemo((prevMemo) => ({
+  //       ...prevMemo,
+  //       project: updatedProjects,
+  //     }));
+  //   } catch (error) {
+  //     console.error("Error updating project:", error);
+  //   }
+  // };
+
+  //UPDATES
+  const updateBody = async (memo) => {
+    // set up the updated memo structure to pass to the backend
+    const updatedMemo = {
+      ...memo,
+      body: memoBody,
+    };
+    try {
+      // update the selected memo via the backend
+      await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
+
+      // then update the selected memo within the modal
+      setSelectedMemo((prevMemo) => ({
+        ...prevMemo,
+        body: memoBody,
+      }));
+
+      // then update the memos listed in the project page
+      setProjectMemos((prevMemos) => {
+        return prevMemos.map((m) => {
+          if (m._id === memo.id) {
+            return { ...m, body: memoBody };
+          }
+          return m;
+        });
+      });
+      setLastUpdate(Date.now());
+    } catch (error) {
+      console.error("Error updating memo body:", error);
+    }
+  };
+
   const updateNotes = async (memo) => {
+    // set up the updated memo structure to pass to the backend
     const updatedMemo = {
       ...memo,
       notes: memoNotes,
     };
     try {
+      // update the selected memo via the backend
       await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
-      dispatch(fetchAllMemos());
+
+      // then update the selected memo within the modal
       setSelectedMemo((prevMemo) => ({
         ...prevMemo,
         notes: memoNotes,
       }));
+
+      // then update the memos listed in the project page
+      setProjectMemos((prevMemos) => {
+        return prevMemos.map((m) => {
+          if (m._id === memo.id) {
+            return { ...m, notes: memoNotes };
+          }
+          return m;
+        });
+      });
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating memo notes:", error);
     }
   };
 
   const updateProgress = async (selectedOption) => {
+    // set up the updated memo structure to pass to the backend
+    const memoId = selectedMemo._id;
     const updatedMemo = {
       ...selectedMemo,
       progress: selectedOption[0].value,
     };
-    setMemoProgress(selectedOption[0].value);
+    setMemoProgress({
+      value: selectedOption[0].value,
+      label: selectedOption[0].label,
+    });
     try {
+      // update the selected memo via the backend
       await dispatch(
         updateMemo({
           formData: updatedMemo,
-          memoId: selectedMemo._id,
+          memoId,
         })
       );
-      dispatch(fetchAllMemos());
+
+      // then update the selected memo within the modal
       setSelectedMemo((prevMemo) => ({
         ...prevMemo,
         progress: selectedOption[0].value,
       }));
+
+      // then update the memos listed in the project page
+      setProjectMemos((prevMemos) => {
+        return prevMemos.map((m) => {
+          if (m._id === memoId) {
+            return { ...m, progress: selectedOption[0].value };
+          }
+          return m;
+        });
+      });
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating progress:", error);
     }
   };
 
-  const updateProject = async (selectedOption) => {
-    const updatedProjects = selectedOption.length
-      ? selectedOption.map((option) => option.value)
+  const updateProjectMemos = async (selectedOption) => {
+    // set up the updated memo structure to pass to the backend
+    const memoId = selectedMemo._id;
+    // const originalProjectId = selectedMemo.project._id;
+    const originalProjectId = selectedMemo.project
+      ? selectedMemo.project._id
       : null;
+    const updatedProject = selectedOption.length
+      ? {
+          _id: selectedOption[0].value,
+          name: selectedOption[0].label,
+        }
+      : null;
+
     const updatedMemo = {
       ...selectedMemo,
-      project: updatedProjects,
+      project: updatedProject ? updatedProject._id : null,
     };
-    setMemoProjects(selectedOption);
+    setMemoProjects({
+      _id: selectedOption[0].value,
+      name: selectedOption[0].label,
+    });
+
     try {
+      // update the selected memo via the backend
       await dispatch(
         updateMemo({
           formData: updatedMemo,
-          memoId: selectedMemo._id,
+          memoId,
         })
       );
-      dispatch(fetchAllMemos());
+
+      // then update the selected memo within the modal
       setSelectedMemo((prevMemo) => ({
         ...prevMemo,
-        project: updatedProjects,
+        project: updatedProject,
       }));
+
+      // Fetch all memos again to reflect the updated project list
+      const memos = await dispatch(fetchMemos()).unwrap();
+      const filteredMemos = memos.filter(
+        (memo) =>
+          memo.project &&
+          memo.project._id === originalProjectId &&
+          memo._id !== memoId
+      );
+
+      setProjectMemos(filteredMemos);
+      setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating project:", error);
     }
@@ -363,19 +559,56 @@ const AllMemos = () => {
     }));
   };
 
+  // const toggleMemoModal = async (memo) => {
+  //   setSelectedMemo(memo);
+  //   setMemoNotes(memo.notes);
+  //   setMemoProgress(options.find((option) => option.value === memo.progress));
+  //   setMemoProjects(
+  //     memo.project
+  //       ? [{ value: memo.project._id, label: memo.project.name }]
+  //       : []
+  //   );
+  //   setShowMemoModal(true);
+  //   try {
+  //     const res = await dispatch(fetchChildrenMemos(memo._id)).unwrap();
+  //     setSubmemos(res.children);
+  //   } catch (error) {
+  //     console.error("Error fetching children memos:", error);
+  //   }
+  // };
+
   const toggleMemoModal = async (memo) => {
     setSelectedMemo(memo);
-    setMemoNotes(memo.notes);
-    setMemoProgress(options.find((option) => option.value === memo.progress));
+    setMemoBody(memo.body || "");
+    setMemoNotes(memo.notes || "");
+    setMemoDueDate(memo.dueDateTime || "");
+    setMemoParentId(memo.parentId || "");
+
+    const foundProgress = options.find(
+      (option) => option.value === memo.progress
+    );
+    setMemoProgress(foundProgress || options[0]);
+
+    const foundProject =
+      memo.project &&
+      projects.find((p) => p._id === (memo.project._id || memo.project));
     setMemoProjects(
-      memo.project
-        ? [{ value: memo.project._id, label: memo.project.name }]
+      foundProject
+        ? [
+            {
+              value: foundProject._id,
+              label: foundProject.name,
+            },
+          ]
         : []
     );
-    setShowMemoModal(true);
+
+    if (showMemoModal === false) {
+      setShowMemoModal(true);
+    }
     try {
       const res = await dispatch(fetchChildrenMemos(memo._id)).unwrap();
-      setSubmemos(res.children);
+      setSubmemos(res.children || []);
     } catch (error) {
       console.error("Error fetching children memos:", error);
     }
@@ -394,305 +627,39 @@ const AllMemos = () => {
   return (
     <>
       {showMemoModal && selectedMemo && (
-        <Modal
-          show={showMemoModal}
-          onHide={handleClose}
-          size="lg"
-          aria-labelledby="contained-modal-title-vcenter"
-          centered
-        >
-          <Modal.Header closeButton>
-            <Modal.Title
-              style={{
-                fontSize: "0.5rem",
-                display: "flex",
-                width: "100%",
-                justifyContent: "space-between",
-                alignItems: "center",
-                paddingRight: "10px",
-              }}
-            >
-              {selectedMemo.progress !== "Completed" ? (
-                <>
-                  <button
-                    onClick={() =>
-                      toggleMemoProgress(selectedMemo, selectedMemo._id)
-                    }
-                  >
-                    &#10003; Mark Complete
-                  </button>
-                  <div
-                    onClick={clickEllipsis}
-                    style={{ color: "black", fontSize: "1rem" }}
-                  >
-                    ...
-                  </div>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() =>
-                      toggleMemoProgress(selectedMemo, selectedMemo._id)
-                    }
-                    style={{ backgroundColor: "green" }}
-                  >
-                    &#10003; Completed
-                  </button>
-                  <div
-                    onClick={clickEllipsis}
-                    style={{ color: "black", fontSize: "1rem" }}
-                  >
-                    ...
-                  </div>
-                </>
-              )}
-              {showEllipsis && (
-                <div
-                  onClick={() => clickDeleteMemo(selectedMemo)}
-                  style={{ color: "black" }}
-                >
-                  Delete
-                </div>
-              )}
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Container>
-              <Row>
-                <Col>
-                  <textarea
-                    aria-label="Memo Body"
-                    style={{
-                      width: "100%",
-                      height: "40px",
-                      overflow: "hidden",
-                      resize: "none",
-                      padding: "10px",
-                      border: "none",
-                    }}
-                    value={selectedMemo.body}
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col style={{ padding: "10px 20px 10px 20px" }}>
-                  <div style={{ color: "black" }}>Due Date</div>
-                </Col>
-                <Col>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                    }}
-                  >
-                    {selectedMemo.dueDateTime ? (
-                      <>
-                        <div
-                          style={{ color: "black", cursor: "pointer" }}
-                          onClick={() => toggleBigCalendar(selectedMemo._id)}
-                        >
-                          {format(parseISO(selectedMemo.dueDateTime), "MMM d")}
-                        </div>
-                        <div
-                          style={{
-                            color: "black",
-                            fontSize: "1rem",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => clearDueDate(selectedMemo)}
-                        >
-                          X
-                        </div>
-                      </>
-                    ) : (
-                      <CiCalendar
-                        style={{ color: "black" }}
-                        onClick={() => toggleBigCalendar(selectedMemo._id)}
-                      />
-                    )}
-                  </div>
-                  <div
-                    ref={(el) => (calendarRefs.current[selectedMemo._id] = el)}
-                    style={{ position: "relative" }}
-                  >
-                    {showBigCalendar[selectedMemo._id] && (
-                      <div
-                        style={{
-                          position: "absolute",
-                          zIndex: 1050,
-                          top: "100%",
-                          left: 0,
-                        }}
-                      >
-                        <Calendar
-                          onChange={(date) => {
-                            changeDueDate(date, selectedMemo);
-                            toggleBigCalendar(selectedMemo._id);
-                          }}
-                          value={
-                            selectedMemo.dueDateTime
-                              ? parseISO(selectedMemo.dueDateTime)
-                              : null
-                          }
-                          calendarType={"gregory"}
-                          style={{ backgroundColor: "white", color: "black" }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <div style={{ color: "black" }}>Progress</div>
-                </Col>
-                <Col>
-                  <Select
-                    style={{ color: "black" }}
-                    options={options}
-                    values={[memoProgress]}
-                    onChange={(selectedOption) => {
-                      updateProgress(selectedOption);
-                    }}
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <div style={{ color: "black" }}>Projects</div>
-                </Col>
-                <Col>
-                  <Select
-                    clearable
-                    style={{ color: "black" }}
-                    options={projectOptions}
-                    values={memoProjects}
-                    onChange={(selectedOption) => {
-                      updateProject(selectedOption);
-                    }}
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <div style={{ color: "black" }}>Descriptions</div>
-                </Col>
-                <Col>
-                  <textarea
-                    style={{ color: "black" }}
-                    placeholder="What is this memo about?"
-                    value={memoNotes}
-                    onChange={(e) => setMemoNotes(e.target.value)}
-                    onBlur={() => updateNotes(selectedMemo)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        updateNotes(selectedMemo);
-                      }
-                    }}
-                  ></textarea>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <button onClick={handleSubMemoAddClick}>+ Add submemo</button>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  {newSubMemoLine && (
-                    <Row>
-                      <Col>
-                        <input
-                          ref={submemoRef}
-                          type="text"
-                          onChange={(e) => setNewSubMemoText(e.target.value)}
-                          placeholder="Type new submemo here..."
-                          className="form-control"
-                          onBlur={() => createSubMemoClick(selectedMemo)}
-                        />
-                      </Col>
-                    </Row>
-                  )}
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <ul>
-                    {submemos.length > 0 &&
-                      submemos.map((submemo) => (
-                        <li
-                          key={submemo._id}
-                          style={{ listStyleType: "circle", color: "black" }}
-                          onClick={() => toggleMemoModal(submemo)}
-                        >
-                          {submemo.progress === "Completed" ? (
-                            <>
-                              <span
-                                style={{
-                                  color: "grey",
-                                  textDecoration: "line-through",
-                                }}
-                              >
-                                {submemo.body}
-                              </span>
-                              <span
-                                style={{
-                                  cursor: submemo.dueDateTime
-                                    ? "pointer"
-                                    : "default",
-                                  color: "grey",
-                                  textDecoration: "line-through",
-                                }}
-                              >
-                                {submemo.dueDateTime
-                                  ? isToday(parseISO(submemo.dueDateTime))
-                                    ? "Today"
-                                    : format(
-                                        parseISO(submemo.dueDateTime),
-                                        "MMM d"
-                                      )
-                                  : null}
-                              </span>
-                            </>
-                          ) : (
-                            <>
-                              <span style={{ color: "black" }}>
-                                {submemo.body}
-                              </span>
-                              {submemo.dueDateTime !== null && (
-                                <span
-                                  style={{
-                                    cursor: submemo.dueDateTime
-                                      ? "pointer"
-                                      : "default",
-                                    color: isToday(
-                                      parseISO(submemo.dueDateTime)
-                                    )
-                                      ? "green"
-                                      : "black",
-                                  }}
-                                >
-                                  {submemo.dueDateTime
-                                    ? isToday(parseISO(submemo.dueDateTime))
-                                      ? "Today"
-                                      : format(
-                                          parseISO(submemo.dueDateTime),
-                                          "MMM d"
-                                        )
-                                    : null}
-                                </span>
-                              )}
-                            </>
-                          )}
-                        </li>
-                      ))}
-                  </ul>
-                </Col>
-              </Row>
-            </Container>
-          </Modal.Body>
-        </Modal>
+        <MemoDetailsModal
+          selectedMemo={selectedMemo}
+          showMemoModal={showMemoModal}
+          handleClose={handleClose}
+          toggleMemoProgress={toggleMemoProgress}
+          clickEllipsis={clickEllipsis}
+          showEllipsis={showEllipsis}
+          clickDeleteMemo={clickDeleteMemo}
+          toggleMemoModal={toggleMemoModal}
+          setMemoBody={setMemoBody}
+          updateBody={updateBody}
+          toggleBigCalendar={toggleBigCalendar}
+          showBigCalendar={showBigCalendar}
+          clearDueDate={clearDueDate}
+          calendarRefs={calendarRefs}
+          changeDueDate={changeDueDate}
+          updateProgress={updateProgress}
+          projectOptions={projectOptions}
+          memoProjects={memoProjects}
+          updateProjectMemos={updateProjectMemos}
+          memoNotes={memoNotes}
+          memoBody={memoBody}
+          setMemoNotes={setMemoNotes}
+          updateNotes={updateNotes}
+          options={options}
+          memoProgress={memoProgress}
+          handleSubMemoAddClick={handleSubMemoAddClick}
+          newSubMemoLine={newSubMemoLine}
+          submemoRef={submemoRef}
+          setNewSubMemoText={setNewSubMemoText}
+          submemos={submemos}
+          createSubMemoClick={createSubMemoClick}
+        />
       )}
       <Row
         style={{
