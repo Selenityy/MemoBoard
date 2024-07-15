@@ -216,7 +216,8 @@ export const updateMemo = createAsyncThunk(
           body: JSON.stringify(formData),
         }
       );
-      const data = response.json();
+      const data = await response.json();
+      console.log("data memo slice:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to update memo");
       }
