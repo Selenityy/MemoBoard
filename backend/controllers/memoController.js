@@ -46,6 +46,7 @@ exports.getAllParentMemos = asyncHandler(async (req, res, next) => {
     const parentMemosObject = parentMemos.map((memo) =>
       memo.toObject({ virtuals: true })
     );
+    // console.log("backend parent memos:", parentMemosObject);
     res.json({
       message: "Successfully retrieved all parent memos",
       parentMemos: parentMemosObject,
@@ -228,14 +229,22 @@ exports.createMemo = [
       await newMemo.save();
 
       if (parentProject) {
-        await Project.findByIdAndUpdate(parentProject, {
-          $push: { memos: newMemo._id },
-        });
+        await Project.findByIdAndUpdate(
+          parentProject,
+          {
+            $push: { memos: newMemo._id },
+          },
+          { new: true }
+        );
       }
 
-      await Project.findByIdAndUpdate(project, {
-        $push: { memos: newMemo._id },
-      });
+      await Project.findByIdAndUpdate(
+        project,
+        {
+          $push: { memos: newMemo._id },
+        },
+        { new: true }
+      );
       return res
         .status(201)
         .json({ message: "Memo created successfully", newMemo: newMemo });
@@ -272,6 +281,10 @@ exports.updateMemo = asyncHandler(async (req, res, next) => {
     const updatedMemo = await Memo.findByIdAndUpdate(memoId, updateData, {
       new: true,
       runValidators: true,
+    });
+
+    await Project.findByIdAndUpdate(project, {
+      $push: { memos: updatedMemo._id },
     });
 
     if (!updatedMemo) {
