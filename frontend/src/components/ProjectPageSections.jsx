@@ -30,6 +30,7 @@ import {
   deleteSection,
   fetchAllSections,
   updateSection,
+  removeMemoFromAllSections,
 } from "@/redux/features/sectionSlice";
 import { updateProject } from "@/redux/features/projectSlice";
 import { debounce, filter } from "lodash";
@@ -61,14 +62,14 @@ const ProjectPageSections = ({ project }) => {
   const projectSections = useSelector(sectionsFromSlice).sort(
     (a, b) => a.index - b.index
   );
-  // console.log("redux project sections", projectSections);
+  console.log("redux project sections", projectSections);
 
   const allMemos = useSelector(memosFromSlice);
   // console.log("all memos:", allMemos);
 
   const projectId = project._id;
   const [projectMemos, setProjectMemos] = useState([]);
-  // console.log("are there project memos:", projectMemos);
+  console.log("are there project memos:", projectMemos);
 
   const submemoRef = useRef(null);
   const calendarRefs = useRef({});
@@ -92,7 +93,7 @@ const ProjectPageSections = ({ project }) => {
   const [showEllipsis, setShowEllipsis] = useState(false);
 
   const projects = useSelector(allProjects);
-  // console.log("all projects selector", projects);
+  console.log("all projects selector", projects);
 
   const [submemos, setSubmemos] = useState([]);
   const [newSubMemoLine, setNewSubMemoLine] = useState(false);
@@ -145,6 +146,8 @@ const ProjectPageSections = ({ project }) => {
           (memo) => memo.project && memo.project._id === projectId
         );
         setProjectMemos(filteredMemos);
+        console.log("project mew:", project);
+
         setMemoProjects(project);
       } catch (error) {
         console.error("Error getting a project's parent memos:", error);
@@ -638,23 +641,20 @@ const ProjectPageSections = ({ project }) => {
 
   const updateProjectMemos = async (selectedOption) => {
     // set up the updated memo structure to pass to the backend
-    console.log("selected option project memos:", selectedOption);
     const memoId = selectedMemo._id;
-    console.log("memo id:", memoId);
-    const originalProjectId = selectedMemo.project._id;
+    const originalProjectId = selectedMemo.project;
     const updatedProject = selectedOption.length
       ? {
           _id: selectedOption[0].value,
           name: selectedOption[0].label,
         }
       : null;
-    console.log("updated project value:", updatedProject);
 
     const updatedMemo = {
       ...selectedMemo,
       project: updatedProject ? updatedProject._id : null,
     };
-    console.log("updated memo value:", updatedMemo);
+
     setMemoProjects({
       _id: selectedOption[0].value,
       name: selectedOption[0].label,
@@ -675,6 +675,47 @@ const ProjectPageSections = ({ project }) => {
         project: updatedProject,
       }));
 
+      // Remove memo from old project's sections
+      if (originalProjectId && originalProjectId !== updatedProject?._id) {
+        await dispatch(
+          removeMemoFromAllSections({ projectId: originalProjectId, memoId })
+        );
+      }
+
+      // Remove memo from old project
+      if (originalProjectId && originalProjectId !== updatedProject._id) {
+        await dispatch(
+          updateProject({
+            projectId: originalProjectId,
+            removeMemos: [memoId],
+          })
+        );
+      }
+
+      // Conditionally add memo to new project
+      if (updatedProject && originalProjectId !== updatedProject._id) {
+        await dispatch(
+          updateProject({
+            projectId: updatedProject._id,
+            addMemos: [memoId],
+          })
+        );
+
+        // Find the first section in the new project to add the memo
+        const sections = await dispatch(
+          fetchAllSections(updatedProject._id)
+        ).unwrap();
+        if (sections.length > 0) {
+          await dispatch(
+            addMemoToSection({
+              sectionId: sections[0]._id,
+              projectId: updatedProject._id,
+              memoId,
+            })
+          );
+        }
+      }
+
       // Fetch all memos again to reflect the updated project list
       const memos = await dispatch(fetchMemos()).unwrap();
       const filteredMemos = memos.filter(
@@ -683,8 +724,6 @@ const ProjectPageSections = ({ project }) => {
           memo.project._id === originalProjectId &&
           memo._id !== memoId
       );
-      console.log("filtered memos:", filteredMemos);
-
       setProjectMemos(filteredMemos);
       setLastUpdate(Date.now());
     } catch (error) {
