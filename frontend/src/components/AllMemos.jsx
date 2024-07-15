@@ -9,10 +9,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "@/context/ThemeContext";
 import {
   fetchAllMemos,
+  fetchMemo,
   fetchChildrenMemos,
   updateMemo,
   createMemo,
   deleteMemo,
+  fetchMemos,
 } from "@/redux/features/memoSlice";
 import { format, parseISO, isToday, isPast, compareAsc } from "date-fns";
 import { IoMdAdd } from "react-icons/io";
@@ -521,7 +523,7 @@ const AllMemos = () => {
           formData: updatedMemo,
           memoId,
         })
-      );
+      ).unwrap();
 
       // then update the selected memo within the modal
       setSelectedMemo((prevMemo) => ({

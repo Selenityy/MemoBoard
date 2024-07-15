@@ -7,6 +7,7 @@ import {
   updateMemo,
   createMemo,
   deleteMemo,
+  fetchMemos,
 } from "@/redux/features/memoSlice";
 import { Row, Col, Container } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
@@ -386,7 +387,7 @@ const CompletedTasks = () => {
       }));
 
       // Fetch all memos again to reflect the updated project list
-      const memos = await dispatch(fetchAllMemos()).unwrap();
+      const memos = await dispatch(fetchMemos()).unwrap();
       const filteredMemos = memos.filter(
         (memo) =>
           memo.project &&
