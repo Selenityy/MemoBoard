@@ -42,8 +42,8 @@ const MemoDetailsModal = ({
   submemos,
   createSubMemoClick,
 }) => {
-  console.log("memo progress modal:", memoProgress, options);
-  console.log("memo projects modal:", memoProjects, projectOptions);
+  // console.log("memo progress modal:", memoProgress, options);
+  // console.log("memo projects modal:", memoProjects, projectOptions);
   return (
     <div>
       <Modal
