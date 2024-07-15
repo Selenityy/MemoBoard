@@ -134,7 +134,7 @@ exports.addMemoToSection = asyncHandler(async (req, res, next) => {
       { $push: { memos: memoId } },
       { new: true }
     );
-    // console.log("backend updated section memo:", updatedSectionMemo);
+    console.log("backend updated section memo:", updatedSectionMemo);
     if (!updatedSectionMemo) {
       return res
         .status(404)
@@ -185,6 +185,35 @@ exports.addMultipleMemosToSection = asyncHandler(async (req, res, next) => {
     res.status(500).json({
       message: "Server error, cannot add all memos to specific section",
     });
+  }
+});
+
+// Remove a memo from the sections
+exports.removeMemoFromAllSections = asyncHandler(async (req, res, next) => {
+  const { projectId, memoId } = req.params;
+  try {
+    const updateResult = await Section.updateMany(
+      { project: projectId },
+      { $pull: { memos: memoId } }
+    );
+
+    if (updateResult.modifiedCount === 0) {
+      return res.status(404).json({ message: "No sections updated" });
+    }
+
+    const updatedSections = await Section.find({ project: projectId });
+    if (!updatedSections) {
+      return res.status(404).json({ message: "No sections updated" });
+    }
+    res.json({
+      message: "Memo removed from all sections",
+      sections: updatedSections,
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Server error, cannot remove memo from sections" });
   }
 });
 

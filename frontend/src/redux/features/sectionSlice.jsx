@@ -133,10 +133,11 @@ export const addMemoToSection = createAsyncThunk(
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({}),
         }
       );
       const data = await response.json();
-      //   console.log("slice section add memo:", data);
+      console.log("section slice data:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to update section memo");
       }
@@ -181,6 +182,45 @@ export const addAllMemosToSection = createAsyncThunk(
       }
       if (data.updatedSectionMemos) {
         return data.updatedSectionMemos;
+      } else {
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+// REMOVE A MEMO FROM ALL SECTIONS
+export const removeMemoFromAllSections = createAsyncThunk(
+  "/section/removeMemo",
+  async ({ sectionId, projectId, memoId }, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:3000/dashboard/projects/${projectId}/sections/${sectionId}/memos/${memoId}/remove`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({}),
+        }
+      );
+      const data = await response.json();
+      console.log("section slice data remove:", data);
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to remove memo from sections");
+      }
+      if (data.sections) {
+        return data.sections;
       } else {
         return thunkAPI.rejectWithValue({
           message: data.message,
@@ -391,6 +431,24 @@ export const sectionSlice = createSlice({
         state.error = null;
       })
       .addCase(addAllMemosToSection.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // REMOVE MEMO FROM SECTION
+      .addCase(removeMemoFromAllSections.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(removeMemoFromAllSections.fulfilled, (state, action) => {
+        action.payload.forEach((section) => {
+          if (state.byId[section._id]) {
+            state.byId[section._id] = section;
+          }
+        });
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(removeMemoFromAllSections.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
