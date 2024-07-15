@@ -403,7 +403,6 @@ const UpcomingTasks = () => {
   const updateProjectMemos = async (selectedOption) => {
     // set up the updated memo structure to pass to the backend
     const memoId = selectedMemo._id;
-    // const originalProjectId = selectedMemo.project._id;
     const originalProjectId = selectedMemo.project
       ? selectedMemo.project._id
       : null;
@@ -419,10 +418,14 @@ const UpcomingTasks = () => {
       project: updatedProject ? updatedProject._id : null,
     };
 
-    setMemoProjects({
-      _id: selectedOption[0].value,
-      name: selectedOption[0].label,
-    });
+    if (updatedMemo.project) {
+      setMemoProjects({
+        _id: selectedOption[0].value,
+        name: selectedOption[0].label,
+      });
+    } else if (updatedMemo.project === null) {
+      setMemoProjects([]);
+    }
 
     try {
       // update the selected memo via the backend
@@ -440,14 +443,14 @@ const UpcomingTasks = () => {
       }));
 
       // Remove memo from old project's sections
-      if (originalProjectId && originalProjectId !== updatedProject._id) {
+      if (originalProjectId && originalProjectId !== updatedProject?._id) {
         await dispatch(
           removeMemoFromAllSections({ projectId: originalProjectId, memoId })
         );
       }
 
       // Remove memo from old project
-      if (originalProjectId && originalProjectId !== updatedProject._id) {
+      if (originalProjectId && originalProjectId !== updatedProject?._id) {
         await dispatch(
           updateProject({
             projectId: originalProjectId,
@@ -457,7 +460,7 @@ const UpcomingTasks = () => {
       }
 
       // Conditionally add memo to new project
-      if (updatedProject && originalProjectId !== updatedProject._id) {
+      if (updatedProject && originalProjectId !== updatedProject?._id) {
         await dispatch(
           updateProject({
             projectId: updatedProject._id,

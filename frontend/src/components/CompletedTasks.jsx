@@ -68,6 +68,7 @@ const CompletedTasks = () => {
   const [memoDueDate, setMemoDueDate] = useState();
   const [memoProgress, setMemoProgress] = useState("");
   const [memoProjects, setMemoProjects] = useState([]);
+  console.log("memoProjects:", memoProjects);
   const [memoParentId, setMemoParentId] = useState("");
   const options = [
     { value: "Not Started", label: "Not Started" },
@@ -340,8 +341,9 @@ const CompletedTasks = () => {
   const updateProjectMemos = async (selectedOption) => {
     // set up the updated memo structure to pass to the backend
     const memoId = selectedMemo._id;
-    // const originalProjectId = selectedMemo.project._id;
-    const originalProjectId = selectedMemo.project ? selectedMemo.project._id : null;
+    const originalProjectId = selectedMemo.project
+      ? selectedMemo.project._id
+      : null;
     const updatedProject = selectedOption.length
       ? {
           _id: selectedOption[0].value,
@@ -354,10 +356,14 @@ const CompletedTasks = () => {
       project: updatedProject ? updatedProject._id : null,
     };
 
-    setMemoProjects({
-      _id: selectedOption[0].value,
-      name: selectedOption[0].label,
-    });
+    if (updatedMemo.project) {
+      setMemoProjects({
+        _id: selectedOption[0].value,
+        name: selectedOption[0].label,
+      });
+    } else if (updatedMemo.project === null) {
+      setMemoProjects([]);
+    }
 
     try {
       // update the selected memo via the backend
@@ -375,14 +381,14 @@ const CompletedTasks = () => {
       }));
 
       // Remove memo from old project's sections
-      if (originalProjectId && originalProjectId !== updatedProject._id) {
+      if (originalProjectId && originalProjectId !== updatedProject?._id) {
         await dispatch(
           removeMemoFromAllSections({ projectId: originalProjectId, memoId })
         );
       }
 
       // Remove memo from old project
-      if (originalProjectId && originalProjectId !== updatedProject._id) {
+      if (originalProjectId && originalProjectId !== updatedProject?._id) {
         await dispatch(
           updateProject({
             projectId: originalProjectId,
@@ -392,7 +398,7 @@ const CompletedTasks = () => {
       }
 
       // Conditionally add memo to new project
-      if (updatedProject && originalProjectId !== updatedProject._id) {
+      if (updatedProject && originalProjectId !== updatedProject?._id) {
         await dispatch(
           updateProject({
             projectId: updatedProject._id,
