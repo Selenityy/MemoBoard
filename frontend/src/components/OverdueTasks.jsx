@@ -14,12 +14,21 @@ import {
   fetchMemos,
   deleteMemo,
 } from "@/redux/features/memoSlice";
+import { updateProject } from "@/redux/features/projectSlice";
+import {
+  addAllMemosToSection,
+  addMemoToSection,
+  createSection,
+  deleteSection,
+  fetchAllSections,
+  updateSection,
+  removeMemoFromAllSections,
+} from "@/redux/features/sectionSlice";
 import { format, parseISO, isToday, isPast, compareAsc } from "date-fns";
 import { IoMdAdd } from "react-icons/io";
 import Calendar from "react-calendar";
 import { CiCalendar } from "react-icons/ci";
 import "react-calendar/dist/Calendar.css";
-import Modal from "react-bootstrap/Modal";
 import MemoDetailsModal from "./MemoDetailsModal";
 
 const allProjects = createSelector(
@@ -32,7 +41,8 @@ const allProjects = createSelector(
 const selectedOverdueMemos = createSelector(
   [(state) => state.memo.allIds, (state) => state.memo.byId],
   (allIds, byId) => {
-    return allIds
+    const uniqueIds = [...new Set(allIds)];
+    return uniqueIds
       .map((id) => byId[id])
       .filter(
         (memo) =>
@@ -81,6 +91,7 @@ const OverdueTasks = () => {
   const [projectOptions, setProjectOptions] = useState([]);
   const [projectMemos, setProjectMemos] = useState([]);
   const [lastUpdate, setLastUpdate] = useState(Date.now());
+  console.log("selected memo:", selectedMemo);
 
   const inputRef = useRef(null);
   const submemoRef = useRef(null);
@@ -89,6 +100,14 @@ const OverdueTasks = () => {
   useEffect(() => {
     dispatch(fetchAllMemos());
   }, [dispatch, lastUpdate]);
+
+  useEffect(() => {
+    const projectList = projects.map((project) => ({
+      value: project._id,
+      label: project.name,
+    }));
+    setProjectOptions(projectList);
+  }, [projects]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -212,23 +231,6 @@ const OverdueTasks = () => {
       console.error("Error clearing memo due date/time:", error);
     }
   };
-
-  // const updateNotes = async (memo) => {
-  //   const updatedMemo = {
-  //     ...memo,
-  //     notes: memoNotes,
-  //   };
-  //   try {
-  //     await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
-  //     dispatch(fetchAllMemos());
-  //     setSelectedMemo((prevMemo) => ({
-  //       ...prevMemo,
-  //       notes: memoNotes,
-  //     }));
-  //   } catch (error) {
-  //     console.error("Error updating memo notes:", error);
-  //   }
-  // };
 
   //UPDATES
   const updateBody = async (memo) => {
@@ -364,36 +366,6 @@ const OverdueTasks = () => {
     }
   };
 
-  // const toggleMemoProgress = async (memo) => {
-  //   // set up the updated memo structure to pass to the backend
-  //   const updatedProgress =
-  //     memo.progress === "Completed" ? "Not Started" : "Completed";
-  //   const updatedMemo = { ...memo, progress: updatedProgress };
-  //   try {
-  //     // update the selected memo via the backend
-  //     await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
-
-  //     // then update the selected memo within the modal
-  //     setSelectedMemo((prevMemo) => ({
-  //       ...prevMemo,
-  //       progress: updatedProgress,
-  //     }));
-
-  //     // then update the memos listed in the project page
-  //     setProjectMemos((prevMemos) => {
-  //       return prevMemos.map((m) => {
-  //         if (m._id === memo.id) {
-  //           return { ...m, progress: updatedProgress };
-  //         }
-  //         return m;
-  //       });
-  //     });
-  //     setLastUpdate(Date.now());
-  //   } catch (error) {
-  //     console.error("Error updating memo:", error);
-  //   }
-  // };
-
   const updateProjectMemos = async (selectedOption) => {
     // set up the updated memo structure to pass to the backend
     const memoId = selectedMemo._id;
@@ -412,6 +384,7 @@ const OverdueTasks = () => {
       ...selectedMemo,
       project: updatedProject ? updatedProject._id : null,
     };
+
     setMemoProjects({
       _id: selectedOption[0].value,
       name: selectedOption[0].label,
@@ -432,6 +405,47 @@ const OverdueTasks = () => {
         project: updatedProject,
       }));
 
+      // Remove memo from old project's sections
+      if (originalProjectId && originalProjectId !== updatedProject._id) {
+        await dispatch(
+          removeMemoFromAllSections({ projectId: originalProjectId, memoId })
+        );
+      }
+
+      // Remove memo from old project
+      if (originalProjectId && originalProjectId !== updatedProject._id) {
+        await dispatch(
+          updateProject({
+            projectId: originalProjectId,
+            projectData: { removeMemos: [memoId] },
+          })
+        );
+      }
+
+      // Conditionally add memo to new project
+      if (updatedProject && originalProjectId !== updatedProject._id) {
+        await dispatch(
+          updateProject({
+            projectId: updatedProject._id,
+            projectData: { addMemos: [memoId] },
+          })
+        );
+
+        // Find the first section in the new project to add the memo
+        const sections = await dispatch(
+          fetchAllSections(updatedProject._id)
+        ).unwrap();
+        if (sections.length > 0) {
+          await dispatch(
+            addMemoToSection({
+              sectionId: sections[0]._id,
+              projectId: updatedProject._id,
+              memoId,
+            })
+          );
+        }
+      }
+
       // Fetch all memos again to reflect the updated project list
       const memos = await dispatch(fetchMemos()).unwrap();
       const filteredMemos = memos.filter(
@@ -440,7 +454,6 @@ const OverdueTasks = () => {
           memo.project._id === originalProjectId &&
           memo._id !== memoId
       );
-
       setProjectMemos(filteredMemos);
       setLastUpdate(Date.now());
     } catch (error) {
@@ -461,18 +474,6 @@ const OverdueTasks = () => {
       [id]: !prevState[id],
     }));
   };
-
-  // const toggleMemoModal = async (memo) => {
-  //   setSelectedMemo(memo);
-  //   setMemoNotes(memo.notes);
-  //   setShowMemoModal(true);
-  //   try {
-  //     const res = await dispatch(fetchChildrenMemos(memo._id)).unwrap();
-  //     setSubmemos(res.children);
-  //   } catch (error) {
-  //     console.error("Error fetching children memos:", error);
-  //   }
-  // };
 
   const toggleMemoModal = async (memo) => {
     setSelectedMemo(memo);

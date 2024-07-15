@@ -29,7 +29,6 @@ import { IoMdAdd } from "react-icons/io";
 import Calendar from "react-calendar";
 import { CiCalendar } from "react-icons/ci";
 import "react-calendar/dist/Calendar.css";
-import Modal from "react-bootstrap/Modal";
 import MemoDetailsModal from "./MemoDetailsModal";
 
 const allProjects = createSelector(
@@ -81,7 +80,6 @@ const UpcomingTasks = () => {
   const [showBigCalendar, setShowBigCalendar] = useState({});
   const [showMemoModal, setShowMemoModal] = useState(false);
   const [selectedMemo, setSelectedMemo] = useState(null);
-  // console.log("selected memo:", selectedMemo);
   const [memoNotes, setMemoNotes] = useState("");
   const [showEllipsis, setShowEllipsis] = useState(false);
 
@@ -405,7 +403,10 @@ const UpcomingTasks = () => {
   const updateProjectMemos = async (selectedOption) => {
     // set up the updated memo structure to pass to the backend
     const memoId = selectedMemo._id;
-    const originalProjectId = selectedMemo.project._id;
+    // const originalProjectId = selectedMemo.project._id;
+    const originalProjectId = selectedMemo.project
+      ? selectedMemo.project._id
+      : null;
     const updatedProject = selectedOption.length
       ? {
           _id: selectedOption[0].value,
