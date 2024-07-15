@@ -12,7 +12,18 @@ import {
   updateMemo,
   createMemo,
   deleteMemo,
+  fetchMemos,
 } from "@/redux/features/memoSlice";
+import { updateProject } from "@/redux/features/projectSlice";
+import {
+  addAllMemosToSection,
+  addMemoToSection,
+  createSection,
+  deleteSection,
+  fetchAllSections,
+  updateSection,
+  removeMemoFromAllSections,
+} from "@/redux/features/sectionSlice";
 import { format, parseISO, isToday, isPast, compareAsc } from "date-fns";
 import { IoMdAdd } from "react-icons/io";
 import Calendar from "react-calendar";
@@ -31,7 +42,8 @@ const allProjects = createSelector(
 const selectedMemos = createSelector(
   [(state) => state.memo.allIds, (state) => state.memo.byId],
   (allIds, byId) => {
-    return allIds
+    const uniqueIds = [...new Set(allIds)];
+    return uniqueIds
       .map((id) => byId[id])
       .filter((memo) => {
         const dueDate = memo.dueDateTime ? parseISO(memo.dueDateTime) : null;
@@ -59,7 +71,7 @@ const UpcomingTasks = () => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const memos = useSelector(selectedMemos);
-  // console.log("memos:", memos);
+  console.log("memos:", memos);
   const [submemos, setSubmemos] = useState([]);
   const [newMemoLine, setNewMemoLine] = useState(false);
   const [newMemoText, setNewMemoText] = useState("");
@@ -286,23 +298,6 @@ const UpcomingTasks = () => {
     }
   };
 
-  // const updateNotes = async (memo) => {
-  //   const updatedMemo = {
-  //     ...memo,
-  //     notes: memoNotes,
-  //   };
-  //   try {
-  //     await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
-  //     dispatch(fetchAllMemos());
-  //     setSelectedMemo((prevMemo) => ({
-  //       ...prevMemo,
-  //       notes: memoNotes,
-  //     }));
-  //   } catch (error) {
-  //     console.error("Error updating memo notes:", error);
-  //   }
-  // };
-
   //UPDATES
   const updateBody = async (memo) => {
     // set up the updated memo structure to pass to the backend
@@ -407,43 +402,10 @@ const UpcomingTasks = () => {
     }
   };
 
-  // const toggleMemoProgress = async (memo) => {
-  //   // set up the updated memo structure to pass to the backend
-  //   const updatedProgress =
-  //     memo.progress === "Completed" ? "Not Started" : "Completed";
-  //   const updatedMemo = { ...memo, progress: updatedProgress };
-  //   try {
-  //     // update the selected memo via the backend
-  //     await dispatch(updateMemo({ formData: updatedMemo, memoId: memo._id }));
-
-  //     // then update the selected memo within the modal
-  //     setSelectedMemo((prevMemo) => ({
-  //       ...prevMemo,
-  //       progress: updatedProgress,
-  //     }));
-
-  //     // then update the memos listed in the project page
-  //     setProjectMemos((prevMemos) => {
-  //       return prevMemos.map((m) => {
-  //         if (m._id === memo.id) {
-  //           return { ...m, progress: updatedProgress };
-  //         }
-  //         return m;
-  //       });
-  //     });
-  //     setLastUpdate(Date.now());
-  //   } catch (error) {
-  //     console.error("Error updating memo:", error);
-  //   }
-  // };
-
   const updateProjectMemos = async (selectedOption) => {
     // set up the updated memo structure to pass to the backend
     const memoId = selectedMemo._id;
-    // const originalProjectId = selectedMemo.project._id;
-    const originalProjectId = selectedMemo.project
-      ? selectedMemo.project._id
-      : null;
+    const originalProjectId = selectedMemo.project._id;
     const updatedProject = selectedOption.length
       ? {
           _id: selectedOption[0].value,
@@ -455,6 +417,7 @@ const UpcomingTasks = () => {
       ...selectedMemo,
       project: updatedProject ? updatedProject._id : null,
     };
+
     setMemoProjects({
       _id: selectedOption[0].value,
       name: selectedOption[0].label,
@@ -475,6 +438,47 @@ const UpcomingTasks = () => {
         project: updatedProject,
       }));
 
+      // Remove memo from old project's sections
+      if (originalProjectId && originalProjectId !== updatedProject._id) {
+        await dispatch(
+          removeMemoFromAllSections({ projectId: originalProjectId, memoId })
+        );
+      }
+
+      // Remove memo from old project
+      if (originalProjectId && originalProjectId !== updatedProject._id) {
+        await dispatch(
+          updateProject({
+            projectId: originalProjectId,
+            projectData: { removeMemos: [memoId] },
+          })
+        );
+      }
+
+      // Conditionally add memo to new project
+      if (updatedProject && originalProjectId !== updatedProject._id) {
+        await dispatch(
+          updateProject({
+            projectId: updatedProject._id,
+            projectData: { addMemos: [memoId] },
+          })
+        );
+
+        // Find the first section in the new project to add the memo
+        const sections = await dispatch(
+          fetchAllSections(updatedProject._id)
+        ).unwrap();
+        if (sections.length > 0) {
+          await dispatch(
+            addMemoToSection({
+              sectionId: sections[0]._id,
+              projectId: updatedProject._id,
+              memoId,
+            })
+          );
+        }
+      }
+
       // Fetch all memos again to reflect the updated project list
       const memos = await dispatch(fetchMemos()).unwrap();
       const filteredMemos = memos.filter(
@@ -483,7 +487,6 @@ const UpcomingTasks = () => {
           memo.project._id === originalProjectId &&
           memo._id !== memoId
       );
-
       setProjectMemos(filteredMemos);
       setLastUpdate(Date.now());
     } catch (error) {
@@ -504,18 +507,6 @@ const UpcomingTasks = () => {
       [id]: !prevState[id],
     }));
   };
-
-  // const toggleMemoModal = async (memo) => {
-  //   setSelectedMemo(memo);
-  //   setMemoNotes(memo.notes);
-  //   setShowMemoModal(true);
-  //   try {
-  //     const res = await dispatch(fetchChildrenMemos(memo._id)).unwrap();
-  //     setSubmemos(res.children);
-  //   } catch (error) {
-  //     console.error("Error fetching children memos:", error);
-  //   }
-  // };
 
   const toggleMemoModal = async (memo) => {
     setSelectedMemo(memo);
