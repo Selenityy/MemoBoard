@@ -134,7 +134,7 @@ exports.addMemoToSection = asyncHandler(async (req, res, next) => {
       { $push: { memos: memoId } },
       { new: true }
     );
-    console.log("backend updated section memo:", updatedSectionMemo);
+    // console.log("backend updated section memo:", updatedSectionMemo);
     if (!updatedSectionMemo) {
       return res
         .status(404)
@@ -261,7 +261,7 @@ exports.deleteSection = asyncHandler(async (req, res, next) => {
       user: userId,
       project: projectId,
     });
-    console.log("backend deleted section:", deletedSection);
+    // console.log("backend deleted section:", deletedSection);
     if (!deletedSection) {
       return res.status(404).json({ message: "Deleted section not found" });
     }
