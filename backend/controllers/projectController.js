@@ -125,7 +125,6 @@ exports.updateProject = asyncHandler(async (req, res) => {
       project.memos = project.memos.filter(
         (memoId) => !removeMemos.includes(memoId.toString())
       );
-      console.log("removed from project:", project.memos);
     }
 
     // Add new memos to the project
@@ -134,7 +133,6 @@ exports.updateProject = asyncHandler(async (req, res) => {
         (memoId) => !project.memos.includes(memoId)
       );
       project.memos = [...project.memos, ...uniqueAddMemos];
-      console.log("added memos:", project.memos);
     }
 
     // Update other project fields
@@ -143,7 +141,6 @@ exports.updateProject = asyncHandler(async (req, res) => {
     });
 
     await project.save();
-    console.log("project:", project);
 
     res.status(200).json({
       message: "Project updated successfully",
@@ -156,56 +153,6 @@ exports.updateProject = asyncHandler(async (req, res) => {
       .json({ message: "Server error, cannot update the project" });
   }
 });
-
-// exports.updateProject = asyncHandler(async (req, res, next) => {
-//   const projectId = req.params.projectId;
-//   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
-//   console.log("backend project id:", projectId);
-
-//   const updateObject = {};
-//   Object.keys(req.body).forEach((key) => {
-//     if (["sections", "memos"].includes(key)) {
-//       // Use $addToSet for array fields to ensure no duplicates
-//       // updateObject.$addToSet = { [key]: { $each: req.body[key] } };
-
-//       // Replace the array to maintain the new order
-//       if (!updateObject.$set) {
-//         updateObject.$set = {};
-//       }
-//       updateObject.$set[key] = req.body[key];
-//     } else {
-//       // Use $set for all other fields to replace their values
-//       if (!updateObject.$set) {
-//         updateObject.$set = {};
-//       }
-//       updateObject.$set[key] = req.body[key];
-//     }
-//   });
-
-//   try {
-//     const updatedProject = await Project.findOneAndUpdate(
-//       {
-//         _id: projectId,
-//         user: userId,
-//       },
-//       updateObject,
-//       { new: true, runValidators: true }
-//     );
-//     if (!updatedProject) {
-//       return res.status(404).json({ message: "Updated project not found" });
-//     }
-//     console.log("backend project controller:", updatedProject);
-//     res.json({
-//       message: "Successfully updated a specific project",
-//       updatedProject: updatedProject,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     return res
-//       .status(500)
-//       .json({ message: "Server error, cannot update a project" });
-//   }
-// });
 
 exports.deleteProject = asyncHandler(async (req, res, next) => {
   const projectId = req.params.projectId;
