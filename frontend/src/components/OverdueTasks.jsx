@@ -11,6 +11,7 @@ import {
   fetchChildrenMemos,
   updateMemo,
   createMemo,
+  fetchMemos,
   deleteMemo,
 } from "@/redux/features/memoSlice";
 import { format, parseISO, isToday, isPast, compareAsc } from "date-fns";
@@ -432,7 +433,7 @@ const OverdueTasks = () => {
       }));
 
       // Fetch all memos again to reflect the updated project list
-      const memos = await dispatch(fetchAllMemos()).unwrap();
+      const memos = await dispatch(fetchMemos()).unwrap();
       const filteredMemos = memos.filter(
         (memo) =>
           memo.project &&
