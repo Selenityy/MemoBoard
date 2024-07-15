@@ -62,14 +62,14 @@ const ProjectPageSections = ({ project }) => {
   const projectSections = useSelector(sectionsFromSlice).sort(
     (a, b) => a.index - b.index
   );
-  console.log("redux project sections", projectSections);
+  // console.log("redux project sections", projectSections);
 
   const allMemos = useSelector(memosFromSlice);
   // console.log("all memos:", allMemos);
 
   const projectId = project._id;
   const [projectMemos, setProjectMemos] = useState([]);
-  console.log("are there project memos:", projectMemos);
+  // console.log("are there project memos:", projectMemos);
 
   const submemoRef = useRef(null);
   const calendarRefs = useRef({});
@@ -88,12 +88,12 @@ const ProjectPageSections = ({ project }) => {
   const [memoProgress, setMemoProgress] = useState("");
   const [memoProjects, setMemoProjects] = useState([]);
   const [memoParentId, setMemoParentId] = useState("");
-  console.log("memo progress page selection:", memoProgress);
-  console.log("memo projects page seletcion:", memoProjects);
+  // console.log("memo progress page selection:", memoProgress);
+  // console.log("memo projects page seletcion:", memoProjects);
   const [showEllipsis, setShowEllipsis] = useState(false);
 
   const projects = useSelector(allProjects);
-  console.log("all projects selector", projects);
+  // console.log("all projects selector", projects);
 
   const [submemos, setSubmemos] = useState([]);
   const [newSubMemoLine, setNewSubMemoLine] = useState(false);
@@ -146,7 +146,7 @@ const ProjectPageSections = ({ project }) => {
           (memo) => memo.project && memo.project._id === projectId
         );
         setProjectMemos(filteredMemos);
-        console.log("project mew:", project);
+        // console.log("project mew:", project);
 
         setMemoProjects(project);
       } catch (error) {
@@ -567,14 +567,14 @@ const ProjectPageSections = ({ project }) => {
   };
 
   const updateProgress = async (selectedOption) => {
-    console.log("selected option progress:", selectedOption);
+    // console.log("selected option progress:", selectedOption);
     // set up the updated memo structure to pass to the backend
     const memoId = selectedMemo._id;
     const updatedMemo = {
       ...selectedMemo,
       progress: selectedOption[0].value,
     };
-    console.log("progress updated memo:", updatedMemo);
+    // console.log("progress updated memo:", updatedMemo);
     setMemoProgress({
       value: selectedOption[0].value,
       label: selectedOption[0].label,
@@ -649,7 +649,6 @@ const ProjectPageSections = ({ project }) => {
           name: selectedOption[0].label,
         }
       : null;
-
     const updatedMemo = {
       ...selectedMemo,
       project: updatedProject ? updatedProject._id : null,
@@ -676,7 +675,7 @@ const ProjectPageSections = ({ project }) => {
       }));
 
       // Remove memo from old project's sections
-      if (originalProjectId && originalProjectId !== updatedProject?._id) {
+      if (originalProjectId && originalProjectId !== updatedProject._id) {
         await dispatch(
           removeMemoFromAllSections({ projectId: originalProjectId, memoId })
         );
@@ -687,7 +686,7 @@ const ProjectPageSections = ({ project }) => {
         await dispatch(
           updateProject({
             projectId: originalProjectId,
-            removeMemos: [memoId],
+            projectData: { removeMemos: [memoId] },
           })
         );
       }
@@ -697,7 +696,7 @@ const ProjectPageSections = ({ project }) => {
         await dispatch(
           updateProject({
             projectId: updatedProject._id,
-            addMemos: [memoId],
+            projectData: { addMemos: [memoId] },
           })
         );
 
