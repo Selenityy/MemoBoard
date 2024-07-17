@@ -12,10 +12,12 @@ import {
 import { useDispatch } from "react-redux";
 import { signupUser } from "@/redux/features/userSlice";
 import { useTheme } from "@/context/ThemeContext";
+import { useRouter } from "next/navigation";
 
 const SignupForm = () => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -70,6 +72,7 @@ const SignupForm = () => {
         setValidated(false);
         setErrorMessage("");
         console.log("successful signup");
+        router.push("/");
       } else {
         setValidated(false);
         setErrorMessage(res.payload);
