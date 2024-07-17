@@ -26,7 +26,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
     email,
     firstName,
     lastName,
-    timezone,
+    timezone: "America/Detroit",
   });
   await newUser.save();
 
