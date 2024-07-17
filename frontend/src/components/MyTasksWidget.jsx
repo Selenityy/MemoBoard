@@ -7,21 +7,23 @@ import UpcomingTasks from "./UpcomingTasks";
 import OverdueTasks from "./OverdueTasks";
 import CompletedTasks from "./CompletedTasks";
 import { useTheme } from "@/context/ThemeContext";
+import { useSelector } from "react-redux";
 
 const MyTasksWidget = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
   const { theme } = useTheme();
+  const { user } = useSelector((state) => state.user);
 
   const renderTabContent = () => {
     switch (activeTab) {
       case "upcoming":
-        return <UpcomingTasks />;
+        return <UpcomingTasks user={user} />;
       case "overdue":
-        return <OverdueTasks />;
+        return <OverdueTasks user={user} />;
       case "completed":
-        return <CompletedTasks />;
+        return <CompletedTasks user={user} />;
       default:
-        return <UpcomingTasks />;
+        return <UpcomingTasks user={user} />;
     }
   };
 
