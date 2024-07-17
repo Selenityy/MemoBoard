@@ -14,7 +14,7 @@ const WelcomeComponent = () => {
   const { user } = useSelector((state) => state.user);
   const [dateString, setDateString] = useState("Loading date...");
   const [timeOfDay, setTimeOfDay] = useState("Loading time of day...");
-  const clock = useLiveTime(user.timezone || "America/Los_Angeles", 1000);
+  const clock = useLiveTime(user.timezone || "America/Detroit", 1000);
 
   useEffect(() => {
     const fetchAndFormateUserInfo = async () => {
