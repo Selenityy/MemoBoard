@@ -38,7 +38,7 @@ const MyTasksWidget = () => {
     >
       <Row>
         <Col>
-          <div style={{ fontWeight: "bold", fontSize: "1.2rem" }}>My Tasks</div>
+          <div style={{ fontWeight: "bold", fontSize: "1.2rem" }}>My Memos</div>
         </Col>
       </Row>
       <Row
