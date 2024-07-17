@@ -351,7 +351,6 @@ export const userSlice = createSlice({
   reducers: {
     logout: (state) => {
       localStorage.removeItem("token");
-      localStorage.removeItem("timezone");
       state.user = initialState.user;
       state.isLoggedIn = false;
       state.status = "idle";
