@@ -8,12 +8,17 @@ import {
   fetchUserInfo,
   updateUserInfo,
   updateTimezone,
+  logout,
+  deleteAccount,
 } from "@/redux/features/userSlice";
 import TimezoneSelect from "react-timezone-select";
+import ConfirmationModal from "./ConfirmationModal";
+import { useRouter } from "next/navigation";
 
 const SettingsModal = (props) => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
+  const router = useRouter();
   const user = useSelector((state) => state.user.user);
   const userId = user._id;
   const [userInfo, setUserInfo] = useState({
@@ -29,6 +34,7 @@ const SettingsModal = (props) => {
   });
   const [validated, setValidated] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const [userInfoChanged, setUserInfoChanged] = useState(false);
   const [timezoneChanged, setTimezoneChanged] = useState(false);
@@ -100,6 +106,19 @@ const SettingsModal = (props) => {
       setErrorMessage(error);
       setValidated(false);
       console.error("Server error failed to update user information:", error);
+    }
+  };
+
+  const onDeleteAccount = async (e) => {
+    console.log("delete button clicked");
+    props.onHide();
+    try {
+      const res = await dispatch(deleteAccount());
+      console.log(res.payload);
+      router.push("/");
+      dispatch(logout());
+    } catch (error) {
+      console.error("Error deleting account:", error);
     }
   };
 
@@ -245,7 +264,7 @@ const SettingsModal = (props) => {
                 <div style={{ color: "red" }}>{errorMessage}</div>
               </Form>
             </Tab>
-            <Tab eventKey="account" title="Account">
+            <Tab eventKey="general" title="General">
               <div>Select Timezone:</div>
               <div>
                 <TimezoneSelect
@@ -254,7 +273,28 @@ const SettingsModal = (props) => {
                 />
               </div>
             </Tab>
-            {/* <Tab eventKey="general" title="General"></Tab> */}
+            <Tab eventKey="account" title="Account">
+              <div style={{ fontWeight: "bold" }}>Delete Account</div>
+              <div>
+                This will immediately delete all of your data including memos,
+                projects, comments, and more. This can’t be undone.
+              </div>
+              <Button
+                variant="outline-danger"
+                onClick={() => setShowConfirmation(true)}
+              >
+                Delete
+              </Button>
+              <ConfirmationModal
+                show={showConfirmation}
+                handleClose={() => setShowConfirmation(false)}
+                handleConfirm={() => {
+                  onDeleteAccount();
+                  setShowConfirmation(false);
+                }}
+                message="Are you sure you want to delete your account? This cannot be undone."
+              />
+            </Tab>
             {/* <Tab eventKey="tags" title="Tags"></Tab> */}
             {/* <Tab eventKey="display" title="Display"></Tab> */}
           </Tabs>
