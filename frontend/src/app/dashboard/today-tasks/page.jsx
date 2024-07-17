@@ -17,7 +17,7 @@ const TodayTasks = () => {
           <div>Today's Memos </div>
         </Col>
       </Row>
-      <TodaysMemos />
+      {/* <TodaysMemos /> */}
     </>
   );
 };

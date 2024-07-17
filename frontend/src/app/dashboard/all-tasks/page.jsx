@@ -17,7 +17,7 @@ const AllTasks = () => {
           <div>My Memos </div>
         </Col>
       </Row>
-      <AllMemos />
+      {/* <AllMemos /> */}
     </>
   );
 };

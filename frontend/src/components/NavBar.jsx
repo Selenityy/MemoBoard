@@ -41,7 +41,7 @@ const NavBar = () => {
   };
 
   const allMemoClick = () => {
-    router.push("/dashboard/all-tasks");
+    // router.push("/dashboard/all-tasks");
   };
 
   const todayMemoClick = () => {

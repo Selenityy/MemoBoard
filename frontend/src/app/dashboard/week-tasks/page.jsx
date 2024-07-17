@@ -7,7 +7,17 @@ import React from "react";
 
 const WeekTasks = () => {
   const { theme } = useTheme();
-  return <div>Week Tasks</div>;
+  return (
+    <div
+      style={{
+        fontSize: "1.5rem",
+        fontWeight: "700",
+        paddingBottom: "20px",
+      }}
+    >
+      Week Tasks
+    </div>
+  );
 };
 
 export default WeekTasks;
