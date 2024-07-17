@@ -245,7 +245,7 @@ const ProjectPageSections = ({ project }) => {
         ...currentSections.map((section) => section._id),
         newSection._id,
       ];
-      
+
       await dispatch(
         updateProject({
           projectId,
@@ -315,9 +315,9 @@ const ProjectPageSections = ({ project }) => {
             sections: updatedSections.map((section) => section._id),
           },
         })
-      ).unwrap();
+      );
 
-      await dispatch(fetchAllSections(updatedSections.project));
+      await dispatch(fetchAllSections(sectionToDelete.project));
 
       setLastUpdate(Date.now());
     } catch (error) {
