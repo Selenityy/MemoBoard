@@ -245,13 +245,13 @@ const ProjectPageSections = ({ project }) => {
         ...currentSections.map((section) => section._id),
         newSection._id,
       ];
-      const projectData = { sections: updatedSectionIds };
+      
       await dispatch(
         updateProject({
           projectId,
-          projectData,
+          projectData: { sections: updatedSectionIds },
         })
-      ).unwrap();
+      );
     } catch (error) {
       console.error("Error adding a section:", error);
     }
@@ -307,6 +307,7 @@ const ProjectPageSections = ({ project }) => {
       const updatedSections = projectSections.filter(
         (section) => section._id !== sectionId
       );
+
       await dispatch(
         updateProject({
           projectId: sectionToDelete.project,
@@ -315,6 +316,8 @@ const ProjectPageSections = ({ project }) => {
           },
         })
       ).unwrap();
+
+      await dispatch(fetchAllSections(updatedSections.project));
 
       setLastUpdate(Date.now());
     } catch (error) {
