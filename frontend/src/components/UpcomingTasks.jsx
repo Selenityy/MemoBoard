@@ -38,39 +38,63 @@ const allProjects = createSelector(
   }
 );
 
-const selectedMemos = createSelector(
-  [(state) => state.memo.allIds, (state) => state.memo.byId],
-  (allIds, byId) => {
-    const uniqueIds = [...new Set(allIds)];
-    return uniqueIds
-      .map((id) => byId[id])
-      .filter((memo) => {
-        const dueDate = memo.dueDateTime ? parseISO(memo.dueDateTime) : null;
-        return (
-          memo.progress !== "Completed" &&
-          (!dueDate || !isPast(dueDate) || isToday(dueDate))
-        );
-      })
-      .sort((a, b) => {
-        const dateA = a.dueDateTime
-          ? parseISO(a.dueDateTime)
-          : new Date(9999, 0, 1);
-        const dateB = b.dueDateTime
-          ? parseISO(b.dueDateTime)
-          : new Date(9999, 0, 1);
+const getUserId = (state) => state.user.user._id;
+const getMemos = (state) => state.memo.byId;
 
-        if (isToday(dateA) && !isToday(dateB)) return -1;
-        if (!isToday(dateA) && isToday(dateB)) return 1;
-        return compareAsc(dateA, dateB);
-      });
-  }
+const selectedMemos = createSelector([getMemos, getUserId], (memos, userId) =>
+  Object.values(memos)
+    .filter((memo) => memo.user === userId && memo.progress !== "Completed")
+    .filter((memo) => {
+      const dueDate = memo.dueDateTime ? parseISO(memo.dueDateTime) : null;
+      return !dueDate || !isPast(dueDate) || isToday(dueDate);
+    })
+    .sort((a, b) => {
+      const dateA = a.dueDateTime
+        ? parseISO(a.dueDateTime)
+        : new Date(9999, 0, 1);
+      const dateB = b.dueDateTime
+        ? parseISO(b.dueDateTime)
+        : new Date(9999, 0, 1);
+      if (isToday(dateA) && !isToday(dateB)) return -1;
+      if (!isToday(dateA) && isToday(dateB)) return 1;
+      return compareAsc(dateA, dateB);
+    })
 );
 
-const UpcomingTasks = () => {
+// const selectedMemos = createSelector(
+//   [(state) => state.memo.allIds, (state) => state.memo.byId],
+//   (allIds, byId) => {
+//     const uniqueIds = [...new Set(allIds)];
+//     return uniqueIds
+//       .map((id) => byId[id])
+//       .filter((memo) => {
+//         const dueDate = memo.dueDateTime ? parseISO(memo.dueDateTime) : null;
+//         return (
+//           memo.progress !== "Completed" &&
+//           (!dueDate || !isPast(dueDate) || isToday(dueDate))
+//         );
+//       })
+//       .sort((a, b) => {
+//         const dateA = a.dueDateTime
+//           ? parseISO(a.dueDateTime)
+//           : new Date(9999, 0, 1);
+//         const dateB = b.dueDateTime
+//           ? parseISO(b.dueDateTime)
+//           : new Date(9999, 0, 1);
+
+//         if (isToday(dateA) && !isToday(dateB)) return -1;
+//         if (!isToday(dateA) && isToday(dateB)) return 1;
+//         return compareAsc(dateA, dateB);
+//       });
+//   }
+// );
+
+const UpcomingTasks = ({ user }) => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const memos = useSelector(selectedMemos);
   console.log("memos:", memos);
+  console.log("Current User:", user);
   const [submemos, setSubmemos] = useState([]);
   const [newMemoLine, setNewMemoLine] = useState(false);
   const [newMemoText, setNewMemoText] = useState("");

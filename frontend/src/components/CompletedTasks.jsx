@@ -38,17 +38,28 @@ const allProjects = createSelector(
   }
 );
 
+const getUserId = (state) => state.user.user._id;
+const getMemos = (state) => state.memo.byId;
+
 const selectCompletedMemos = createSelector(
-  [(state) => state.memo.allIds, (state) => state.memo.byId],
-  (allIds, byId) => {
-    const uniqueIds = [...new Set(allIds)];
-    return uniqueIds
-      .map((id) => byId[id])
-      .filter((memo) => memo.progress === "Completed");
-  }
+  [getMemos, getUserId],
+  (memos, userId) =>
+    Object.values(memos).filter(
+      (memo) => memo.user === userId && memo.progress === "Completed"
+    )
 );
 
-const CompletedTasks = () => {
+// const selectCompletedMemos = createSelector(
+//   [(state) => state.memo.allIds, (state) => state.memo.byId],
+//   (allIds, byId) => {
+//     const uniqueIds = [...new Set(allIds)];
+//     return uniqueIds
+//       .map((id) => byId[id])
+//       .filter((memo) => memo.progress === "Completed");
+//   }
+// );
+
+const CompletedTasks = ({ user }) => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const completedMemos = useSelector(selectCompletedMemos);

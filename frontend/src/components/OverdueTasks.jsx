@@ -38,30 +38,52 @@ const allProjects = createSelector(
   }
 );
 
+const getUserId = (state) => state.user.user._id;
+const getMemos = (state) => state.memo.byId;
+
 const selectedOverdueMemos = createSelector(
-  [(state) => state.memo.allIds, (state) => state.memo.byId],
-  (allIds, byId) => {
-    const uniqueIds = [...new Set(allIds)];
-    return uniqueIds
-      .map((id) => byId[id])
+  [getMemos, getUserId],
+  (memos, userId) =>
+    Object.values(memos)
       .filter(
         (memo) =>
+          memo.user === userId &&
+          memo.progress !== "Completed" &&
           memo.dueDateTime &&
           isPast(parseISO(memo.dueDateTime)) &&
-          !isToday(parseISO(memo.dueDateTime)) &&
-          memo.progress !== "Completed"
+          !isToday(parseISO(memo.dueDateTime))
       )
       .sort((a, b) => {
         const dateA = parseISO(a.dueDateTime);
         const dateB = parseISO(b.dueDateTime);
-        if (isToday(dateA) && !isToday(dateB)) return -1;
-        if (!isToday(dateA) && isToday(dateB)) return 1;
         return compareAsc(dateA, dateB);
-      });
-  }
+      })
 );
 
-const OverdueTasks = () => {
+// const selectedOverdueMemos = createSelector(
+//   [(state) => state.memo.allIds, (state) => state.memo.byId],
+//   (allIds, byId) => {
+//     const uniqueIds = [...new Set(allIds)];
+//     return uniqueIds
+//       .map((id) => byId[id])
+//       .filter(
+//         (memo) =>
+//           memo.dueDateTime &&
+//           isPast(parseISO(memo.dueDateTime)) &&
+//           !isToday(parseISO(memo.dueDateTime)) &&
+//           memo.progress !== "Completed"
+//       )
+//       .sort((a, b) => {
+//         const dateA = parseISO(a.dueDateTime);
+//         const dateB = parseISO(b.dueDateTime);
+//         if (isToday(dateA) && !isToday(dateB)) return -1;
+//         if (!isToday(dateA) && isToday(dateB)) return 1;
+//         return compareAsc(dateA, dateB);
+//       });
+//   }
+// );
+
+const OverdueTasks = ({ user }) => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const overdueMemos = useSelector(selectedOverdueMemos);
