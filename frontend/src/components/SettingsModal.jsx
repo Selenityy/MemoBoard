@@ -12,12 +12,10 @@ import {
 import TimezoneSelect from "react-timezone-select";
 
 const SettingsModal = (props) => {
-  console.log(props.show);
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
   const userId = user._id;
-  console.log("user:", user);
   const [userInfo, setUserInfo] = useState({
     newFirstName: "",
     newLastName: "",
@@ -25,7 +23,6 @@ const SettingsModal = (props) => {
     newEmail: "",
     newTimezone: "",
   });
-  console.log("user info:", userInfo);
   const [selectedTimezone, setSelectedTimezone] = useState({
     value: user.timezone,
     label: user.timezone,
@@ -38,7 +35,6 @@ const SettingsModal = (props) => {
 
   useEffect(() => {
     if (props.show === true) {
-      console.log("inside props show");
       const loadUserInfo = async () => {
         try {
           const userInfo = await dispatch(fetchUserInfo()).unwrap();
@@ -77,7 +73,6 @@ const SettingsModal = (props) => {
 
   const savingSettings = async (e) => {
     e.preventDefault();
-    console.log("inside save settings");
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
       e.stopPropagation();
