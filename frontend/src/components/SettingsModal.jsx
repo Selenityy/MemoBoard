@@ -12,9 +12,12 @@ import {
 import TimezoneSelect from "react-timezone-select";
 
 const SettingsModal = (props) => {
+  console.log(props.show);
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
+  const userId = user._id;
+  console.log("user:", user);
   const [userInfo, setUserInfo] = useState({
     newFirstName: "",
     newLastName: "",
@@ -22,39 +25,44 @@ const SettingsModal = (props) => {
     newEmail: "",
     newTimezone: "",
   });
-  const [selectedTimezone, setSelectedTimezone] = useState(null);
+  console.log("user info:", userInfo);
+  const [selectedTimezone, setSelectedTimezone] = useState({
+    value: user.timezone,
+    label: user.timezone,
+  });
   const [validated, setValidated] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [userId, setUserId] = useState(null);
+
   const [userInfoChanged, setUserInfoChanged] = useState(false);
   const [timezoneChanged, setTimezoneChanged] = useState(false);
 
   useEffect(() => {
-    const updateUserInfo = async () => {
-      try {
-        // userId
-        const userIdRes = await dispatch(fetchUserId());
-        setUserId(userIdRes.payload);
-
-        // userInfo
-        await dispatch(fetchUserInfo()).unwrap();
-        setUserInfo({
-          newFirstName: user.firstName,
-          newLastName: user.lastName,
-          newUsername: user.username,
-          newEmail: user.email,
-          newTimezone: user.timezone,
-        });
-        setSelectedTimezone({
-          value: user.timezone,
-          label: user.timezone,
-        });
-      } catch (error) {
-        console.error("Failed to get the user info:", error);
-      }
-    };
-    updateUserInfo();
-  }, [dispatch, user.timezone]);
+    if (props.show === true) {
+      console.log("inside props show");
+      const loadUserInfo = async () => {
+        try {
+          const userInfo = await dispatch(fetchUserInfo()).unwrap();
+          if (user) {
+            setUserInfo({
+              newFirstName: user.firstName || "",
+              newLastName: user.lastName || "",
+              newUsername: user.username || "",
+              newEmail: user.email || "",
+              newTimezone: user.timezone || "",
+            });
+            setSelectedTimezone({
+              value: user.timezone,
+              label: user.timezone,
+            });
+          }
+        } catch (error) {
+          console.error("Failed to fetch user info:", error);
+          setErrorMessage("Failed to load user information.");
+        }
+      };
+      loadUserInfo();
+    }
+  }, [dispatch, props.show, user._id, user.timezone]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,6 +77,7 @@ const SettingsModal = (props) => {
 
   const savingSettings = async (e) => {
     e.preventDefault();
+    console.log("inside save settings");
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
       e.stopPropagation();
@@ -102,8 +111,6 @@ const SettingsModal = (props) => {
   const closeModal = async (e) => {
     e.preventDefault();
     props.onHide();
-    setUserInfo(false);
-    setTimezoneChanged(false);
   };
 
   return (
