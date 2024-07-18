@@ -218,7 +218,7 @@ exports.deleteAccount = asyncHandler(async (req, res, next) => {
 });
 
 exports.getUserNotes = asyncHandler(async (req, res, next) => {
-  const userId = req.user_id; // Assuming req.user is populated by Passport's JWT strategy
+  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   try {
     const user = await User.findById(userId).select("notes");
     if (!user) {
@@ -237,18 +237,18 @@ exports.getUserNotes = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateUserNotes = asyncHandler(async (req, res, next) => {
-  const userId = req.user_id; // Assuming req.user is populated by Passport's JWT strategy
+  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   const { notes } = req.body;
-
+  // console.log("backend id:", userId);
   try {
     const user = await User.findByIdAndUpdate(
       userId,
       { notes },
       { new: true }
     ).select("notes");
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    // if (!user) {
+    //   return res.status(404).json({ message: "User not found" });
+    // }
     res.json({ message: "Notes updated successfully", notes: user.notes });
   } catch (error) {
     console.error(error);
