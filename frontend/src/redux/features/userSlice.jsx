@@ -329,6 +329,74 @@ export const deleteAccount = createAsyncThunk(
   }
 );
 
+// GET USER NOTES
+export const fetchUserNotes = createAsyncThunk(
+  "/user/notes",
+  async (_, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch(
+        "http://localhost:3000/dashboard/user/notes",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch user notes");
+      }
+      if (data.notes) {
+        return data.notes;
+      } else {
+        return thunkAPI.rejectWithValue({
+          message: data.message,
+          error: data.errors,
+        });
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+// UPDATE USER NOTES
+export const updateUserNotes = createAsyncThunk(
+  "/user/updateNotes",
+  async (notes, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+    try {
+      const response = await fetch(
+        "http://localhost:3000/dashboard/user/notes",
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ notes }),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to update user notes");
+      }
+      return data.notes;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 const initialState = {
   user: {
     _id: "",
@@ -339,6 +407,7 @@ const initialState = {
     password: "",
     googleId: "",
     timezone: "",
+    notes: "",
   },
   isLoggedIn: false,
   status: "idle",
@@ -473,6 +542,33 @@ export const userSlice = createSlice({
         localStorage.removeItem("timezone");
       })
       .addCase(deleteAccount.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // GET USER NOTES
+      .addCase(fetchUserNotes.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchUserNotes.fulfilled, (state, action) => {
+        state.user = { ...state.user, ...action.payload };
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(fetchUserNotes.rejected, (state, action) => {
+        (state.status = "failed"), (state.error = action.payload);
+      })
+
+      // UPDATE USER NOTES
+      .addCase(updateUserNotes.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateUserNotes.fulfilled, (state, action) => {
+        state.user = { ...state.user, ...action.payload };
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(updateUserNotes.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
