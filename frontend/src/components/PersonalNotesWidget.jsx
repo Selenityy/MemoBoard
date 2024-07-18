@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import dynamic from "next/dynamic";
 import { createSelector } from "reselect";
@@ -23,11 +23,12 @@ const QuillComponent = dynamic(
 const PersonalNotesWidget = () => {
   const dispatch = useDispatch();
   const userPersonalNotes = useSelector(userNotes);
+  console.log("user personal notes:", userPersonalNotes);
   const userId = useSelector((state) => state.user.user._id);
 
   useEffect(() => {
     if (userId) {
-      dispatch(fetchUserNotes({ userId }));
+      dispatch(fetchUserNotes());
     }
   }, [dispatch, userId]);
 
