@@ -3,6 +3,12 @@
 import React from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import dynamic from "next/dynamic";
+import { createSelector } from "reselect";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchUserNotes } from "@/redux/features/userSlice";
+
+const getUser = (state) => state.user.user;
+const userNotes = createSelector([getUser], (user) => user.notes);
 
 const QuillComponent = dynamic(
   () =>
@@ -15,6 +21,16 @@ const QuillComponent = dynamic(
 );
 
 const PersonalNotesWidget = () => {
+  const dispatch = useDispatch();
+  const userPersonalNotes = useSelector(userNotes);
+  const userId = useSelector((state) => state.user.user._id);
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(fetchUserNotes({ userId }));
+    }
+  }, [dispatch, userId]);
+
   return (
     <Container
       style={{
@@ -31,7 +47,7 @@ const PersonalNotesWidget = () => {
           </span>
         </Col>
         <Col xs={12} style={{ width: "full", height: "300px" }}>
-          <QuillComponent />
+          <QuillComponent userPersonalNotes={userPersonalNotes} />
         </Col>
       </Row>
     </Container>
