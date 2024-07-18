@@ -23,6 +23,10 @@ function LoginForm() {
     identifier: "",
     password: "",
   });
+  const [testCredentials, setTestCredentials] = useState({
+    identifier: "testuser2",
+    password: "password123",
+  });
   const [validated, setValidated] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -49,6 +53,24 @@ function LoginForm() {
           password: "",
         });
         setValidated(false);
+        setErrorMessage("");
+        console.log("successful login!");
+      } else {
+        setErrorMessage("Username/Email or Passowrd is incorrect");
+      }
+    } catch (error) {
+      setErrorMessage(error);
+      setValidated(false);
+      console.error("Server error failed to log in:", error);
+    }
+  };
+
+  const handleTestLogIn = async (e) => {
+    try {
+      const res = await dispatch(loginUser(testCredentials)).unwrap();
+      const userId = res._id;
+      if (userId) {
+        await router.push("/dashboard");
         setErrorMessage("");
         console.log("successful login!");
       } else {
@@ -125,6 +147,16 @@ function LoginForm() {
             <div style={{ color: "red" }}>{errorMessage}</div>
           </Form>
         </Col>
+      </Row>
+      <Row>
+        <Button
+          variant="dark"
+          type="submit"
+          className="submit-form-btn"
+          onClick={handleTestLogIn}
+        >
+          Login as Test User
+        </Button>
       </Row>
     </Container>
   );
