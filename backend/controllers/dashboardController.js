@@ -197,7 +197,7 @@ exports.updateTimezone = asyncHandler(async (req, res, next) => {
 });
 
 exports.deleteAccount = asyncHandler(async (req, res, next) => {
-  const userId = req.user_id; // Assuming req.user is populated by Passport's JWT strategy
+  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
   try {
     await Memo.deleteMany({ user: userId });
     await Tag.deleteMany({ user: userId });
