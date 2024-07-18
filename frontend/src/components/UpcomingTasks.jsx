@@ -93,8 +93,8 @@ const UpcomingTasks = ({ user }) => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const memos = useSelector(selectedMemos);
-  console.log("memos:", memos);
-  console.log("Current User:", user);
+  // console.log("memos:", memos);
+  // console.log("Current User:", user);
   const [submemos, setSubmemos] = useState([]);
   const [newMemoLine, setNewMemoLine] = useState(false);
   const [newMemoText, setNewMemoText] = useState("");
@@ -123,7 +123,7 @@ const UpcomingTasks = ({ user }) => {
   const [projectOptions, setProjectOptions] = useState([]);
   const [projectMemos, setProjectMemos] = useState([]);
   const [lastUpdate, setLastUpdate] = useState(Date.now());
-  console.log("selected memo:", selectedMemo);
+  // console.log("selected memo:", selectedMemo);
 
   const inputRef = useRef(null);
   const submemoRef = useRef(null);

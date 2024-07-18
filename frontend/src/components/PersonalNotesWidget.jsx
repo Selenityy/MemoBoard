@@ -23,7 +23,6 @@ const QuillComponent = dynamic(
 const PersonalNotesWidget = () => {
   const dispatch = useDispatch();
   const userPersonalNotes = useSelector(userNotes);
-  console.log("user personal notes:", userPersonalNotes);
   const userId = useSelector((state) => state.user.user._id);
 
   useEffect(() => {

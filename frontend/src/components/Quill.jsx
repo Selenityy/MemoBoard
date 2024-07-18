@@ -11,7 +11,6 @@ import debounce from "lodash/debounce";
 export const QuillComponent = ({ userPersonalNotes }) => {
   const dispatch = useDispatch();
   const [value, setValue] = useState(userPersonalNotes);
-  console.log("notes:", value);
 
   useEffect(() => {
     setValue(userPersonalNotes);
