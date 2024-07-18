@@ -113,8 +113,7 @@ const SettingsModal = (props) => {
     console.log("delete button clicked");
     props.onHide();
     try {
-      const res = await dispatch(deleteAccount());
-      console.log(res.payload);
+      await dispatch(deleteAccount());
       router.push("/");
       dispatch(logout());
     } catch (error) {
