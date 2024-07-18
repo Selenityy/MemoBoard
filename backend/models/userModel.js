@@ -28,6 +28,7 @@ const UserSchema = new Schema({
   password: { type: String, required: false }, // google auths dont use password, make sure you check for password in your login
   googleId: { type: String },
   timezone: { type: String },
+  notes: { type: String, default: "" },
 });
 
 module.exports = mongoose.model("User", UserSchema);
