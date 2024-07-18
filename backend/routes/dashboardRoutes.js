@@ -13,11 +13,14 @@ const sectionRoutes = require("../routes/sectonRoutes");
 // Apply JWT authentication middleware to all routes in this router
 router.use(passport.authenticate("jwt", { session: false }));
 
+// /dashboard/...
 router.get("/", (req, res) => {
   res.json({ message: "Successful login to protected routes" });
 });
 router.get("/data", dashboardController.userData);
 router.get("/timezone", dashboardController.timezone);
+router.get("/user/notes", dashboardController.getUserNotes);
+router.put("/user/notes", dashboardController.updateUserNotes);
 router.put("/:userId/updateEmail", dashboardController.updateEmail);
 router.put("/:userId/updateName", dashboardController.updateName);
 router.put("/:userId/updateUsername", dashboardController.updateUsername);

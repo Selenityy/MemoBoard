@@ -74,9 +74,9 @@ exports.updateProfileGoogleAuth = asyncHandler(async (req, res, next) => {
 exports.updateEmail = asyncHandler(async (req, res, next) => {
   const { newEmail } = req.body;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
-//   if (!newEmail) {
-//     return res.status(400).json({ message: "Email is required." });
-//   }
+  //   if (!newEmail) {
+  //     return res.status(400).json({ message: "Email is required." });
+  //   }
 
   try {
     const updatedUser = await User.findByIdAndUpdate(
@@ -104,11 +104,11 @@ exports.updateEmail = asyncHandler(async (req, res, next) => {
 exports.updateName = asyncHandler(async (req, res, next) => {
   const { newFirstName, newLastName } = req.body;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
-//   if (!newFirstName || !newLastName) {
-//     return res
-//       .status(400)
-//       .json({ message: "First and last name is required." });
-//   }
+  //   if (!newFirstName || !newLastName) {
+  //     return res
+  //       .status(400)
+  //       .json({ message: "First and last name is required." });
+  //   }
 
   try {
     const updatedUser = await User.findByIdAndUpdate(
@@ -139,9 +139,9 @@ exports.updateName = asyncHandler(async (req, res, next) => {
 exports.updateUsername = asyncHandler(async (req, res, next) => {
   const { newUsername } = req.body;
   const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
-//   if (!newUsername) {
-//     return res.status(400).json({ message: "Username is required" });
-//   }
+  //   if (!newUsername) {
+  //     return res.status(400).json({ message: "Username is required" });
+  //   }
 
   try {
     const updatedUser = await User.findByIdAndUpdate(
@@ -214,5 +214,44 @@ exports.deleteAccount = asyncHandler(async (req, res, next) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error, cannot delete account." });
+  }
+});
+
+exports.getUserNotes = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
+  try {
+    const user = await User.findById(userId).select("notes");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({
+      message: "Successfully retreieved user notes.",
+      notes: user.notes,
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Server error, cannot retrieve user notes" });
+  }
+});
+
+exports.updateUserNotes = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id; // Assuming req.user is populated by Passport's JWT strategy
+  const { notes } = req.body;
+  // console.log("backend id:", userId);
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { notes },
+      { new: true }
+    ).select("notes");
+    // if (!user) {
+    //   return res.status(404).json({ message: "User not found" });
+    // }
+    res.json({ message: "Notes updated successfully", notes: user.notes });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error, cannot update user notes" });
   }
 });
