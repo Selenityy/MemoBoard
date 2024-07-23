@@ -54,6 +54,7 @@ export const fetchProject = createAsyncThunk(
         }
       );
       const data = await response.json();
+      console.log("get one project data:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch project");
       }
@@ -135,8 +136,8 @@ export const updateProject = createAsyncThunk(
       if (!response.ok) {
         throw new Error(data.message || "Failed to update project");
       }
-      if (data.updatedProject) {
-        return data.updatedProject;
+      if (data.project) {
+        return data.project;
       } else {
         return thunkAPI.rejectWithValue({
           message: data.message,

@@ -25,6 +25,7 @@ const makeGetProjectByDisplayName = () => {
 };
 
 const ProjectPage = ({ params: { slug } }) => {
+  console.log(slug);
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const displayName = slug.replace(/-/g, " ");
@@ -71,6 +72,9 @@ const ProjectPage = ({ params: { slug } }) => {
             </span>
           </div>
         </Col>
+      </Row>
+      <Row>
+        <Col>{project.description}</Col>
       </Row>
       <ProjectPageSections project={project} />
     </>

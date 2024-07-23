@@ -21,7 +21,7 @@ export const fetchAllSections = createAsyncThunk(
         }
       );
       const data = await response.json();
-      //   console.log("slice all sections:", data);
+      console.log("slice all sections:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch sections");
       }
@@ -98,7 +98,7 @@ export const createSection = createAsyncThunk(
         }
       );
       const data = await response.json();
-      //   console.log("slice data created section", data);
+      console.log("slice data created section", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to create a section");
       }
@@ -176,7 +176,7 @@ export const addAllMemosToSection = createAsyncThunk(
         }
       );
       const data = await response.json();
-      //   console.log("slice section add all memos:", data);
+      console.log("slice section add all memos:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to update section memos");
       }
@@ -329,7 +329,11 @@ export const sectionSlice = createSlice({
         state.status = "loading";
       })
       .addCase(fetchAllSections.fulfilled, (state, action) => {
-        state.allIds = action.payload.map((section) => section._id);
+        const fetchedSectionIds = action.payload.map((section) => section._id);
+        state.allIds = Array.from(
+          new Set([...state.allIds, ...fetchedSectionIds])
+        );
+
         action.payload.forEach((section) => {
           state.byId[section._id] = {
             ...section,
