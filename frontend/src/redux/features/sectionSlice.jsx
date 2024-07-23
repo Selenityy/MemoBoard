@@ -329,7 +329,11 @@ export const sectionSlice = createSlice({
         state.status = "loading";
       })
       .addCase(fetchAllSections.fulfilled, (state, action) => {
-        state.allIds = action.payload.map((section) => section._id);
+        const fetchedSectionIds = action.payload.map((section) => section._id);
+        state.allIds = Array.from(
+          new Set([...state.allIds, ...fetchedSectionIds])
+        );
+
         action.payload.forEach((section) => {
           state.byId[section._id] = {
             ...section,
