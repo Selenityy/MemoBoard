@@ -108,6 +108,7 @@ exports.createSection = [
       await Project.findByIdAndUpdate(projectId, {
         $push: { sections: newSection._id },
       });
+      console.log("backend new section:", newSection);
 
       return res.status(201).json({
         message: "Section created successfully",
