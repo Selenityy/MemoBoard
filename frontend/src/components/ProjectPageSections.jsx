@@ -58,7 +58,8 @@ const sectionsFromSlice = createSelector(
   (allIds, byId, projectId) => {
     return allIds
       .map((id) => byId[id])
-      .filter((section) => section.project === projectId);
+      .filter((section) => section.project === projectId)
+      .sort((a, b) => a.index - b.index);
   }
 );
 
@@ -906,6 +907,7 @@ const ProjectPageSections = ({ project }) => {
 
   const onDragEnd = async (result) => {
     const { source, destination, draggableId, type } = result;
+    console.log(result);
 
     // Do nothing if there's no destination or the item is dropped in the same place it was dragged from
     if (
@@ -917,8 +919,10 @@ const ProjectPageSections = ({ project }) => {
     }
 
     if (type === "column") {
+      console.log("inside column");
       // Handling column (section) reordering
       const newSections = Array.from(projectSections);
+      console.log("new sections:", newSections);
       const [movedSection] = newSections.splice(source.index, 1);
       newSections.splice(destination.index, 0, movedSection);
 
