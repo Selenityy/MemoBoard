@@ -54,7 +54,7 @@ function LoginForm() {
         });
         setValidated(false);
         setErrorMessage("");
-        console.log("successful login!");
+        // console.log("successful login!");
       } else {
         setErrorMessage("Username/Email or Passowrd is incorrect");
       }
@@ -72,7 +72,7 @@ function LoginForm() {
       if (userId) {
         await router.push("/dashboard");
         setErrorMessage("");
-        console.log("successful login!");
+        // console.log("successful login!");
       } else {
         setErrorMessage("Username/Email or Passowrd is incorrect");
       }

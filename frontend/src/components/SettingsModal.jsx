@@ -110,7 +110,7 @@ const SettingsModal = (props) => {
   };
 
   const onDeleteAccount = async (e) => {
-    console.log("delete button clicked");
+    // console.log("delete button clicked");
     props.onHide();
     try {
       await dispatch(deleteAccount());

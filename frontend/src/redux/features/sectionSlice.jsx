@@ -98,7 +98,7 @@ export const createSection = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("slice data created section", data);
+      //   console.log("slice data created section", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to create a section");
       }
@@ -137,7 +137,7 @@ export const addMemoToSection = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("section slice data:", data);
+      //   console.log("section slice data:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to update section memo");
       }
@@ -176,7 +176,7 @@ export const addAllMemosToSection = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("slice section add all memos:", data);
+      //   console.log("slice section add all memos:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to update section memos");
       }
@@ -215,7 +215,7 @@ export const removeMemoFromAllSections = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("section slice data remove:", data);
+      //   console.log("section slice data remove:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to remove memo from sections");
       }
@@ -319,7 +319,7 @@ export const sectionSlice = createSlice({
     removeAllSections: (state) => {
       state.byId = {};
       state.allIds = [];
-      console.log("removed");
+      //   console.log("removed");
     },
   },
   extraReducers: (builder) => {

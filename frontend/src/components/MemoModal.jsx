@@ -35,20 +35,20 @@ const MemoModal = (props) => {
   const [memoProjects, setMemoProjects] = useState(props.memo.project);
   const [submemos, setSubmemos] = useState([]);
 
-  console.log(
-    "memo:",
-    memo,
-    "body:",
-    memoBody
-    // "notes:",
-    // memoNotes,
-    // "progress:",
-    // memoProgress,
-    // "project:",
-    // memoProjects,
-    // "submemos:",
-    // submemos
-  );
+  // console.log(
+  //   "memo:",
+  //   memo,
+  //   "body:",
+  //   memoBody
+  //   // "notes:",
+  //   // memoNotes,
+  //   // "progress:",
+  //   // memoProgress,
+  //   // "project:",
+  //   // memoProjects,
+  //   // "submemos:",
+  //   // submemos
+  // );
 
   // const [submemos, setSubmemos] = useState([]);
   const [newSubMemoLine, setNewSubMemoLine] = useState(false);
@@ -102,7 +102,7 @@ const MemoModal = (props) => {
 
   // UPDATES
   const updateMemoBody = async (e) => {
-    console.log(e);
+    // console.log(e);
     setMemoBody(e);
     setMemo((memo) => ({ ...memo, body: memoBody }));
     // setMemo({ ...memo, body: memoBody });

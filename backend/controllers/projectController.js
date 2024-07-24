@@ -53,7 +53,7 @@ exports.getProject = asyncHandler(async (req, res, next) => {
     if (!project) {
       return res.status(404).json({ message: "Specific project not found" });
     }
-    console.log(project);
+    // console.log(project);
     res.json({
       message: "Successfully retrieved a specific project",
       project: project,
@@ -142,7 +142,7 @@ exports.updateProject = asyncHandler(async (req, res) => {
     });
 
     await project.save();
-    console.log("backend project:", project);
+    // console.log("backend project:", project);
 
     res.status(200).json({
       message: "Project updated successfully",

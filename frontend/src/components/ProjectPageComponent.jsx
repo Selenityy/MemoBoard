@@ -10,15 +10,15 @@ import "../styles/main.scss";
 import MemosListed from "./MemosListed";
 
 const ProjectPageComponent = ({ project }) => {
-  console.log("project:", project);
+  // console.log("project:", project);
   const dispatch = useDispatch();
   const projectMemoArray = project.memos;
   const projectId = project._id;
   const [projectMemos, setProjectMemos] = useState([]);
   const [ellipsisDropdown, setEllipsisDropdown] = useState(null);
   const [memoProjects, setMemoProjects] = useState([]);
-  console.log("project memos:", projectMemos);
-  console.log("memo projects:", memoProjects);
+  // console.log("project memos:", projectMemos);
+  // console.log("memo projects:", memoProjects);
 
   // grab all memos for the specific project
   useEffect(() => {
@@ -46,7 +46,7 @@ const ProjectPageComponent = ({ project }) => {
   };
 
   const [sections, setSections] = useState(getInitialSections);
-  console.log("sections:", sections);
+  // console.log("sections:", sections);
 
   const sectionRefs = useRef(
     sections.reduce((acc, section) => {
@@ -91,7 +91,7 @@ const ProjectPageComponent = ({ project }) => {
     // create memo
     // attach memo to the section it's under and update the local storage
     // update project to include memo
-    console.log("create memo");
+    // console.log("create memo");
   };
 
   // Delete sections

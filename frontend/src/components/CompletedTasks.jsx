@@ -63,7 +63,7 @@ const CompletedTasks = ({ user }) => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const completedMemos = useSelector(selectCompletedMemos);
-  console.log("completed memos:", completedMemos);
+  // console.log("completed memos:", completedMemos);
   const projects = useSelector(allProjects);
   const [submemos, setSubmemos] = useState([]);
   const [newSubMemoLine, setNewSubMemoLine] = useState(false);
@@ -79,7 +79,7 @@ const CompletedTasks = ({ user }) => {
   const [memoDueDate, setMemoDueDate] = useState();
   const [memoProgress, setMemoProgress] = useState("");
   const [memoProjects, setMemoProjects] = useState([]);
-  console.log("memoProjects:", memoProjects);
+  // console.log("memoProjects:", memoProjects);
   const [memoParentId, setMemoParentId] = useState("");
   const options = [
     { value: "Not Started", label: "Not Started" },
@@ -91,7 +91,7 @@ const CompletedTasks = ({ user }) => {
   const [projectOptions, setProjectOptions] = useState([]);
   const [projectMemos, setProjectMemos] = useState([]);
   const [lastUpdate, setLastUpdate] = useState(Date.now());
-  console.log("selected memo:", selectedMemo);
+  // console.log("selected memo:", selectedMemo);
 
   const inputRef = useRef(null);
   const submemoRef = useRef(null);

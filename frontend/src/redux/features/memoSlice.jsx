@@ -217,7 +217,7 @@ export const updateMemo = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("data memo slice:", data);
+      // console.log("data memo slice:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to update memo");
       }
@@ -257,7 +257,7 @@ export const deleteMemo = createAsyncThunk(
       const data = await response.json();
       // const data = response.json();
       // const data = JSON.parse(response);
-      console.log("data:", data);
+      // console.log("data:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to delete memo");
       }
@@ -466,7 +466,7 @@ export const memoSlice = createSlice({
         state.status = "loading";
       })
       .addCase(deleteMemo.fulfilled, (state, action) => {
-        console.log("it was fulfilled:", action.meta.arg);
+        // console.log("it was fulfilled:", action.meta.arg);
         const memoId = action.meta.arg;
 
         // Remove the memo from allIds array

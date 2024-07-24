@@ -57,7 +57,7 @@ const SignupForm = () => {
     setValidated(true);
     try {
       const res = await dispatch(signupUser(formData));
-      console.log("res:", res);
+      // console.log("res:", res);
       if (signupUser.fulfilled.match(res)) {
         setUserCreated(true);
         setFormData({
@@ -71,7 +71,7 @@ const SignupForm = () => {
         setConfirmPassword("");
         setValidated(false);
         setErrorMessage("");
-        console.log("successful signup");
+        // console.log("successful signup");
         router.push("/");
       } else {
         setValidated(false);

@@ -113,7 +113,7 @@ const OverdueTasks = ({ user }) => {
   const [projectOptions, setProjectOptions] = useState([]);
   const [projectMemos, setProjectMemos] = useState([]);
   const [lastUpdate, setLastUpdate] = useState(Date.now());
-  console.log("selected memo:", selectedMemo);
+  // console.log("selected memo:", selectedMemo);
 
   const inputRef = useRef(null);
   const submemoRef = useRef(null);

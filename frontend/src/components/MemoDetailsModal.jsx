@@ -44,7 +44,7 @@ const MemoDetailsModal = ({
 }) => {
   // console.log("memo progress modal:", memoProgress, options);
   // console.log("memo projects modal:", memoProjects, projectOptions);
-  console.log("selected memo:", selectedMemo);
+  // console.log("selected memo:", selectedMemo);
   return (
     <div>
       <Modal

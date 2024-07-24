@@ -69,7 +69,7 @@ const ProjectPage = ({ params }) => {
     debounce(async (e) => {
       const newProjectName = e.target.value;
       const displayNameEdited = newProjectName.replace(/-/g, " ");
-      console.log("edited:", displayNameEdited);
+      // console.log("edited:", displayNameEdited);
       setProjectName(displayNameEdited);
       try {
         await dispatch(
@@ -79,7 +79,7 @@ const ProjectPage = ({ params }) => {
           })
         );
         const newSlug = newProjectName.replace(/ /g, "-");
-        console.log("new slug:", newSlug);
+        // console.log("new slug:", newSlug);
         router.push(`/dashboard/project/${newSlug}-${projectId}`);
       } catch (error) {
         console.error("Error updating the project name:", error);

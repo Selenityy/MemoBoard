@@ -39,7 +39,7 @@ const MemosListed = ({
   setMemoProjects,
   memoProjects,
 }) => {
-  console.log("passed memo projects:", memoProjects);
+  // console.log("passed memo projects:", memoProjects);
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const projectId = project._id;
@@ -79,7 +79,7 @@ const MemosListed = ({
   ];
   const [projectOptions, setProjectOptions] = useState([]);
 
-  console.log("selected memo:", selectedMemo);
+  // console.log("selected memo:", selectedMemo);
 
   //   useEffect(() => {
   //     dispatch(fetchMemos());
