@@ -54,7 +54,8 @@ const NavBar = () => {
 
   const projectClick = (project) => {
     const formattedProjectName = project.name.replace(/\s+/g, "-");
-    router.push(`/dashboard/project/${formattedProjectName}`);
+    const projectId = project._id;
+    router.push(`/dashboard/project/${formattedProjectName}-${projectId}`);
   };
 
   return (
