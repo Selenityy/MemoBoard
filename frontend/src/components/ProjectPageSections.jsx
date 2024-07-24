@@ -179,7 +179,7 @@ const ProjectPageSections = ({ project }) => {
   // useEffect to fetch sections
   useEffect(() => {
     if (projectSections.length >= 2) {
-      console.log("project sections is 2 or more");
+      // console.log("project sections is 2 or more");
       const fetchSections = async () => {
         try {
           await dispatch(fetchAllSections(projectId)).unwrap();
@@ -194,7 +194,7 @@ const ProjectPageSections = ({ project }) => {
   useEffect(() => {
     async function handleSectionInitialization() {
       if (projectSections.length === 0 && projectMemos.length > 0) {
-        console.log("Initializing new section...");
+        // console.log("Initializing new section...");
         try {
           const formData = {
             user: project.user,
@@ -206,7 +206,7 @@ const ProjectPageSections = ({ project }) => {
           const newSection = await dispatch(
             createSection({ projectId, formData })
           ).unwrap();
-          console.log("New section created:", newSection);
+          // console.log("New section created:", newSection);
 
           // Add memos to newly created section if applicable
           const selectedMemos = projectMemos.map((memo) => memo.id);
@@ -217,11 +217,11 @@ const ProjectPageSections = ({ project }) => {
               selectedMemos,
             })
           );
-          console.log("added memos:", addedMemos);
+          // console.log("added memos:", addedMemos);
 
           // Update project redux
           const projectData = { sections: [newSection._id] };
-          console.log("projectData:", projectData);
+          // console.log("projectData:", projectData);
           await dispatch(
             updateProject({
               projectId,
@@ -245,7 +245,7 @@ const ProjectPageSections = ({ project }) => {
   );
 
   const onAddSectionClick = async () => {
-    console.log("inside add section");
+    // console.log("inside add section");
     const currentSections = projectSections; // Assuming this is up to date with all current sections
     const newIndex =
       currentSections.length > 0
@@ -262,13 +262,13 @@ const ProjectPageSections = ({ project }) => {
       const newSection = await dispatch(
         createSection({ projectId, formData })
       ).unwrap();
-      console.log("new section:", newSection);
+      // console.log("new section:", newSection);
 
       const updatedSectionIds = [
         ...currentSections.map((section) => section._id),
         newSection._id,
       ];
-      console.log("updated section ids:", updatedSectionIds);
+      // console.log("updated section ids:", updatedSectionIds);
 
       const res = await dispatch(
         updateProject({
@@ -276,7 +276,7 @@ const ProjectPageSections = ({ project }) => {
           projectData: { sections: updatedSectionIds },
         })
       );
-      console.log("res:", res);
+      // console.log("res:", res);
     } catch (error) {
       console.error("Error adding a section:", error);
     }
@@ -907,7 +907,7 @@ const ProjectPageSections = ({ project }) => {
 
   const onDragEnd = async (result) => {
     const { source, destination, draggableId, type } = result;
-    console.log(result);
+    // console.log(result);
 
     // Do nothing if there's no destination or the item is dropped in the same place it was dragged from
     if (
@@ -919,10 +919,10 @@ const ProjectPageSections = ({ project }) => {
     }
 
     if (type === "column") {
-      console.log("inside column");
+      // console.log("inside column");
       // Handling column (section) reordering
       const newSections = Array.from(projectSections);
-      console.log("new sections:", newSections);
+      // console.log("new sections:", newSections);
       const [movedSection] = newSections.splice(source.index, 1);
       newSections.splice(destination.index, 0, movedSection);
 

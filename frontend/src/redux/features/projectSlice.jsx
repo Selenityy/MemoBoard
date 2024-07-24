@@ -54,7 +54,7 @@ export const fetchProject = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("get one project data:", data);
+      // console.log("get one project data:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch project");
       }
@@ -114,7 +114,7 @@ export const createProject = createAsyncThunk(
 export const updateProject = createAsyncThunk(
   "/dashboard/project/update",
   async ({ projectId, projectData }, thunkAPI) => {
-    console.log("slice:", projectData);
+    // console.log("slice:", projectData);
     const token = localStorage.getItem("token");
     if (!token) {
       return thunkAPI.rejectWithValue("No token found");
@@ -132,7 +132,7 @@ export const updateProject = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("project slice data:", data);
+      // console.log("project slice data:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to update project");
       }
