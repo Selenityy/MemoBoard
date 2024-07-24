@@ -35,30 +35,31 @@ const ProjectPage = ({ params }) => {
   const { slug } = params;
   const { secondPart: projectId } = splitSlug(slug);
   const router = useRouter();
-  console.log("query", router.query);
   const project = useSelector((state) => getProjectById(state, projectId));
   const initialDisplayName = params.slug.replace(/-/g, " ");
   const [projectName, setProjectName] = useState(initialDisplayName);
   const [projectDescription, setProjectDescription] = useState(
     project?.description || ""
   );
+  const [projectColor, setProjectColor] = useState(project?.color || "");
   const projectNameRef = useRef(null);
   const projectDescriptionRef = useRef(null);
+  const colorInputRef = useRef(null);
   const [userChanged, setUserChanged] = useState(false);
+  const [editingColor, setEditingColor] = useState(false);
 
   // console.log("params:", params);
   // console.log("project:", project);
   // console.log("project name:", projectName);
-  // console.log("display name:", displayName);
   // console.log("description:", projectDescription);
   // console.log("project id:", projectId);
+  // console.log("project color:", projectColor);
 
   useEffect(() => {
     if (!project) {
       dispatch(fetchProjects());
     } else if (project && !userChanged) {
       const { firstPart, secondPart } = splitSlug(params.slug);
-      console.log("first part:", firstPart);
       setProjectName(firstPart.replace(/-/g, " "));
       setProjectDescription(project.description || "");
     }
@@ -105,6 +106,17 @@ const ProjectPage = ({ params }) => {
     [dispatch, projectDescription]
   );
 
+  const handleColorChange = (e) => {
+    const newColor = e.target.value;
+    setProjectColor(newColor);
+    dispatch(
+      updateProject({
+        projectId: project._id,
+        projectData: { color: newColor },
+      })
+    );
+  };
+
   return (
     <>
       <Row>
@@ -120,10 +132,31 @@ const ProjectPage = ({ params }) => {
                 width: "25px",
                 height: "25px",
                 borderRadius: "4px",
-                backgroundColor: project.color,
+                backgroundColor: projectColor,
                 marginRight: "10px",
+                cursor: "pointer",
+                position: "relative",
               }}
-            ></div>
+              onClick={() => colorInputRef.current.click()}
+            >
+              <input
+                ref={colorInputRef}
+                type="color"
+                value={projectColor}
+                onChange={handleColorChange}
+                style={{
+                  opacity: 0,
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  cursor: "pointer",
+                  border: "none",
+                  padding: 0,
+                  top: 0,
+                  left: 0,
+                }}
+              />
+            </div>
             <ContentEditable
               innerRef={projectNameRef}
               html={projectName}
