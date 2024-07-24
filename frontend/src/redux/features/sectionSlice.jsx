@@ -21,7 +21,7 @@ export const fetchAllSections = createAsyncThunk(
         }
       );
       const data = await response.json();
-      console.log("slice all sections:", data);
+      // console.log("slice all sections:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch sections");
       }
