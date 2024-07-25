@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 const useAuth = () => {
   const router = useRouter();
-  const isAuthenticated = useSelector((state) => state.user._id);
+  const isAuthenticated = useSelector((state) => state.user.isLoggedIn);
 
   useEffect(() => {
     if (!isAuthenticated) {
