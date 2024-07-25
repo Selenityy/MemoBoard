@@ -5,9 +5,15 @@ import NavBar from "@/components/NavBar";
 import React from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useTheme } from "@/context/ThemeContext";
+import useAuth from "@/components/UseAuth";
 
 const DashboardLayout = ({ children }) => {
   const { theme } = useTheme();
+  const isAuthenticated = useAuth();
+
+  if (!isAuthenticated) {
+    return <div>Restricted access, redirecting...</div>;
+  }
   return (
     <Container
       fluid
