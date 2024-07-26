@@ -167,7 +167,7 @@ const NewMemoModal = ({
                   placeholder="Describe your memo..."
                   value={memoBody}
                   onChange={(e) => setMemoBody(e.target.value)}
-                  onBlur={() => updateBody(selectedMemo)}
+                  // onBlur={() => updateBody(selectedMemo)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       updateBody(selectedMemo);
