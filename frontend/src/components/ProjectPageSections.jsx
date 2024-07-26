@@ -793,7 +793,8 @@ const ProjectPageSections = ({ project }) => {
     toggleNewMemoModal(newMemoTemplate);
   };
 
-  const handleNewMemoSave = async () => {
+  const handleNewMemoSave = async (e) => {
+    e.preventDefault();
     // find the project label
     const selectedProject = projects.find(
       (project) => project.name === memoProjects[0].label
