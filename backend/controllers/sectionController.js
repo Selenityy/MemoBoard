@@ -108,7 +108,7 @@ exports.createSection = [
       await Project.findByIdAndUpdate(projectId, {
         $push: { sections: newSection._id },
       });
-    //   console.log("backend new section:", newSection);
+      //   console.log("backend new section:", newSection);
 
       return res.status(201).json({
         message: "Section created successfully",
@@ -263,9 +263,9 @@ exports.deleteSection = asyncHandler(async (req, res, next) => {
       project: projectId,
     });
     // console.log("backend deleted section:", deletedSection);
-    if (!deletedSection) {
-      return res.status(404).json({ message: "Deleted section not found" });
-    }
+    // if (!deletedSection) {
+    //   return res.status(404).json({ message: "Deleted section not found" });
+    // }
     res.status(200).json({ message: "Successfully deleted section" });
   } catch (error) {
     console.error(error);
