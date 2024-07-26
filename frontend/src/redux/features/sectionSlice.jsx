@@ -281,6 +281,7 @@ export const deleteSection = createAsyncThunk(
     if (!token) {
       return thunkAPI.rejectWithValue("No token found");
     }
+    console.log(sectionId, projectId);
     try {
       const response = await fetch(
         `http://localhost:3000/dashboard/projects/${projectId}/sections/${sectionId}/delete`,
@@ -293,7 +294,7 @@ export const deleteSection = createAsyncThunk(
         }
       );
       const data = await response.json();
-      //   console.log("slice deleted section:", data);
+      // console.log("slice deleted section:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to delete section");
       }
@@ -487,7 +488,7 @@ export const sectionSlice = createSlice({
         state.status = "loading";
       })
       .addCase(deleteSection.fulfilled, (state, action) => {
-        const sectionId = action.meta.arg; // assumes the sectionId was passed as the argument to the thunk
+        const sectionId = action.meta.arg.sectionId; // assumes the sectionId was passed as the argument to the thunk
         state.allIds = state.allIds.filter((id) => id !== sectionId);
         delete state.byId[sectionId];
         if (state.currentSection === sectionId) {
