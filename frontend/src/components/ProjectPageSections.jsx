@@ -323,10 +323,10 @@ const ProjectPageSections = ({ project }) => {
       // remove the section from the backend logic
       await dispatch(
         deleteSection({
-          sectionId,
+          sectionId: sectionToDelete._id,
           projectId: sectionToDelete.project,
         })
-      ).unwrap();
+      );
 
       // update the project redux to sections without the deleted one
       const updatedSections = projectSections.filter(
