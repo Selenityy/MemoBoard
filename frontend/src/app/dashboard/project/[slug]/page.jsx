@@ -15,6 +15,8 @@ import { debounce } from "lodash";
 import { useRouter } from "next/navigation";
 import ProjectPageSections from "@/components/ProjectPageSections";
 import ContentEditable from "react-contenteditable";
+import { RiArrowDropDownLine } from "react-icons/ri";
+import Dropdown from "react-bootstrap/Dropdown";
 
 const getProjectById = createSelector(
   [(state) => state.project.byId, (_, projectId) => projectId],
@@ -47,6 +49,7 @@ const ProjectPage = ({ params }) => {
   const colorInputRef = useRef(null);
   const [userChanged, setUserChanged] = useState(false);
   const [editingColor, setEditingColor] = useState(false);
+  // const [showDropDown, setShowDropDown] = useState(false);
 
   // console.log("params:", params);
   // console.log("project:", project);
@@ -117,6 +120,20 @@ const ProjectPage = ({ params }) => {
     );
   };
 
+  // const handleDropDownClick = () => {
+  //   if (showDropDown === false) {
+  //     setShowDropDown(true);
+  //   } else if (showDropDown === true) {
+  //     setShowDropDown(false);
+  //   }
+  // };
+
+  const handleDeleteProjectClick = () => {
+    // pop up checking if sure
+    
+    // delete all memos, sections associated with the project and the project itself
+  };
+
   return (
     <>
       <Row>
@@ -170,6 +187,38 @@ const ProjectPage = ({ params }) => {
                 theme === "dark" ? "project-names-dark" : "project-names-light"
               }
             />
+            <Dropdown>
+              <Dropdown.Toggle
+                size="lg"
+                variant="secondary"
+                id="project-dropdown"
+                style={{
+                  marginLeft: "10px",
+                  backgroundColor: "transparent",
+                  color: "black",
+                  border: "none",
+                  padding: "none",
+                  // onclick show border
+                }}
+              ></Dropdown.Toggle>
+              <Dropdown.Menu style={{ marginLeft: "20px", padding: "none" }}>
+                <Dropdown.Item onClick={() => handleDeleteProjectClick()}>
+                  Delete Project
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+            {/* <div
+              style={{ paddingLeft: "16px" }}
+              onClick={() => handleDropDownClick()}
+            >
+              <RiArrowDropDownLine style={{ width: "35px", height: "35px" }} />
+              {showDropDown && (
+                <div style={{ position: "fixed", paddingLeft: "20px" }}>
+                  {" "}
+                  Delete Project
+                </div>
+              )}
+            </div> */}
           </div>
         </Col>
       </Row>
