@@ -164,9 +164,9 @@ exports.deleteProject = asyncHandler(async (req, res, next) => {
       _id: projectId,
       user: userId,
     });
-    if (!deleteProject) {
-      return res.status(404).json({ message: "Delete project not found" });
-    }
+    // if (!deleteProject) {
+    //   return res.status(404).json({ message: "Delete project not found" });
+    // }
 
     // delete memos associated with the project
     await Memo.deleteMany({ project: projectId });
