@@ -9,11 +9,6 @@ import WelcomeComponent from "@/components/WelcomeComponent";
 const DashboardPage = () => {
   return (
     <>
-      {/* <Row>
-        <Col xs={1}>
-          <span style={{ fontWeight: "bold" }}>Home</span>
-        </Col>
-      </Row> */}
       <Row>
         <Col style={{ paddingBottom: "20px" }}>
           <WelcomeComponent />
