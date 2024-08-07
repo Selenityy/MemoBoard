@@ -7,6 +7,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { createSelector } from "reselect";
 import { useSelector, useDispatch } from "react-redux";
 import {
+  deleteProject,
   fetchProject,
   fetchProjects,
   updateProject,
@@ -17,6 +18,7 @@ import ProjectPageSections from "@/components/ProjectPageSections";
 import ContentEditable from "react-contenteditable";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import Dropdown from "react-bootstrap/Dropdown";
+import ConfirmationModal from "@/components/ConfirmationModal";
 
 const getProjectById = createSelector(
   [(state) => state.project.byId, (_, projectId) => projectId],
@@ -49,6 +51,8 @@ const ProjectPage = ({ params }) => {
   const colorInputRef = useRef(null);
   const [userChanged, setUserChanged] = useState(false);
   const [editingColor, setEditingColor] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
   // const [showDropDown, setShowDropDown] = useState(false);
 
   // console.log("params:", params);
@@ -120,17 +124,14 @@ const ProjectPage = ({ params }) => {
     );
   };
 
-  // const handleDropDownClick = () => {
-  //   if (showDropDown === false) {
-  //     setShowDropDown(true);
-  //   } else if (showDropDown === true) {
-  //     setShowDropDown(false);
-  //   }
-  // };
-
-  const handleDeleteProjectClick = () => {
-    // pop up checking if sure
-    
+  const handleDeleteProjectClick = async (e) => {
+    console.log("delete");
+    try {
+      await dispatch(deleteProject(projectId));
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Error deleting project:", error);
+    }
     // delete all memos, sections associated with the project and the project itself
   };
 
@@ -202,23 +203,20 @@ const ProjectPage = ({ params }) => {
                 }}
               ></Dropdown.Toggle>
               <Dropdown.Menu style={{ marginLeft: "20px", padding: "none" }}>
-                <Dropdown.Item onClick={() => handleDeleteProjectClick()}>
+                <Dropdown.Item onClick={() => setShowConfirmation(true)}>
                   Delete Project
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-            {/* <div
-              style={{ paddingLeft: "16px" }}
-              onClick={() => handleDropDownClick()}
-            >
-              <RiArrowDropDownLine style={{ width: "35px", height: "35px" }} />
-              {showDropDown && (
-                <div style={{ position: "fixed", paddingLeft: "20px" }}>
-                  {" "}
-                  Delete Project
-                </div>
-              )}
-            </div> */}
+            <ConfirmationModal
+              show={showConfirmation}
+              handleClose={() => setShowConfirmation(false)}
+              handleConfirm={() => {
+                handleDeleteProjectClick();
+                setShowConfirmation(false);
+              }}
+              message="Are you sure you want to delete your project? This cannot be undone."
+            />
           </div>
         </Col>
       </Row>
