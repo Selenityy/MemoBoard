@@ -1,9 +1,22 @@
-@import "~bootstrap/scss/bootstrap";
-@import url("https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+// Variables, helpers and mixins
 @import "utilities/_variables.scss";
 @import "utilities/_mixins.scss";
 @import "utilities/_helpers.scss";
+
+// Google Fonts
+@import url("https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+
+// Framework
+@import "~bootstrap/scss/bootstrap";
+
+// Base HTML element and body styles
+@import "base/_base.scss";
+
+// Typography and specific element/component modifications
+@import "base/_typography.scss";
+
+// Componets
 @import "components/_buttons.scss";
 @import "components/_forms.scss";
 @import "components/_modals.scss";
@@ -15,5 +28,3 @@
 @import "components/project-widget";
 @import "components/calendar";
 @import "components/project-page-component";
-@import "base/_base.scss";
-@import "base/_typography.scss";
