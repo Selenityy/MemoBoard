@@ -90,7 +90,7 @@ function LoginForm() {
       }
     >
       <Row className="justify-content-center">
-        <Col xs={12} sm={10} md={8} lg={6}>
+        <Col xs={12} sm={10} md={8}>
           <Form
             noValidate
             validated={validated}
@@ -160,7 +160,7 @@ function LoginForm() {
         </Col>
       </Row>
       <Row className="justify-content-center">
-        <Col xs={12} sm={10} md={8} lg={6}>
+        <Col xs={12} sm={10} md={8}>
           <Button
             variant="primary"
             type="submit"
