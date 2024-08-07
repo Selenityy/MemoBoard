@@ -158,9 +158,10 @@ export const deleteProject = createAsyncThunk(
     if (!token) {
       return thunkAPI.rejectWithValue("No token found");
     }
+    console.log(projectId);
     try {
       const response = await fetch(
-        `http://locahlhost:3000/dashboard/projects/${projectId}/delete`,
+        `http://localhost:3000/dashboard/projects/${projectId}/delete`,
         {
           method: "DELETE",
           headers: {
