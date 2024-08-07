@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import {
   Form,
   Button,
@@ -14,7 +14,7 @@ import { signupUser } from "@/redux/features/userSlice";
 import { useTheme } from "@/context/ThemeContext";
 import { useRouter } from "next/navigation";
 
-const SignupForm = () => {
+const SignupForm = forwardRef((props, ref) => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const router = useRouter();
@@ -91,6 +91,8 @@ const SignupForm = () => {
       className={
         theme === "dark" ? "form-container-dark" : "form-container-light"
       }
+      ref={ref}
+      style={{ zIndex: "1000" }}
     >
       <Row className="justify-content-center">
         <Col>
@@ -287,6 +289,6 @@ const SignupForm = () => {
       )}
     </Container>
   );
-};
+});
 
 export default SignupForm;

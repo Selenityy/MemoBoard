@@ -148,15 +148,28 @@ function LoginForm() {
           </Form>
         </Col>
       </Row>
-      <Row>
-        <Button
-          variant="dark"
-          type="submit"
-          className="submit-form-btn"
-          onClick={handleTestLogIn}
-        >
-          Login as Test User
-        </Button>
+      <Row className="div-hr-container">
+        <Col xs={3} style={{ padding: "0px", margin: "0px" }}>
+          <hr></hr>
+        </Col>
+        <Col xs="auto">
+          <span>or</span>
+        </Col>
+        <Col xs={3} style={{ padding: "0px", margin: "0px" }}>
+          <hr></hr>
+        </Col>
+      </Row>
+      <Row className="justify-content-center">
+        <Col xs={12} sm={10} md={8} lg={6}>
+          <Button
+            variant="primary"
+            type="submit"
+            className="submit-form-btn"
+            onClick={handleTestLogIn}
+          >
+            Login as Test User
+          </Button>
+        </Col>
       </Row>
     </Container>
   );

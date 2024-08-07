@@ -3,22 +3,22 @@
 import { Button } from "react-bootstrap";
 import { useTheme } from "@/context/ThemeContext";
 
-const SignUpBtn = ({ setShowSignUpForm }) => {
+const LoginLink = ({ setShowSignUpForm }) => {
   const { theme } = useTheme();
 
   return (
     <>
       <Button
-        onClick={() => setShowSignUpForm(true)}
+        onClick={() => setShowSignUpForm(false)}
         variant="link"
         className={
           theme === "dark" ? "signup-button-dark" : "signup-button-light"
         }
       >
-        Don't have an account yet? Sign up here.
+        Already have an account? Log in here.
       </Button>
     </>
   );
 };
 
-export default SignUpBtn;
+export default LoginLink;

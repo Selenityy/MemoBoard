@@ -1,18 +1,50 @@
 "use client";
 
+import { useRef, useState, useEffect } from "react";
 import LoginHeader from "@/components/LoginHeader";
 import "../styles/main.scss";
 import LoginForm from "@/components/LoginForm";
 import { Col, Container, Row } from "react-bootstrap";
 import SignUpBtn from "@/components/SignUpBtn";
 import { useTheme } from "@/context/ThemeContext";
+import SignupForm from "@/components/SignupForm";
+import LoginLink from "@/components/LoginLink";
 
 const Auth = () => {
   const { theme } = useTheme();
+  const containerRef = useRef(null);
+  const signupFormRef = useRef(null);
+  const [showSignUpForm, setShowSignUpForm] = useState(false);
+
+  const handleOutsideClick = (event) => {
+    if (
+      signupFormRef.current &&
+      !signupFormRef.current.contains(event.target)
+    ) {
+      setShowSignUpForm(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showSignUpForm) {
+      document.addEventListener("click", handleOutsideClick);
+    } else {
+      document.removeEventListener("click", handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, [showSignUpForm]);
+
   return (
     <div className={theme === "dark" ? "login-page-dark" : "login-page-light"}>
       <LoginHeader />
-      <Container className="my-5 py-5">
+      <Container
+        className="my-5 py-5"
+        ref={containerRef}
+        style={{ position: "relative" }}
+      >
         <Row className="mb-4">
           <Col xs={12}>
             <h2
@@ -33,32 +65,27 @@ const Auth = () => {
             </h3>
           </Col>
         </Row>
-        <Row className="justify-content-center pb-3">
-          <Col xs="auto">
-            <span className={`sign-in-or-text ${theme}`}>Google</span>
-          </Col>
-        </Row>
-        <Container>
-          <Row className="div-hr-container">
-            <Col xs={3} className={`div-hr-border ${theme}`}>
-              <div></div>
-            </Col>
-            <Col xs="auto">
-              <span className={`sign-in-or-text ${theme}`}>or</span>
-            </Col>
-            <Col xs={3} className={`div-hr-border ${theme}`}>
-              <div></div>
+        {showSignUpForm && (
+          <Row>
+            <Col>
+              <SignupForm ref={signupFormRef} />
             </Col>
           </Row>
-        </Container>
-        <Row>
-          <Col>
-            <LoginForm />
-          </Col>
-        </Row>
+        )}
+        {!showSignUpForm && (
+          <Row>
+            <Col>
+              <LoginForm />
+            </Col>
+          </Row>
+        )}
         <Row className="justify-content-center mt-2">
           <Col xs="auto">
-            <SignUpBtn />
+            {!showSignUpForm ? (
+              <SignUpBtn setShowSignUpForm={setShowSignUpForm} />
+            ) : (
+              <LoginLink setShowSignUpForm={setShowSignUpForm} />
+            )}
           </Col>
         </Row>
       </Container>
