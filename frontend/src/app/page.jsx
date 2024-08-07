@@ -65,14 +65,13 @@ const Auth = () => {
             </h3>
           </Col>
         </Row>
-        {showSignUpForm && (
+        {showSignUpForm ? (
           <Row>
             <Col>
               <SignupForm ref={signupFormRef} />
             </Col>
           </Row>
-        )}
-        {!showSignUpForm && (
+        ) : (
           <Row>
             <Col>
               <LoginForm />
