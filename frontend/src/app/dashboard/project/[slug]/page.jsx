@@ -132,7 +132,6 @@ const ProjectPage = ({ params }) => {
     } catch (error) {
       console.error("Error deleting project:", error);
     }
-    // delete all memos, sections associated with the project and the project itself
   };
 
   return (
