@@ -1,8 +1,8 @@
 "use client";
 
+import "../styles/main.scss";
 import { useRef, useState, useEffect } from "react";
 import LoginHeader from "@/components/LoginHeader";
-import "../styles/main.scss";
 import LoginForm from "@/components/LoginForm";
 import { Col, Container, Row } from "react-bootstrap";
 import SignUpBtn from "@/components/SignUpBtn";
