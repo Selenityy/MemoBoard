@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { createSelector } from "reselect";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUserNotes } from "@/redux/features/userSlice";
+import { useTheme } from "@/context/ThemeContext";
 
 const getUser = (state) => state.user.user;
 const userNotes = createSelector([getUser], (user) => user.notes);
@@ -22,6 +23,7 @@ const QuillComponent = dynamic(
 
 const PersonalNotesWidget = () => {
   const dispatch = useDispatch();
+  const { theme } = useTheme();
   const userPersonalNotes = useSelector(userNotes);
   const userId = useSelector((state) => state.user.user._id);
 
@@ -33,20 +35,17 @@ const PersonalNotesWidget = () => {
 
   return (
     <Container
-      style={{
-        width: "100%",
-        border: "1px solid grey",
-        borderRadius: "16px",
-        padding: "none",
-      }}
+      className={
+        theme === "dark"
+          ? "personal-notes-widget-container-dark"
+          : "personal-notes-widget-container-light"
+      }
     >
       <Row>
         <Col xs={12} style={{ padding: "16px 0px 5px 25px" }}>
-          <span style={{ fontWeight: "bold", fontSize: "1.2rem" }}>
-            Personal Notes
-          </span>
+          <span className="personal-notes-widget-title">Personal Notes</span>
         </Col>
-        <Col xs={12} style={{ width: "full", height: "300px" }}>
+        <Col xs={12} className="personal-notes-widget-quill-col">
           <QuillComponent userPersonalNotes={userPersonalNotes} />
         </Col>
       </Row>
