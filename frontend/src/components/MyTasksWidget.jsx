@@ -36,12 +36,11 @@ const MyTasksWidget = () => {
       }
     >
       <Row>
-        <Col>
+        {/* Fixed header */}
+        <Col xs={12}>
           <div className="my-task-widget-my-memos-widget">My Memos</div>
         </Col>
-      </Row>
-      <Row className="my-task-widget-rows">
-        <Col>
+        <Col xs={12} className="my-task-widget-rows">
           <Nav
             variant="underline"
             defaultActiveKey="upcoming"
@@ -86,7 +85,59 @@ const MyTasksWidget = () => {
           </Nav>
         </Col>
       </Row>
+      {/* <Row>
+        <Col>
+          <div className="my-task-widget-my-memos-widget">My Memos</div>
+        </Col>
+      </Row> */}
+      {/* <Row className="my-task-widget-rows">
+        <Col>
+          <Nav
+            variant="underline"
+            defaultActiveKey="upcoming"
+            onSelect={(selectedKey) => setActiveTab(selectedKey)}
+          >
+            <Nav.Item>
+              <Nav.Link
+                eventKey="upcoming"
+                className={
+                  theme === "dark"
+                    ? "my-task-widget-nav-event-keys-dark"
+                    : "my-task-widget-nav-event-keys-light"
+                }
+              >
+                Upcoming
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link
+                eventKey="overdue"
+                className={
+                  theme === "dark"
+                    ? "my-task-widget-nav-event-keys-dark"
+                    : "my-task-widget-nav-event-keys-light"
+                }
+              >
+                Overdue
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link
+                eventKey="completed"
+                className={
+                  theme === "dark"
+                    ? "my-task-widget-nav-event-keys-dark"
+                    : "my-task-widget-nav-event-keys-light"
+                }
+              >
+                Completed
+              </Nav.Link>
+            </Nav.Item>
+          </Nav>
+        </Col>
+      </Row> */}
       <Row className="my-task-widget-render-tabs-row">
+        {/* Scrollable list */}
         <Col>{renderTabContent()}</Col>
       </Row>
     </Container>

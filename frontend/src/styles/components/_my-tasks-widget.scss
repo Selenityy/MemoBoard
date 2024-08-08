@@ -10,6 +10,7 @@
   width: 100%;
   padding: 16px;
   margin: 0px;
+  overflow: hidden;
 }
 
 .my-task-widget-container-light {
@@ -20,6 +21,7 @@
   width: 100%;
   padding: 16px;
   margin: 0px;
+  overflow: hidden;
 }
 
 .my-task-widget-my-memos-widget {
@@ -28,9 +30,10 @@
 }
 
 .my-task-widget-rows {
-  margin: 0px -16px;
+  //   margin: 0px -16px;
   border-bottom: 1px solid grey;
-  padding: 0px 4px;
+  //   padding: 0px 4px;
+  //   width: 100%;
 }
 
 .my-task-widget-nav-event-keys-dark,
@@ -45,6 +48,8 @@
 
 .my-task-widget-render-tabs-row {
   padding: 12px;
+  overflow-y: auto;
+  max-height: calc(100% - 50px);
 }
 
 // UPCOMING TASKS TAB
