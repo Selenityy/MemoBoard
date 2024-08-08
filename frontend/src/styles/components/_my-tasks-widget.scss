@@ -1,0 +1,113 @@
+@import "../utilities/mixins";
+@import "../utilities/variables";
+@import "../utilities/helpers";
+
+.my-task-widget-container-dark {
+  border: 1px solid grey;
+  background: $background-color-header-nav-dark;
+  border-radius: 16px;
+  height: 400px;
+  width: 100%;
+  padding: 16px;
+  margin: 0px;
+}
+
+.my-task-widget-container-light {
+  border: 1px solid gray;
+  background: $background-color-light;
+  border-radius: 16px;
+  height: 400px;
+  width: 100%;
+  padding: 16px;
+  margin: 0px;
+}
+
+.my-task-widget-my-memos-widget {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.my-task-widget-rows {
+  margin: 0px -16px;
+  border-bottom: 1px solid grey;
+  padding: 0px 4px;
+}
+
+.my-task-widget-nav-event-keys-dark,
+.my-task-widget-nav-event-keys-dark.nav-link.active {
+  color: $text-color-light;
+}
+
+.my-task-widget-nav-event-keys-light,
+.my-task-widget-nav-event-keys-light.nav-link.active {
+  color: $text-color-dark;
+}
+
+.my-task-widget-render-tabs-row {
+  padding: 12px;
+}
+
+// UPCOMING TASKS TAB
+
+.upcoming-tasks-row {
+  align-items: flex-start;
+}
+
+.upcoming-tasks-col {
+  padding: 0px 0px 0px 10px;
+  margin: 0px;
+}
+
+.upcoming-tasks-add-memo-btn-dark {
+  padding: 0px;
+  border: none;
+  background: none;
+  outline: none;
+  box-shadow: none;
+  color: $text-color-header-nav-light;
+  margin-bottom: 6px;
+}
+
+.upcoming-tasks-add-memo-btn-light {
+  padding: 0px;
+  border: none;
+  background: none;
+  outline: none;
+  box-shadow: none;
+  color: $text-color-header-nav-dark;
+  margin-bottom: 6px;
+}
+
+.upcoming-tasks-span-dark {
+  color: $text-color-header-nav-light;
+  padding: 2px 0px 0px 0px;
+  margin: 0px;
+}
+
+.upcoming-tasks-span-light {
+  color: $text-color-dark;
+  padding: 2px 0px 0px 0px;
+  margin: 0px;
+}
+
+.upcoming-tasks-new-memo-line-dark {
+  background-color: $background-color-dark;
+  color: inherit;
+  border: 0.5px solid white;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.upcoming-tasks-new-memo-line-light {
+  background-color: inherit;
+  color: inherit;
+  border: 0.5px solid black;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+  }
+}

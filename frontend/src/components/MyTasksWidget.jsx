@@ -29,29 +29,18 @@ const MyTasksWidget = () => {
 
   return (
     <Container
-      style={{
-        border: "1px solid grey",
-        borderRadius: "16px",
-        height: "400px",
-        width: "100%",
-        padding: "16px",
-        margin: "0px",
-      }}
+      className={
+        theme === "dark"
+          ? "my-task-widget-container-dark"
+          : "my-task-widget-container-light"
+      }
     >
       <Row>
         <Col>
-          <div style={{ fontWeight: "bold", fontSize: "1.2rem" }}>My Memos</div>
+          <div className="my-task-widget-my-memos-widget">My Memos</div>
         </Col>
       </Row>
-      <Row
-        style={{
-          marginLeft: "-16px",
-          marginRight: "-16px",
-          borderBottom: "1px solid grey",
-          paddingLeft: "4px",
-          paddingRight: "4px",
-        }}
-      >
+      <Row className="my-task-widget-rows">
         <Col>
           <Nav
             variant="underline"
@@ -59,24 +48,45 @@ const MyTasksWidget = () => {
             onSelect={(selectedKey) => setActiveTab(selectedKey)}
           >
             <Nav.Item>
-              <Nav.Link eventKey="upcoming" style={{ color: "black" }}>
+              <Nav.Link
+                eventKey="upcoming"
+                className={
+                  theme === "dark"
+                    ? "my-task-widget-nav-event-keys-dark"
+                    : "my-task-widget-nav-event-keys-light"
+                }
+              >
                 Upcoming
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link eventKey="overdue" style={{ color: "black" }}>
+              <Nav.Link
+                eventKey="overdue"
+                className={
+                  theme === "dark"
+                    ? "my-task-widget-nav-event-keys-dark"
+                    : "my-task-widget-nav-event-keys-light"
+                }
+              >
                 Overdue
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link eventKey="completed" style={{ color: "black" }}>
+              <Nav.Link
+                eventKey="completed"
+                className={
+                  theme === "dark"
+                    ? "my-task-widget-nav-event-keys-dark"
+                    : "my-task-widget-nav-event-keys-light"
+                }
+              >
                 Completed
               </Nav.Link>
             </Nav.Item>
           </Nav>
         </Col>
       </Row>
-      <Row style={{ padding: "12px" }}>
+      <Row className="my-task-widget-render-tabs-row">
         <Col>{renderTabContent()}</Col>
       </Row>
     </Container>

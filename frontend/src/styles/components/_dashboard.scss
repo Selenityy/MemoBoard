@@ -1,0 +1,26 @@
+@import "../utilities/variables";
+@import "../utilities/mixins";
+@import "../utilities/helpers";
+
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-clock {
+  font-family: $font-secondary;
+  font-size: 4rem;
+  font-weight: 900;
+}
+
+.dashboard-date {
+  font-family: 1rem;
+  font-weight: 600;
+}
+
+.dashboard-greetings {
+    font-size: 2rem;
+    font-weight: 700;
+}

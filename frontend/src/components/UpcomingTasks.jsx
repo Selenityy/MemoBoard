@@ -616,31 +616,32 @@ const UpcomingTasks = ({ user }) => {
           createSubMemoClick={createSubMemoClick}
         />
       )}
-      <Row
-        style={{
-          alignItems: "center",
-        }}
-      >
-        <Col xs="auto" style={{ padding: "0px 0px 10px 10px", margin: "0px" }}>
+      <Row className="upcoming-tasks-row">
+        <Col xs="auto" className="upcoming-tasks-col">
           <button
             className={
               theme === "dark"
-                ? "add-project-btn-dark"
-                : "add-project-btn-light"
+                ? "upcoming-tasks-add-memo-btn-dark"
+                : "upcoming-tasks-add-memo-btn-light"
             }
             onClick={handleAddClick}
-            style={{ padding: "0px", margin: "0px" }}
           >
-            <IoMdAdd style={{ color: "#5a5b5c" }} size={20} className="me-2" />
+            <IoMdAdd size={20} className="me-2 upcoming-tasks-add-memo-icon" />
           </button>
         </Col>
         <Col
           className={
-            theme === "dark" ? "project-span-dark" : "project-span-light"
+            theme === "dark"
+              ? "upcoming-tasks-span-dark"
+              : "upcoming-tasks-span-light"
           }
-          style={{ padding: "0px 0px 10px 0px", margin: "0px" }}
         >
-          <span style={{ color: "#5a5b5c" }}>Create Memo</span>
+          <span>Create Memo</span>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <hr></hr>
         </Col>
       </Row>
       {newMemoLine && (
@@ -652,7 +653,11 @@ const UpcomingTasks = ({ user }) => {
               vlue={newMemoText}
               onChange={(e) => setNewMemoText(e.target.value)}
               placeholder="Type new memo here..."
-              className="form-control"
+              className={
+                theme === "dark"
+                  ? "upcoming-tasks-new-memo-line-dark"
+                  : "upcoming-tasks-new-memo-line-light"
+              }
               onBlur={createMemoClick}
             />
           </Col>

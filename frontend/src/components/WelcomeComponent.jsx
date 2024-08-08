@@ -1,6 +1,5 @@
 "use client";
 
-import "../styles/main.scss";
 import { Col, Container, Row } from "react-bootstrap";
 import { useTheme } from "@/context/ThemeContext";
 import React, { useEffect, useState } from "react";
@@ -53,47 +52,20 @@ const WelcomeComponent = () => {
   }, [user.timezone, user.firstName, dispatch]);
 
   return (
-    <Container
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <Container className="welcome-container">
       <Row>
         <Col>
-          <span
-            style={{
-              fontWeight: "900",
-              fontSize: "4rem",
-              fontFamily: "Architects Daughter",
-            }}
-          >
-            {clock}
-          </span>
+          <span className="dashboard-clock ">{clock}</span>
         </Col>
       </Row>
       <Row>
         <Col>
-          <span
-            style={{
-              fontWeight: "600",
-              fontSize: "1rem",
-            }}
-          >
-            {dateString}
-          </span>
+          <span className="dashboard-date">{dateString}</span>
         </Col>
       </Row>
       <Row>
         <Col>
-          <span
-            style={{
-              fontWeight: "700",
-              fontSize: "2rem",
-            }}
-          >
+          <span className="dashboard-greetings">
             Good {timeOfDay}, {user.firstName}
           </span>
         </Col>
