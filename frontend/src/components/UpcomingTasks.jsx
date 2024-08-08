@@ -708,15 +708,7 @@ const UpcomingTasks = ({ user }) => {
                   <CiCalendar onClick={() => toggleCalendar(memo._id)} />
                 )}
                 {showCalendar[memo._id] && (
-                  <div
-                    // style={{
-                    //   position: "absolute",
-                    //   zIndex: 1000,
-                    //   top: "100%",
-                    //   left: 0,
-                    // }}
-                    className="dashboard-tasks-calendar-div"
-                  >
+                  <div className="dashboard-tasks-calendar-div">
                     <Calendar
                       onChange={(date) => {
                         changeDueDate(date, memo);

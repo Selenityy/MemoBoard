@@ -11,6 +11,7 @@
   padding: 16px;
   margin: 0px;
   overflow: hidden;
+  position: relative;
 }
 
 .my-task-widget-container-light {
@@ -51,7 +52,7 @@
   padding: 12px;
   overflow-y: auto;
   max-height: calc(100% - 50px);
-  position: relative;
+  //   position: relative;
 }
 
 // UPCOMING TASKS TAB
@@ -144,6 +145,8 @@
 .dashboard-tasks-calendar-div {
   position: absolute;
   z-index: 1000;
-  top: 0;
+  top: 20%;
   left: 30%;
+  height: 100%;
+  width: auto;
 }

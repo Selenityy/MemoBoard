@@ -576,20 +576,13 @@ const CompletedTasks = ({ user }) => {
               </ul>
               <div
                 ref={(el) => (calendarRefs.current[memo._id] = el)}
-                style={{ position: "relative" }}
+                // style={{ position: "relative" }}
               >
                 {!memo.dueDateTime && (
                   <CiCalendar onClick={() => toggleCalendar(memo._id)} />
                 )}
                 {showCalendar[memo._id] && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      zIndex: 1000,
-                      top: "100%",
-                      left: 0,
-                    }}
-                  >
+                  <div className="dashboard-tasks-calendar-div">
                     <Calendar
                       onChange={(date) => {
                         changeDueDate(date, memo);
