@@ -37,50 +37,24 @@ const ProjectsWidget = () => {
 
   return (
     <Container
-      style={{
-        border: "1px solid grey",
-        borderRadius: "16px",
-        height: "400px",
-        width: "100%",
-        padding: "16px",
-        margin: "0px",
-      }}
+      className={
+        theme === "dark"
+          ? "project-widget-containter-dark"
+          : "project-widget-containter-light"
+      }
     >
       {/* <Row>
         <Col>
           <div onClick={massWipe}>DELETE SECTIONS</div>
         </Col>
       </Row> */}
-      <Row
-        style={{
-          marginLeft: "-16px",
-          marginRight: "-16px",
-          borderBottom: "none",
-          paddingLeft: "4px",
-          paddingRight: "4px",
-        }}
-      >
+      <Row className="project-widget-rows">
         <Col>
-          <span
-            style={{
-              fontWeight: "bold",
-              fontSize: "1.2rem",
-            }}
-          >
-            Projects
-          </span>
+          <span className="project-widget-project-span">Projects</span>
         </Col>
       </Row>
       <Row>
-        <Col
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gridAutoFlow: "row",
-            padding: "20px 30px 30px 30px",
-            gap: "20px",
-          }}
-        >
+        <Col className="project-widget-project-cols">
           {allProjects.map((project) => (
             <div
               key={project._id}
@@ -90,26 +64,15 @@ const ProjectsWidget = () => {
                   : "project-widget-items-light"
               }
               onClick={() => navToProject(project)}
+              style={{ "--project-color": project.color }}
             >
-              <ul
-                style={{
-                  flex: 1,
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
+              <ul className="project-widget-ul">
                 <li>
-                  <div
-                    style={{
-                      width: "30px",
-                      height: "30px",
-                      borderRadius: "4px",
-                      backgroundColor: project.color,
-                      marginRight: "10px",
-                    }}
-                  ></div>
+                  <div className="project-widget-li-div"></div>
                 </li>
-                <li style={{ fontSize: "1rem" }}>{project.name}</li>
+                <li className="project-widget-li-project-name">
+                  {project.name}
+                </li>
               </ul>
             </div>
           ))}
