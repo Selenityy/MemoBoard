@@ -1,0 +1,39 @@
+@import "../utilities/helpers";
+@import "../utilities/variables";
+@import "../utilities/mixins";
+
+.personal-notes-widget-container-dark {
+  background: $background-color-header-nav-dark;
+  border: 1px solid grey;
+  border-radius: 16px;
+  width: 100%;
+  padding: none;
+  overflow: auto;
+}
+
+.personal-notes-widget-container-light {
+  background: $background-color-light;
+  border: 1px solid grey;
+  border-radius: 16px;
+  width: 100%;
+  padding: none;
+  overflow: auto;
+}
+
+.personal-notes-widget-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.personal-notes-widget-quill-col {
+  width: full;
+  height: 300px;
+}
+
+.personal-notes-widget-content-dark {
+  color: $text-color-light;
+}
+
+.personal-notes-widget-content-light {
+  color: $text-color-dark;
+}
