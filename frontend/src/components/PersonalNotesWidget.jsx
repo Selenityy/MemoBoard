@@ -29,7 +29,7 @@ const PersonalNotesWidget = () => {
 
   useEffect(() => {
     if (userId) {
-      dispatch(fetchUserNotes());
+      dispatch(fetchUserNotes()).unwrap();
     }
   }, [dispatch, userId]);
 
