@@ -540,29 +540,22 @@ const CompletedTasks = ({ user }) => {
           createSubMemoClick={createSubMemoClick}
         />
       )}
-      <div className={theme === "dark" ? "body-dark" : "body-light"}>
+      <div>
         <ul>
           {completedMemos.map((memo) => (
             <li
               key={memo._id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                width: "100%",
-              }}
+              className={
+                theme === "dark"
+                  ? "dashboard-tasks-memos-li-dark"
+                  : "dashboard-tasks-memos-li-light"
+              }
             >
               <MdCheckBox
                 onClick={() => checkboxToggle(memo, memo._id)}
                 style={{ color: "green" }}
               />
-              <ul
-                style={{
-                  flex: 1,
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
-              >
+              <ul className="dashboard-tasks-memos-ul">
                 <li
                   onClick={() => toggleMemoModal(memo)}
                   style={{ color: "grey" }}

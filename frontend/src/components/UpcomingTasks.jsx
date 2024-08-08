@@ -663,28 +663,21 @@ const UpcomingTasks = ({ user }) => {
           </Col>
         </Row>
       )}
-      <div className={theme === "dark" ? "body-dark" : "body-light"}>
+      <div>
         <ul>
           {memos.map((memo) => (
             <li
               key={memo._id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                width: "100%",
-              }}
+              className={
+                theme === "dark"
+                  ? "dashboard-tasks-memos-li-dark"
+                  : "dashboard-tasks-memos-li-light"
+              }
             >
               <MdCheckBoxOutlineBlank
                 onClick={() => checkboxToggle(memo, memo._id)}
               />
-              <ul
-                style={{
-                  flex: 1,
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
-              >
+              <ul className="dashboard-tasks-memos-ul">
                 <li onClick={() => toggleMemoModal(memo)}>{memo.body}</li>
                 {memo.dueDateTime && (
                   <li
@@ -709,19 +702,20 @@ const UpcomingTasks = ({ user }) => {
               </ul>
               <div
                 ref={(el) => (calendarRefs.current[memo._id] = el)}
-                style={{ position: "relative" }}
+                // style={{ position: "relative" }}
               >
                 {!memo.dueDateTime && (
                   <CiCalendar onClick={() => toggleCalendar(memo._id)} />
                 )}
                 {showCalendar[memo._id] && (
                   <div
-                    style={{
-                      position: "absolute",
-                      zIndex: 1000,
-                      top: "100%",
-                      left: 0,
-                    }}
+                    // style={{
+                    //   position: "absolute",
+                    //   zIndex: 1000,
+                    //   top: "100%",
+                    //   left: 0,
+                    // }}
+                    className="dashboard-tasks-calendar-div"
                   >
                     <Calendar
                       onChange={(date) => {

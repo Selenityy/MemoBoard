@@ -580,28 +580,21 @@ const OverdueTasks = ({ user }) => {
           createSubMemoClick={createSubMemoClick}
         />
       )}
-      <div className={theme === "dark" ? "body-dark" : "body-light"}>
+      <div>
         <ul>
           {overdueMemos.map((memo) => (
             <li
               key={memo._id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                width: "100%",
-              }}
+              className={
+                theme === "dark"
+                  ? "dashboard-tasks-memos-li-dark"
+                  : "dashboard-tasks-memos-li-light"
+              }
             >
               <MdCheckBoxOutlineBlank
                 onClick={() => checkboxToggle(memo, memo._id)}
               />
-              <ul
-                style={{
-                  flex: 1,
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
-              >
+              <ul className="dashboard-tasks-memos-ul">
                 <li onClick={() => toggleMemoModal(memo)}>{memo.body}</li>
                 {memo.dueDateTime && (
                   <li
