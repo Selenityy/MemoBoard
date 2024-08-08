@@ -32,6 +32,7 @@
 .my-task-widget-rows {
   //   margin: 0px -16px;
   border-bottom: 1px solid grey;
+  padding-left: 50px;
   //   padding: 0px 4px;
   //   width: 100%;
 }
@@ -50,6 +51,7 @@
   padding: 12px;
   overflow-y: auto;
   max-height: calc(100% - 50px);
+  position: relative;
 }
 
 // UPCOMING TASKS TAB
@@ -115,4 +117,33 @@
   &:focus {
     outline: none;
   }
+}
+
+.dashboard-tasks-memos-li-dark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: $background-color-header-nav-dark;
+}
+
+.dashboard-tasks-memos-li-light {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: $background-color-light;
+}
+
+.dashboard-tasks-memos-ul {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.dashboard-tasks-calendar-div {
+  position: absolute;
+  z-index: 1000;
+  top: 0;
+  left: 30%;
 }
