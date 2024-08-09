@@ -1,0 +1,106 @@
+@import "../utilities/mixins";
+@import "../utilities/variables";
+@import "../utilities/helpers";
+
+.project-page-slug-cols {
+  display: flex;
+  align-items: center;
+}
+
+.project-page-slug-color-block-div {
+  width: 25px;
+  height: 25px;
+  border-radius: 4px;
+  margin-right: 10px;
+  cursor: pointer;
+  position: relative;
+}
+
+.project-page-slug-color-block-input-ref {
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  top: 0;
+  left: 0;
+}
+
+.project-page-slug-content-editable-project-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.project-page-slug-dropdown-arrow-dark {
+  margin-left: 10px;
+  background-color: transparent;
+  color: $text-color-light;
+  border: none;
+  padding: none;
+
+  &:hover,
+  &:active,
+  &:focus,
+  &:focus-visible {
+    border: none;
+    background-color: transparent;
+    color: $text-color-light;
+    outline: none;
+  }
+}
+
+.project-page-slug-dropdown-arrow-light {
+  margin-left: 10px;
+  background-color: transparent;
+  color: $text-color-dark;
+  border: none;
+  padding: none;
+
+  &:hover,
+  &:active,
+  &:focus,
+  &:focus-visible {
+    border: none;
+    background-color: transparent;
+    color: $text-color-dark;
+    outline: none;
+  }
+}
+
+.project-page-slug-dropdown-menu-dark {
+  margin-left: 20px;
+  padding: none;
+  background-color: $background-color-header-nav-dark;
+}
+
+.project-page-slug-dropdown-menu-light {
+  margin-left: 20px;
+  padding: none;
+  background-color: $background-color-header-nav-light;
+}
+
+.project-page-slug-dropdown-item-dark {
+  background-color: $background-color-header-nav-dark;
+  color: $text-color-light;
+
+  &:active,
+  &:focus,
+  &:hover {
+    background-color: $background-color-dark;
+    color: $text-color-light;
+  }
+}
+
+.project-page-slug-dropdown-item-light {
+  background-color: $background-color-header-nav-light;
+  color: $text-color-dark;
+
+  &:active,
+  &:focus,
+  &:hover {
+    background-color: $background-color-light;
+    color: $text-color-dark;
+  }
+}

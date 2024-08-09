@@ -138,22 +138,12 @@ const ProjectPage = ({ params }) => {
     <>
       <Row>
         <Col>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
+          <div className="project-page-slug-cols">
             <div
               style={{
-                width: "25px",
-                height: "25px",
-                borderRadius: "4px",
                 backgroundColor: projectColor,
-                marginRight: "10px",
-                cursor: "pointer",
-                position: "relative",
               }}
+              className="project-page-slug-color-block-div"
               onClick={() => colorInputRef.current.click()}
             >
               <input
@@ -161,17 +151,7 @@ const ProjectPage = ({ params }) => {
                 type="color"
                 value={projectColor}
                 onChange={handleColorChange}
-                style={{
-                  opacity: 0,
-                  position: "absolute",
-                  width: "100%",
-                  height: "100%",
-                  cursor: "pointer",
-                  border: "none",
-                  padding: 0,
-                  top: 0,
-                  left: 0,
-                }}
+                className="project-page-slug-color-block-input-ref"
               />
             </div>
             <ContentEditable
@@ -179,30 +159,36 @@ const ProjectPage = ({ params }) => {
               html={projectName}
               onChange={(e) => handleProjectNameChange(e)}
               tagName="div"
-              style={{
-                fontSize: "1.5rem",
-                fontWeight: "700",
-              }}
-              className={
+              className={`${
                 theme === "dark" ? "project-names-dark" : "project-names-light"
-              }
+              } project-page-slug-content-editable-project-name`}
             />
             <Dropdown>
               <Dropdown.Toggle
                 size="lg"
                 variant="secondary"
                 id="project-dropdown"
-                style={{
-                  marginLeft: "10px",
-                  backgroundColor: "transparent",
-                  color: "black",
-                  border: "none",
-                  padding: "none",
-                  // onclick show border
-                }}
+                className={
+                  theme === "dark"
+                    ? "project-page-slug-dropdown-arrow-dark"
+                    : "project-page-slug-dropdown-arrow-light"
+                }
               ></Dropdown.Toggle>
-              <Dropdown.Menu style={{ marginLeft: "20px", padding: "none" }}>
-                <Dropdown.Item onClick={() => setShowConfirmation(true)}>
+              <Dropdown.Menu
+                className={
+                  theme === "dark"
+                    ? "project-page-slug-dropdown-menu-dark"
+                    : "project-page-slug-dropdown-menu-light"
+                }
+              >
+                <Dropdown.Item
+                  className={
+                    theme === "dark"
+                      ? "project-page-slug-dropdown-item-dark"
+                      : "project-page-slug-dropdown-item-light"
+                  }
+                  onClick={() => setShowConfirmation(true)}
+                >
                   Delete Project
                 </Dropdown.Item>
               </Dropdown.Menu>
