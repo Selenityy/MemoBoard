@@ -12,42 +12,113 @@
   flex-wrap: nowrap;
 }
 
+.project-component-content-editable-section-names {
+  width: min-content;
+  padding: 0px, 5px;
+}
+
 .section-names {
   font-size: 1.2rem;
   font-weight: 600;
+  width: min-content;
+  padding: 0px, 5px;
 
   &:hover {
     cursor: pointer;
   }
 }
 
-.drag-handle {
+.drag-handle-dark {
   border-radius: 10px;
   padding: 10px;
   width: 400px;
   min-height: 100px;
   height: 100vh;
-  background-color: white;
+  background-color: $background-color-header-nav-dark;
   border: 1px solid transparent;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  &:active {
+    background-color: $background-color-header-nav-dark;
+    border-color: rgba(255, 255, 255, 0.5);
+  }
 }
 
-.drag-handle:hover {
-  border-color: rgba(0, 0, 0, 0.5);
+.drag-handle-light {
+  border-radius: 10px;
+  padding: 10px;
+  width: 400px;
+  min-height: 100px;
+  height: 100vh;
+  background-color: $background-color-light;
+  border: 1px solid transparent;
+
+  &:hover {
+    border-color: rgba(0, 0, 0, 0.5);
+  }
+
+  &:active {
+    background-color: $background-color-header-nav-light;
+    border-color: rgba(0, 0, 0, 0.5);
+  }
 }
 
-.drag-handle:active {
-  background-color: #d3d3d3;
+.memo-box-dark {
+  height: 100px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 20px;
+  background-color: #454547;
+
+  &:hover,
+  &:active,
+  &:focus {
+    border-color: white;
+  }
 }
 
-.memo-box {
+.memo-box-light {
   height: 100px;
   border: 1px solid rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   padding: 10px;
   margin-bottom: 20px;
   background-color: white;
+
+  &:hover,
+  &:active,
+  &:focus {
+    border-color: black;
+  }
 }
 
-.memo-box:hover {
-  border-color: black;
+.project-page-memo-li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.project-page-memo-ul {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.project-page-memo-body {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+}
+
+.memo-due-date-dark {
+  color: $text-color-header-nav-light;
+}
+
+.memo-due-date-light {
+  color: $text-color-header-nav-dark;
 }

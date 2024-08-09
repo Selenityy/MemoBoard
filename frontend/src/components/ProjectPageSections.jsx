@@ -1138,7 +1138,13 @@ const ProjectPageSections = ({ project }) => {
                             {...provided.draggableProps}
                             style={provided.draggableProps.style}
                           >
-                            <div className="drag-handle">
+                            <div
+                              className={
+                                theme === "dark"
+                                  ? "drag-handle-dark"
+                                  : "drag-handle-light"
+                              }
+                            >
                               <Row className="mb-3">
                                 <Col {...provided.dragHandleProps}>
                                   <ContentEditable
@@ -1149,11 +1155,6 @@ const ProjectPageSections = ({ project }) => {
                                     }
                                     tagName="div"
                                     className="section-names"
-                                    style={{
-                                      width: "min-content",
-                                      paddingLeft: "5px",
-                                      paddingRight: "5px",
-                                    }}
                                   />
                                 </Col>
                                 {index !== 0 && (
@@ -1208,19 +1209,18 @@ const ProjectPageSections = ({ project }) => {
                                                   ref={provided.innerRef}
                                                   {...provided.draggableProps}
                                                   {...provided.dragHandleProps}
-                                                  className="memo-box"
+                                                  className={
+                                                    theme === "dark"
+                                                      ? "memo-box-dark"
+                                                      : "memo-box-light"
+                                                  }
                                                   onClick={() =>
                                                     toggleMemoModal(memo)
                                                   }
                                                 >
                                                   <li
                                                     key={memo._id}
-                                                    style={{
-                                                      display: "flex",
-                                                      alignItems: "center",
-                                                      gap: "10px",
-                                                      width: "100%",
-                                                    }}
+                                                    className="project-page-memo-li"
                                                   >
                                                     {memo.progress ===
                                                     "Completed" ? (
@@ -1245,15 +1245,10 @@ const ProjectPageSections = ({ project }) => {
                                                         }
                                                       />
                                                     )}
-                                                    <ul
-                                                      style={{
-                                                        flex: 1,
-                                                        display: "flex",
-                                                        justifyContent:
-                                                          "space-between",
-                                                      }}
-                                                    >
-                                                      <li>{memo.body}</li>
+                                                    <ul className="project-page-memo-ul">
+                                                      <li className="project-page-memo-body">
+                                                        {memo.body}
+                                                      </li>
                                                       {memo.dueDateTime && (
                                                         <li
                                                           onClick={(e) => {
@@ -1262,9 +1257,11 @@ const ProjectPageSections = ({ project }) => {
                                                               memo._id
                                                             );
                                                           }}
-                                                          style={{
-                                                            color: "grey",
-                                                          }}
+                                                          className={
+                                                            theme === "dark"
+                                                              ? "memo-due-date-dark"
+                                                              : "memo-due-date-light"
+                                                          }
                                                         >
                                                           {format(
                                                             parseISO(
