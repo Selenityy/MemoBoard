@@ -134,14 +134,25 @@ const SettingsModal = (props) => {
       centered
       dialogClassName="settings-modal-width"
     >
-      <Modal.Header className="settings-modal-header">
+      <Modal.Header
+        className={
+          theme === "dark"
+            ? "settings-modal-header-dark"
+            : "settings-modal-header-light"
+        }
+      >
         <Modal.Title
           id="settings-modal-title-vcenter"
-          className={`settings-modal-title {
+          // className={`settings-modal-title {
+          //   theme === "dark"
+          //     ? "project-modal-title-dark"
+          //     : "project-modal-title-light"
+          // }`}
+          className={
             theme === "dark"
-              ? "project-modal-title-dark"
-              : "project-modal-title-light"
-          }`}
+              ? "settings-modal-title-dark"
+              : "settings-modal-title-light"
+          }
         >
           Settings
         </Modal.Title>
@@ -151,7 +162,9 @@ const SettingsModal = (props) => {
           <Tabs
             defaultActiveKey="profile"
             id="justify-tab-settings"
-            className="small-tabs"
+            className={
+              theme === "dark" ? "small-tabs-dark" : "small-tabs-light"
+            }
             justify
           >
             <Tab eventKey="profile" title="Profile">
@@ -263,8 +276,12 @@ const SettingsModal = (props) => {
                 <div style={{ color: "red" }}>{errorMessage}</div>
               </Form>
             </Tab>
-            <Tab eventKey="general" title="General">
-              <div>Select Timezone:</div>
+            <Tab
+              eventKey="general"
+              title="General"
+              className="settings-modal-timezone"
+            >
+              <div className="settings-modal-padding">Select Timezone:</div>
               <div>
                 <TimezoneSelect
                   value={selectedTimezone}
@@ -272,11 +289,17 @@ const SettingsModal = (props) => {
                 />
               </div>
             </Tab>
-            <Tab eventKey="account" title="Account">
-              <div style={{ fontWeight: "bold" }}>Delete Account</div>
-              <div>
+            <Tab
+              eventKey="account"
+              title="Account"
+              className="settings-modal-account"
+            >
+              <div style={{ fontWeight: "bold", paddingBottom: "10px" }}>
+                Delete Account
+              </div>
+              <div className="settings-modal-padding">
                 This will immediately delete all of your data including memos,
-                projects, comments, and more. This can’t be undone.
+                projects, comments, and more. This cannot be undone.
               </div>
               <Button
                 variant="outline-danger"
@@ -300,20 +323,10 @@ const SettingsModal = (props) => {
         </Container>
       </Modal.Body>
       <Modal.Footer className={theme === "dark" ? "modal-dark" : "modal-light"}>
-        <Button
-          variant="secondary"
-          onClick={closeModal}
-          size="sm"
-          className="save-close-btn"
-        >
+        <Button variant="secondary" onClick={closeModal} size="sm">
           Close
         </Button>
-        <Button
-          onClick={savingSettings}
-          variant="primary"
-          size="sm"
-          className="save-close-btn"
-        >
+        <Button onClick={savingSettings} variant="primary" size="sm">
           Save Changes
         </Button>
       </Modal.Footer>

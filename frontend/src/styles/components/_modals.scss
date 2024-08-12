@@ -30,20 +30,66 @@
   padding: 15px;
 }
 
-.settings-modal-header {
+.settings-modal-header-dark {
   padding-left: 20px;
   padding-bottom: 10px;
   border-bottom: none;
+  background-color: $background-color-dark;
 }
 
-.settings-modal-title {
+.settings-modal-header-light {
+  padding-left: 20px;
+  padding-bottom: 10px;
+  border-bottom: none;
+  background-color: $background-color-light;
+}
+
+.settings-modal-title-dark {
+  font-size: 1rem;
+  color: $text-color-light;
+}
+
+.settings-modal-title-light {
   font-size: 1rem;
   color: $text-color-dark;
 }
 
-.small-tabs .nav-link {
-  padding: 5px 10px; /* Reduce padding to shrink size */
-  font-size: 12px; /* Smaller font size */
+// .small-tabs .nav-link {
+//   padding: 5px 10px; /* Reduce padding to shrink size */
+//   font-size: 12px; /* Smaller font size */
+//   background-color: pink;
+// }
+
+// .nav-link.active {
+//   background-color: purple;
+// }
+
+.small-tabs-dark {
+  .nav-link {
+    padding: 5px 10px;
+    font-size: 12px;
+    background-color: $background-color-dark; // Default background for non-active tabs
+    color: $text-color-light;
+  }
+
+  .nav-link.active {
+    background-color: $background-color-header-nav-dark; // Specific style for the active tab
+    color: $text-color-light;
+  }
+}
+
+.small-tabs-light {
+  .nav-link {
+    padding: 5px 10px;
+    font-size: 12px;
+    background-color: $background-color-light; // Default background for non-active tabs
+    color: $text-color-dark;
+  }
+
+  .nav-link.active {
+    background-color: $background-color-header-nav-light; // Specific style for the active tab
+    color: $text-color-dark;
+  }
 }
 
 .project-modal-title-light {
@@ -66,4 +112,36 @@
 .project-form-labels-dark {
   font-size: 0.8rem;
   color: $text-color-light;
+}
+
+.project-form-styling-dark {
+  background-color: $background-color-dark;
+  color: $text-color-light;
+
+  &:focus {
+    background-color: $background-color-header-nav-dark;
+    color: $text-color-light;
+  }
+}
+
+.project-form-styling-light {
+  background-color: $background-color-light;
+  color: $text-color-dark;
+
+  &:focus {
+    background-color: $background-color-header-nav-light;
+    color: $text-color-dark;
+  }
+}
+
+.settings-modal-timezone {
+  padding: 16px;
+}
+
+.settings-modal-account {
+  padding: 16px;
+}
+
+.settings-modal-padding {
+  padding-bottom: 10px;
 }
