@@ -294,7 +294,7 @@ const SettingsModal = (props) => {
               title="Account"
               className="settings-modal-account"
             >
-              <div style={{ fontWeight: "bold", paddingBottom: "10px" }}>
+              <div className="settings-modal-delete-account">
                 Delete Account
               </div>
               <div className="settings-modal-padding">
