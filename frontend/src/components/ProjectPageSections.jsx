@@ -1124,7 +1124,7 @@ const ProjectPageSections = ({ project }) => {
           >
             {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
-                <Row className="mt-4 flex-nowrap">
+                <Row className="mt-4">
                   {projectSections.map((section, index) => (
                     <Col key={section._id} xs={3}>
                       <Draggable
@@ -1194,7 +1194,7 @@ const ProjectPageSections = ({ project }) => {
                                         {...provided.droppableProps}
                                         style={{
                                           minHeight: "20px",
-                                          paddingBottom: "20px",
+                                          // paddingBottom: "20px",
                                         }}
                                       >
                                         {section.memos.map(
@@ -1218,7 +1218,7 @@ const ProjectPageSections = ({ project }) => {
                                                     toggleMemoModal(memo)
                                                   }
                                                 >
-                                                  <li
+                                                  <div
                                                     key={memo._id}
                                                     className="project-page-memo-li"
                                                   >
@@ -1231,9 +1231,7 @@ const ProjectPageSections = ({ project }) => {
                                                             memo._id
                                                           )
                                                         }
-                                                        style={{
-                                                          color: "green",
-                                                        }}
+                                                        className="project-page-checkbox-completed"
                                                       />
                                                     ) : (
                                                       <MdCheckBoxOutlineBlank
@@ -1243,35 +1241,36 @@ const ProjectPageSections = ({ project }) => {
                                                             memo._id
                                                           )
                                                         }
+                                                        className="project-page-checkbox-blank"
                                                       />
                                                     )}
-                                                    <ul className="project-page-memo-ul">
-                                                      <li className="project-page-memo-body">
-                                                        {memo.body}
+                                                    {/* <ul className="project-page-memo-ul"> */}
+                                                    <div className="project-page-memo-body">
+                                                      {memo.body}
+                                                    </div>
+                                                    {memo.dueDateTime && (
+                                                      <li
+                                                        onClick={(e) => {
+                                                          e.preventDefault();
+                                                          toggleCalendar(
+                                                            memo._id
+                                                          );
+                                                        }}
+                                                        className={
+                                                          theme === "dark"
+                                                            ? "memo-due-date-dark"
+                                                            : "memo-due-date-light"
+                                                        }
+                                                      >
+                                                        {format(
+                                                          parseISO(
+                                                            memo.dueDateTime
+                                                          ),
+                                                          "MMM d"
+                                                        )}
                                                       </li>
-                                                      {memo.dueDateTime && (
-                                                        <li
-                                                          onClick={(e) => {
-                                                            e.preventDefault();
-                                                            toggleCalendar(
-                                                              memo._id
-                                                            );
-                                                          }}
-                                                          className={
-                                                            theme === "dark"
-                                                              ? "memo-due-date-dark"
-                                                              : "memo-due-date-light"
-                                                          }
-                                                        >
-                                                          {format(
-                                                            parseISO(
-                                                              memo.dueDateTime
-                                                            ),
-                                                            "MMM d"
-                                                          )}
-                                                        </li>
-                                                      )}
-                                                    </ul>
+                                                    )}
+                                                    {/* </ul> */}
                                                     <div
                                                       ref={(el) =>
                                                         (calendarRefs.current[
@@ -1329,7 +1328,7 @@ const ProjectPageSections = ({ project }) => {
                                                         </div>
                                                       )}
                                                     </div>
-                                                  </li>
+                                                  </div>
                                                 </div>
                                               )}
                                             </Draggable>
@@ -1344,6 +1343,9 @@ const ProjectPageSections = ({ project }) => {
                               <Row>
                                 <Col>
                                   <Button
+                                    variant={
+                                      theme === "dark" ? "light" : "primary"
+                                    }
                                     onClick={() => handleAddClick(section._id)}
                                   >
                                     + Add Memo
@@ -1358,7 +1360,12 @@ const ProjectPageSections = ({ project }) => {
                     </Col>
                   ))}
                   <Col xs={3}>
-                    <Button onClick={onAddSectionClick}>+ Add Section</Button>
+                    <Button
+                      variant={theme === "dark" ? "light" : "primary"}
+                      onClick={onAddSectionClick}
+                    >
+                      + Add Section
+                    </Button>
                   </Col>
                 </Row>
                 {provided.placeholder}
