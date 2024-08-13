@@ -2,9 +2,9 @@
 @import "../utilities/variables";
 @import "../utilities/mixins";
 
-.nav-bar-contatiner-dark {
-  width: 14%;
-  height: 110vh;
+.nav-bar-container-dark {
+  // width: 14%;
+  // height: 110vh;
   margin: 0px;
   padding-top: 0.75rem;
   padding-left: 1.5rem;
@@ -12,15 +12,69 @@
   border-right: 0.5px solid rgba($background-color-header-nav-light, 0.2);
 }
 
-.nav-bar-contatiner-light {
+.nav-bar-container-light {
   overflow-y: scroll;
-  width: 14%;
-  height: 110vh;
+  // width: 14%;
+  // height: 110vh;
   margin: 0px;
   padding-top: 0.75rem;
   padding-left: 1.5rem;
   @include theme-header-nav-background("light");
   border-right: 0.5px solid rgba($background-color-header-nav-dark, 0.2);
+}
+
+.mobile-nav-bar-row-dark {
+  position: sticky;
+  bottom: 0;
+  z-index: 1020;
+  border-top: 0.5px solid rgba($background-color-header-nav-light, 0.2);
+}
+
+.mobile-nav-bar-row-light {
+  position: sticky;
+  bottom: 0;
+  z-index: 1020;
+  border-top: 0.5px solid rgba($background-color-header-nav-dark, 0.2);
+}
+
+.mobilenav-bar-col-dark {
+  width: 100%;
+  height: min-content;
+  margin: 0px;
+  padding: 0px;
+  // padding-top: 0.75rem;
+  // padding-left: 1.5rem;
+  @include theme-header-nav-background("dark");
+  border-right: 0.5px solid rgba($background-color-header-nav-light, 0.2);
+}
+
+.mobile-nav-bar-col-light {
+  overflow-y: scroll;
+  width: 100%;
+  height: min-content;
+  margin: 0px;
+  // padding-top: 0.75rem;
+  // padding-left: 1.5rem;
+  @include theme-header-nav-background("light");
+  border-right: 0.5px solid rgba($background-color-header-nav-dark, 0.2);
+  display: flex;
+  padding: 0px;
+}
+
+.mobile-nav-bar-container-dark {
+  padding: 5px 0px;
+  display: flex;
+  justify-content: space-around;
+  background-color: $background-color-header-nav-dark;
+  width: 100%;
+}
+
+.mobile-nav-bar-container-light {
+  padding: 5px 0px;
+  display: flex;
+  justify-content: space-around;
+  background-color: $background-color-header-nav-light;
+  width: 100%;
 }
 
 .nav-icon-row-dark {
@@ -120,3 +174,22 @@
   width: calc(100% + 40px);
   background-color: $background-color-header-nav-light;
 }
+
+// .container-fluid {
+//   .nav-bar-container-dark,
+//   .nav-bar-container-light {
+//     @media (max-width: 575.98px) {
+//       // Bootstrap's 'sm' breakpoint
+//       order: 2; // Puts NavBar at the bottom on small screens
+//     }
+//   }
+// }
+
+// .sticky-bottom-nav {
+//   @media (max-width: 575.98px) {
+//     // Bootstrap's 'sm' breakpoint
+//     position: sticky;
+//     bottom: 0;
+//     z-index: 1020; // Ensure it's above other content
+//   }
+// }
