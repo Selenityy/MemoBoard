@@ -1124,9 +1124,17 @@ const ProjectPageSections = ({ project }) => {
           >
             {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
-                <Row className="mt-4">
+                <Row
+                  className="mt-4"
+                  style={{
+                    margin: "0",
+                    display: "flex",
+                    flexWrap: "nowrap",
+                    gap: "10px",
+                  }}
+                >
                   {projectSections.map((section, index) => (
-                    <Col key={section._id} xs={3}>
+                    <Col key={section._id} style={{ display: "inline-block" }}>
                       <Draggable
                         key={section._id}
                         draggableId={section._id}
