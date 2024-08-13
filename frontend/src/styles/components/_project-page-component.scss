@@ -3,10 +3,24 @@
 @import "../utilities/mixins";
 
 .scrollable-row {
-  overflow-x: auto;
-  // white-space: nowrap;
-  height: 100%;
+  // overflow-x: auto;
+  // // white-space: nowrap;
+  // height: 100%;
+
+  display: flex; // Ensuring flex layout
+  flex-wrap: nowrap; // Prevents wrapping of columns
+  overflow-x: auto; // Enables horizontal scrolling
+  width: 100%; // Full width to stretch within the container
+  padding: 20px 0;
 }
+
+// @media (max-width: 576px) {
+//   // Bootstrap breakpoint for small screens
+//   .scrollable-row .col {
+//     flex: 0 0 80%; // Each column takes 80% of the viewport width
+//     max-width: 80%; // Maximum width set to 80% to enforce smaller columns
+//   }
+// }
 
 // .scrollable-row .row {
 //   // flex-wrap: nowrap;
@@ -31,7 +45,7 @@
 .drag-handle-dark {
   border-radius: 10px;
   padding: 10px;
-  width: 400px;
+  width: 20vw;
   min-height: 100px;
   height: 100vh;
   background-color: $background-color-header-nav-dark;
@@ -45,12 +59,24 @@
     background-color: $background-color-header-nav-dark;
     border-color: rgba(255, 255, 255, 0.5);
   }
+
+  @media (max-width: 1200px) {
+    width: 30vw;
+  }
+
+  @media (max-width: 768px) {
+    width: 30vw;
+  }
+
+  @media (max-width: 760px) {
+    width: 40vw;
+  }
 }
 
 .drag-handle-light {
   border-radius: 10px;
   padding: 10px;
-  width: 400px;
+  width: 20vw;
   min-height: 100px;
   height: 100vh;
   background-color: $background-color-header-nav-light;
@@ -63,6 +89,22 @@
   &:active {
     background-color: $background-color-header-nav-light;
     border-color: rgba(0, 0, 0, 0.5);
+  }
+
+  @media (max-width: 1200px) {
+    width: 30vw;
+  }
+
+  @media (max-width: 768px) {
+    width: 40vw;
+  }
+
+  // @media (max-width: 576px) {
+  //   width: 40vw;
+  // }
+
+  @media (max-width: 570px) {
+    width: 80vw;
   }
 }
 
@@ -98,6 +140,38 @@
   }
 }
 
+.mobile-memo-box-dark {
+  height: 100px;
+  width: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 20px;
+  background-color: #454547;
+
+  &:hover,
+  &:active,
+  &:focus {
+    border-color: white;
+  }
+}
+
+.mobile-memo-box-light {
+  height: 100px;
+  width: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 20px;
+  background-color: white;
+
+  &:hover,
+  &:active,
+  &:focus {
+    border-color: black;
+  }
+}
+
 .project-page-memo-li {
   // display: flex;
   // align-items: center;
@@ -116,6 +190,7 @@
   list-style: none;
   width: 100%;
   height: 100%;
+  overflow: scroll;
 }
 
 // .project-page-memo-ul {
