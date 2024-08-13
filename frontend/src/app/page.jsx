@@ -38,7 +38,11 @@ const Auth = () => {
   }, [showSignUpForm]);
 
   return (
-    <div className={theme === "dark" ? "login-page-dark" : "login-page-light"}>
+    <div
+      className={`container-fluid ${
+        theme === "dark" ? "login-page-dark" : "login-page-light"
+      }`}
+    >
       <LoginHeader />
       <Container
         className="my-5 py-5"
