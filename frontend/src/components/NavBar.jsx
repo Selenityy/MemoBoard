@@ -154,7 +154,7 @@ const NavBar = () => {
         </Col>
       </Row>
       {/* PROJECTS */}
-      <Row className="justify-content-bewteen align-items-center">
+      <Row className="justify-content-bewteen align-items-center d-none d-md-block">
         <Col
           className={
             theme === "dark" ? "project-span-dark" : "project-span-light"
