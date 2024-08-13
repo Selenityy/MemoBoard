@@ -38,7 +38,7 @@ const DashboardLayout = ({ children }) => {
           <NavBar className="pe-2" />
         </Col>
         <Col
-          className={`w-100% px-4 pt-3 ${
+          className={`w-100% px-5 pt-3 ${
             theme === "dark" ? "body-dark" : "body-light"
           }`}
           style={{ overflowX: "auto" }}
