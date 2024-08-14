@@ -66,6 +66,7 @@ const NewMemoModal = ({
   projects,
 }) => {
   // console.log("selected memo:", selectedMemo);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const project = projectOptions.find(
@@ -83,7 +84,10 @@ const NewMemoModal = ({
         aria-labelledby="contained-modal-title-vcenter"
         centered
       >
-        <Modal.Header closeButton>
+        <Modal.Header
+          className={theme === "dark" ? "memo-modal-dark" : "memo-modal-light"}
+          closeButton
+        >
           <Modal.Title
             style={{
               fontSize: "0.5rem",
@@ -96,13 +100,15 @@ const NewMemoModal = ({
           >
             {selectedMemo.progress !== "Completed" ? (
               <>
-                <button
+                <Button
+                  variant="outline-success"
+                  size="sm"
                   onClick={() =>
                     toggleMemoProgress(selectedMemo, selectedMemo._id)
                   }
                 >
                   &#10003; Mark Complete
-                </button>
+                </Button>
                 <div
                   onClick={clickEllipsis}
                   style={{ color: "black", fontSize: "1rem" }}
@@ -112,14 +118,16 @@ const NewMemoModal = ({
               </>
             ) : (
               <>
-                <button
+                <Button
+                  variant="success"
+                  size="sm"
                   onClick={() =>
                     toggleMemoProgress(selectedMemo, selectedMemo._id)
                   }
-                  style={{ backgroundColor: "green" }}
+                  // style={{ backgroundColor: "green" }}
                 >
                   &#10003; Completed
-                </button>
+                </Button>
                 <div
                   onClick={clickEllipsis}
                   style={{ color: "black", fontSize: "1rem" }}
@@ -177,7 +185,7 @@ const NewMemoModal = ({
               </Col>
             </Row>
             <Row>
-              <Col style={{ padding: "10px 20px 10px 20px" }}>
+              <Col>
                 <div style={{ color: "black" }}>Due Date</div>
               </Col>
               <Col>
@@ -282,7 +290,7 @@ const NewMemoModal = ({
               </Col>
               <Col>
                 <textarea
-                  style={{ color: "black" }}
+                  style={{ color: "black", width: "100%" }}
                   placeholder="What is this memo about?"
                   value={memoNotes}
                   onChange={(e) => setMemoNotes(e.target.value)}
@@ -297,7 +305,12 @@ const NewMemoModal = ({
             </Row>
             <Row>
               <Col>
-                <button onClick={handleSubMemoAddClick}>+ Add submemo</button>
+                <Button
+                  variant="outline-primary"
+                  onClick={handleSubMemoAddClick}
+                >
+                  + Add submemo
+                </Button>
               </Col>
             </Row>
             <Row>

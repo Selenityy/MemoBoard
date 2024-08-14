@@ -1,6 +1,6 @@
 "use client";
 
-import { Row, Col, Container } from "react-bootstrap";
+import { Row, Col, Button, Container } from "react-bootstrap";
 import { useTheme } from "@/context/ThemeContext";
 import { format, parseISO, isToday } from "date-fns";
 import Calendar from "react-calendar";
@@ -42,6 +42,8 @@ const MemoDetailsModal = ({
   submemos,
   createSubMemoClick,
 }) => {
+  const { theme } = useTheme();
+
   // console.log("memo progress modal:", memoProgress, options);
   // console.log("memo projects modal:", memoProjects, projectOptions);
   // console.log("selected memo:", selectedMemo);
@@ -54,7 +56,10 @@ const MemoDetailsModal = ({
         aria-labelledby="contained-modal-title-vcenter"
         centered
       >
-        <Modal.Header closeButton>
+        <Modal.Header
+          className={theme === "dark" ? "memo-modal-dark" : "memo-modal-light"}
+          closeButton
+        >
           <Modal.Title
             style={{
               fontSize: "0.5rem",
@@ -67,13 +72,15 @@ const MemoDetailsModal = ({
           >
             {selectedMemo.progress !== "Completed" ? (
               <>
-                <button
+                <Button
+                  variant="outline-success"
+                  size="sm"
                   onClick={() =>
                     toggleMemoProgress(selectedMemo, selectedMemo._id)
                   }
                 >
                   &#10003; Mark Complete
-                </button>
+                </Button>
                 <div
                   onClick={clickEllipsis}
                   style={{ color: "black", fontSize: "1rem" }}
@@ -83,14 +90,16 @@ const MemoDetailsModal = ({
               </>
             ) : (
               <>
-                <button
+                <Button
+                  variant="success"
+                  size="sm"
                   onClick={() =>
                     toggleMemoProgress(selectedMemo, selectedMemo._id)
                   }
-                  style={{ backgroundColor: "green" }}
+                  // style={{ backgroundColor: "green" }}
                 >
                   &#10003; Completed
-                </button>
+                </Button>
                 <div
                   onClick={clickEllipsis}
                   style={{ color: "black", fontSize: "1rem" }}
@@ -267,7 +276,12 @@ const MemoDetailsModal = ({
             </Row>
             <Row>
               <Col>
-                <button onClick={handleSubMemoAddClick}>+ Add submemo</button>
+                <Button
+                  variant="outline-primary"
+                  onClick={handleSubMemoAddClick}
+                >
+                  + Add submemo
+                </Button>
               </Col>
             </Row>
             <Row>
