@@ -162,3 +162,31 @@
 .ql-container.ql-snow {
   border: none !important;
 }
+
+.memo-modal-dark {
+  background-color: $background-color-dark;
+
+  .btn-close,
+  .close {
+    // Targets the close button specifically
+    color: white; // Sets the color of the close button
+    opacity: 1; // Ensures the button is fully visible
+
+    &:hover {
+      color: #ccc; // Lighter color on hover for better interaction feedback
+    }
+  }
+}
+
+.memo-modal-light {
+  background-color: $background-color-light;
+
+  .close {
+    color: black; // Suitable for light backgrounds
+    opacity: 1;
+
+    &:hover {
+      color: #666; // Darker grey on hover
+    }
+  }
+}
