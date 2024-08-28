@@ -15,7 +15,7 @@ Welcome to the MemoBoard repository, a comprehensive task and project management
 
 ## Technology Used
 
-- [NodeJS](https://nodejs.org/en) - Server-side Javascript runtimeExpress: Web application framework for Node.js designed for building web applications and APIs.
+- [NodeJS](https://nodejs.org/en) - Server-side Javascript runtime
 - [Express](https://expressjs.com/) - NodeJS web application framework
 - [Next.js](https://nextjs.org/) - React framework with server-side rendering
 - [MongoDB](https://www.mongodb.com/) - NoSQL document database
