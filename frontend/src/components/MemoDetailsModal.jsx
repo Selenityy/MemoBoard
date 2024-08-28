@@ -81,11 +81,21 @@ const MemoDetailsModal = ({
                 >
                   &#10003; Mark Complete
                 </Button>
-                <div
-                  onClick={clickEllipsis}
-                  style={{ color: "black", fontSize: "1rem" }}
-                >
-                  ...
+                <div>
+                  <div
+                    onClick={clickEllipsis}
+                    style={{ color: "black", fontSize: "1rem" }}
+                  >
+                    ...
+                  </div>
+                  {showEllipsis && (
+                    <div
+                      onClick={() => clickDeleteMemo(selectedMemo)}
+                      style={{ color: "black" }}
+                    >
+                      Delete
+                    </div>
+                  )}
                 </div>
               </>
             ) : (
@@ -100,21 +110,20 @@ const MemoDetailsModal = ({
                 >
                   &#10003; Completed
                 </Button>
-                <div
-                  onClick={clickEllipsis}
-                  style={{ color: "black", fontSize: "1rem" }}
-                >
-                  ...
+                <div>
+                  <div onClick={clickEllipsis} className="memo-modal-ellipsis">
+                    ...
+                  </div>
+                  {showEllipsis && (
+                    <div
+                      onClick={() => clickDeleteMemo(selectedMemo)}
+                      style={{ color: "black" }}
+                    >
+                      Delete
+                    </div>
+                  )}
                 </div>
               </>
-            )}
-            {showEllipsis && (
-              <div
-                onClick={() => clickDeleteMemo(selectedMemo)}
-                style={{ color: "black" }}
-              >
-                Delete
-              </div>
             )}
           </Modal.Title>
         </Modal.Header>
