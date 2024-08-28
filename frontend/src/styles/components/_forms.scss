@@ -165,33 +165,162 @@
 
 .memo-modal-dark {
   background-color: $background-color-dark;
+  color: $text-color-light;
 
-  .btn-close,
-  .close {
-    // Targets the close button specifically
-    color: white; // Sets the color of the close button
-    opacity: 1; // Ensures the button is fully visible
-
-    &:hover {
-      color: #ccc; // Lighter color on hover for better interaction feedback
-    }
+  .btn-close {
+    filter: invert(100%) sepia(0%) saturate(7494%) hue-rotate(244deg)
+      brightness(98%) contrast(99%);
+    opacity: 0.75;
   }
 }
 
 .memo-modal-light {
   background-color: $background-color-light;
+  color: $text-color-dark;
 
-  .close {
-    color: black; // Suitable for light backgrounds
-    opacity: 1;
-
-    &:hover {
-      color: #666; // Darker grey on hover
-    }
+  .btn-close {
+    filter: invert(0%) sepia(100%) saturate(28%) hue-rotate(50deg)
+      brightness(108%) contrast(106%);
+    opacity: 0.75;
   }
 }
 
-.memo-modal-ellipsis {
-  color: black;
+.memo-modal-ellipsis-dark {
+  color: $text-color-light;
+  font-size: 1.5rem;
+}
+
+.memo-modal-ellipsis-light {
+  color: $text-color-dark;
+  font-size: 1.5rem;
+}
+
+.memo-modal-delete-dark {
+  color: $text-color-light;
   font-size: 1rem;
+}
+
+.memo-modal-delete-light {
+  color: $text-color-dark;
+  font-size: 1rem;
+}
+
+.memo-modal-parent-div-ellipsis-delete {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  // position: relative;
+}
+
+.memo-modal-dark svg,
+.memo-modal-light svg {
+  fill: currentColor; // Example of styling internal SVGs
+  margin-top: 10px; // This won't work as expected for internal elements without a direct parent selector
+}
+
+.memo-modal-memo-body-dark {
+  width: 100%;
+  height: 40px;
+  overflow: hidden;
+  resize: none;
+  padding: 10px;
+  border: none;
+  background-color: transparent;
+  color: $text-color-light;
+}
+
+.memo-modal-memo-body-light {
+  width: 100%;
+  height: 40px;
+  overflow: hidden;
+  resize: none;
+  padding: 10px;
+  border: none;
+  background-color: transparent;
+  color: $text-color-dark;
+}
+
+.memo-modal-descriptions-dark {
+  width: 100%;
+  color: $text-color-light;
+  background-color: transparent;
+}
+
+.memo-modal-descriptions-light {
+  width: 100%;
+  color: $text-color-dark;
+  background-color: transparent;
+}
+
+.memo-modal-selects-dark {
+  color: $text-color-light;
+  background-color: transparent;
+}
+
+.memo-modal-selects-light {
+  color: $text-color-dark;
+  background-color: transparent;
+}
+
+.react-dropdown-select-item-dark span {
+  color: $text-color-light;
+  background-color: $background-color-dark;
+  border: none;
+
+  &:hover {
+    color: $text-color-dark;
+    background-color: none;
+    border: none;
+  }
+}
+
+.react-dropdown-select-item-light span {
+  color: $text-color-dark;
+  background-color: $background-color-light;
+  border: none;
+
+  &:hover {
+    color: $text-color-dark;
+    background-color: none;
+    border: none;
+  }
+}
+
+.memo-modal-subtask-line-dark {
+  width: 100%;
+  color: $text-color-light;
+  background-color: $background-color-dark;
+
+  &::placeholder {
+    color: $text-color-light;
+  }
+
+  &:active,
+  &:focus,
+  &:hover {
+    color: $text-color-light;
+    background-color: transparent;
+  }
+}
+
+.memo-modal-subtask-line-light {
+  width: 100%;
+  color: $text-color-dark;
+  background-color: $background-color-light;
+
+  &::placeholder {
+    color: $text-color-dark;
+  }
+}
+
+.memo-modal-submemos-li-dark span {
+  color: $text-color-dark;
+}
+
+.memo-modal-submemos-li-light span {
+  color: $text-color-light;
+}
+
+.memo-modal-submemos-ul {
+  padding: 10px;
 }

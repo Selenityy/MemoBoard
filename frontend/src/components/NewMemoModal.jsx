@@ -27,6 +27,7 @@ import MemoDetailsModal from "./MemoDetailsModal";
 import ContentEditable from "react-contenteditable";
 import uniqid from "uniqid";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
+import { MdArrowBack } from "react-icons/md";
 
 const NewMemoModal = ({
   selectedMemo,
@@ -109,14 +110,25 @@ const NewMemoModal = ({
                 >
                   &#10003; Mark Complete
                 </Button>
-                <div>
-                  <div onClick={clickEllipsis} className="memo-modal-ellipsis">
+                <div className="memo-modal-parent-div-ellipsis-delete">
+                  <div
+                    onClick={clickEllipsis}
+                    className={
+                      theme === "dark"
+                        ? "memo-modal-ellipsis-dark"
+                        : "memo-modal-ellipsis-light"
+                    }
+                  >
                     ...
                   </div>
                   {showEllipsis && (
                     <div
                       onClick={() => clickDeleteMemo(selectedMemo)}
-                      style={{ color: "black" }}
+                      className={
+                        theme === "dark"
+                          ? "memo-modal-delete-dark"
+                          : "memo-modal-delete-light"
+                      }
                     >
                       Delete
                     </div>
@@ -135,18 +147,25 @@ const NewMemoModal = ({
                 >
                   &#10003; Completed
                 </Button>
-                <div>
+                <div className="memo-modal-parent-div-ellipsis-delete">
                   <div
                     onClick={clickEllipsis}
-                    // style={{ color: "red", fontSize: "1rem" }}
-                    className="memo-modal-ellipsis"
+                    className={
+                      theme === "dark"
+                        ? "memo-modal-ellipsis-dark"
+                        : "memo-modal-ellipsis-light"
+                    }
                   >
                     ...
                   </div>
                   {showEllipsis && (
                     <div
                       onClick={() => clickDeleteMemo(selectedMemo)}
-                      style={{ color: "black" }}
+                      className={
+                        theme === "dark"
+                          ? "memo-modal-delete-dark"
+                          : "memo-modal-delete-light"
+                      }
                     >
                       Delete
                     </div>
@@ -156,16 +175,35 @@ const NewMemoModal = ({
             )}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body
+          className={theme === "dark" ? "memo-modal-dark" : "memo-modal-light"}
+        >
           <Container>
             <Row>
               <Col>
                 {selectedMemo.parentId && (
                   <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                    }}
                     onClick={() => toggleMemoModal(selectedMemo.parentId)}
-                    style={{ color: "black" }}
                   >
-                    {selectedMemo.parentId.body}
+                    <div style={{ height: "min-content" }}>
+                      <MdArrowBack style={{ marginTop: "0px" }} />
+                    </div>
+                    <div
+                      // onClick={() => toggleMemoModal(selectedMemo.parentId)}
+                      className={
+                        theme === "dark"
+                          ? "memo-modal-memo-body-dark"
+                          : "memo-modal-memo-body-light"
+                      }
+                      style={{ padding: "0px", height: "min-content" }}
+                    >
+                      {selectedMemo.parentId.body}
+                    </div>
                   </div>
                 )}
               </Col>
@@ -174,14 +212,11 @@ const NewMemoModal = ({
               <Col>
                 <textarea
                   aria-label="Memo Body"
-                  style={{
-                    width: "100%",
-                    height: "40px",
-                    overflow: "hidden",
-                    resize: "none",
-                    padding: "10px",
-                    border: "none",
-                  }}
+                  className={
+                    theme === "dark"
+                      ? "memo-modal-memo-body-dark"
+                      : "memo-modal-memo-body-light"
+                  }
                   placeholder="Describe your memo..."
                   value={memoBody}
                   onChange={(e) => setMemoBody(e.target.value)}
@@ -195,8 +230,14 @@ const NewMemoModal = ({
               </Col>
             </Row>
             <Row>
-              <Col>
-                <div style={{ color: "black" }}>Due Date</div>
+              <Col style={{ paddingTop: "10px", paddingBottom: "10px" }}>
+                <div
+                  className={
+                    theme === "dark" ? "memo-modal-dark" : "memo-modal-light"
+                  }
+                >
+                  Due Date
+                </div>
               </Col>
               <Col>
                 <div
@@ -227,7 +268,11 @@ const NewMemoModal = ({
                     </>
                   ) : (
                     <CiCalendar
-                      style={{ color: "black" }}
+                      className={
+                        theme === "dark"
+                          ? "memo-modal-dark"
+                          : "memo-modal-light"
+                      }
                       onClick={() => toggleBigCalendar(selectedMemo._id)}
                     />
                   )}
@@ -265,11 +310,21 @@ const NewMemoModal = ({
             </Row>
             <Row>
               <Col>
-                <div style={{ color: "black" }}>Progress</div>
+                <div
+                  className={
+                    theme === "dark" ? "memo-modal-dark" : "memo-modal-light"
+                  }
+                >
+                  Progress
+                </div>
               </Col>
               <Col>
                 <Select
-                  style={{ color: "black" }}
+                  className={`${
+                    theme === "dark"
+                      ? "memo-modal-selects-dark react-dropdown-select-item-dark"
+                      : "memo-modal-selects-light react-dropdown-select-item-light"
+                  }`}
                   options={options}
                   values={[memoProgress]}
                   onChange={(selectedOption) => {
@@ -280,12 +335,22 @@ const NewMemoModal = ({
             </Row>
             <Row>
               <Col>
-                <div style={{ color: "black" }}>Projects</div>
+                <div
+                  className={
+                    theme === "dark" ? "memo-modal-dark" : "memo-modal-light"
+                  }
+                >
+                  Projects
+                </div>
               </Col>
               <Col>
                 <Select
                   clearable
-                  style={{ color: "black" }}
+                  className={`${
+                    theme === "dark"
+                      ? "memo-modal-selects-dark react-dropdown-select-item-dark"
+                      : "memo-modal-selects-light react-dropdown-select-item-light"
+                  }`}
                   options={projectOptions}
                   values={memoProjects}
                   onChange={(selectedOption) => {
@@ -296,11 +361,21 @@ const NewMemoModal = ({
             </Row>
             <Row>
               <Col>
-                <div style={{ color: "black" }}>Descriptions</div>
+                <div
+                  className={
+                    theme === "dark" ? "memo-modal-dark" : "memo-modal-light"
+                  }
+                >
+                  Descriptions
+                </div>
               </Col>
               <Col>
                 <textarea
-                  style={{ color: "black", width: "100%" }}
+                  className={
+                    theme === "dark"
+                      ? "memo-modal-descriptions-dark"
+                      : "memo-modal-descriptions-light"
+                  }
                   placeholder="What is this memo about?"
                   value={memoNotes}
                   onChange={(e) => setMemoNotes(e.target.value)}
@@ -333,7 +408,11 @@ const NewMemoModal = ({
                         type="text"
                         onChange={(e) => setNewSubMemoText(e.target.value)}
                         placeholder="Type new submemo here..."
-                        className="form-control"
+                        className={`${
+                          theme === "dark"
+                            ? "memo-modal-subtask-line-dark"
+                            : "memo-modal-subtask-line-light"
+                        } form-control`}
                         onBlur={() => createSubMemoClick(selectedMemo)}
                       />
                     </Col>
@@ -343,12 +422,15 @@ const NewMemoModal = ({
             </Row>
             <Row>
               <Col>
-                <ul>
+                <ul className="memo-modal-submemos-ul">
                   {submemos.length > 0 &&
                     submemos.map((submemo) => (
                       <li
                         key={submemo._id}
-                        style={{ listStyleType: "circle", color: "black" }}
+                        style={{
+                          listStyle: "circle",
+                          paddingTop: "10px",
+                        }}
                         onClick={() => toggleMemoModal(submemo)}
                       >
                         {submemo.progress === "Completed" ? (
@@ -382,7 +464,13 @@ const NewMemoModal = ({
                           </>
                         ) : (
                           <>
-                            <span style={{ color: "black" }}>
+                            <span
+                              className={
+                                theme === "dark"
+                                  ? "memo-modal-submemos-li-dark"
+                                  : "memo-modal-submemos-li-light"
+                              }
+                            >
                               {submemo.body}
                             </span>
                             {submemo.dueDateTime !== null && (
@@ -415,7 +503,9 @@ const NewMemoModal = ({
             </Row>
           </Container>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer
+          className={theme === "dark" ? "memo-modal-dark" : "memo-modal-light"}
+        >
           <Button onClick={handleNewMemoSave}>Save</Button>
         </Modal.Footer>
       </Modal>
