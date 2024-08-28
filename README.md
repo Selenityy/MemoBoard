@@ -33,13 +33,15 @@ Welcome to the MemoBoard repository, a comprehensive task and project management
 
 This project has been instrumental in refining my skills across several dimensions:
 
-- **React and Redux Integration**: Mastering state management with Redux in a React-driven environment was crucial for handling complex state logic across the application.
+- **React and Redux Integration**: Further learning with state management with Redux in a React-driven environment was crucial for handling complex state logic across the application.
   
 - **Advanced Backend Logic**: Implementing complex server-side logic with Express and integrating it seamlessly with MongoDB for dynamic data storage and retrieval.
 
+- **Interactive Features with React Libraries**: Integrating libraries such as React Beautiful DnD, Quill, Calendar, and Timezone Select and more enhanced the application's interactivity.
+
 - **Responsive and Adaptive Design**: Ensuring the application's interface adapts smoothly across different devices challenged my CSS and design skills, especially when integrating Bootstrap and SCSS.
 
-- **Security Implementation**: Learning to secure web applications using JWT for authentication and secure HTTP headers and responses was pivotal.
+- **Security Implementation**: Further learning to secure web applications using JWT for authentication and secure HTTP headers and responses was pivotal.
 
 ## Future Plans
 
