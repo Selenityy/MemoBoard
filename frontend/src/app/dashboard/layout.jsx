@@ -13,7 +13,14 @@ const DashboardLayout = ({ children }) => {
   const isAuthenticated = useAuth();
 
   if (!isAuthenticated) {
-    return <div>Restricted access, redirecting...</div>;
+    return (
+      <div
+        className={theme === "dark" ? "body-dark" : "body-light"}
+        style={{ width: "100vw", height: "100vh", padding: "20px" }}
+      >
+        Restricted access, redirecting...
+      </div>
+    );
   }
   return (
     <Container

@@ -12,6 +12,10 @@ const useAuth = () => {
     if (!isAuthenticated) {
       router.push("/");
     }
+
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    }
   }, [isAuthenticated, router]);
 
   return isAuthenticated;

@@ -9,12 +9,25 @@ import SignUpBtn from "@/components/SignUpBtn";
 import { useTheme } from "@/context/ThemeContext";
 import SignupForm from "@/components/SignupForm";
 import LoginLink from "@/components/LoginLink";
+import useAuth from "@/components/UseAuth";
 
 const Auth = () => {
   const { theme } = useTheme();
   const containerRef = useRef(null);
   const signupFormRef = useRef(null);
   const [showSignUpForm, setShowSignUpForm] = useState(false);
+  const isAuthenticated = useAuth();
+
+  if (isAuthenticated) {
+    return (
+      <div
+        className={theme === "dark" ? "body-dark" : "body-light"}
+        style={{ width: "100vw", height: "100vh", padding: "20px" }}
+      >
+        Already logged in, redirecting...
+      </div>
+    );
+  }
 
   const handleOutsideClick = (event) => {
     if (
