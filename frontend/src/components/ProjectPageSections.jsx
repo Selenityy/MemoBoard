@@ -1367,7 +1367,7 @@ const ProjectPageSections = ({ project }) => {
                       </Draggable>
                     </Col>
                   ))}
-                  <Col xs={3}>
+                  <Col xs={4}>
                     <Button
                       variant={theme === "dark" ? "light" : "primary"}
                       onClick={onAddSectionClick}
