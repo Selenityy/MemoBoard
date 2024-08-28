@@ -18,17 +18,6 @@ const Auth = () => {
   const [showSignUpForm, setShowSignUpForm] = useState(false);
   const isAuthenticated = useAuth();
 
-  if (isAuthenticated) {
-    return (
-      <div
-        className={theme === "dark" ? "body-dark" : "body-light"}
-        style={{ width: "100vw", height: "100vh", padding: "20px" }}
-      >
-        Already logged in, redirecting...
-      </div>
-    );
-  }
-
   const handleOutsideClick = (event) => {
     if (
       signupFormRef.current &&
@@ -49,6 +38,17 @@ const Auth = () => {
       document.removeEventListener("click", handleOutsideClick);
     };
   }, [showSignUpForm]);
+
+  if (isAuthenticated) {
+    return (
+      <div
+        className={theme === "dark" ? "body-dark" : "body-light"}
+        style={{ width: "100vw", height: "100vh", padding: "20px" }}
+      >
+        Already logged in, redirecting...
+      </div>
+    );
+  }
 
   return (
     <div
