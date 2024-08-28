@@ -221,23 +221,25 @@
 .memo-modal-memo-body-dark {
   width: 100%;
   height: 40px;
-  overflow: hidden;
+  // overflow: hidden;
   resize: none;
   padding: 10px;
   border: none;
   background-color: transparent;
   color: $text-color-light;
+  font-size: 1.2rem;
 }
 
 .memo-modal-memo-body-light {
   width: 100%;
   height: 40px;
-  overflow: hidden;
+  // overflow: scroll;
   resize: none;
   padding: 10px;
   border: none;
   background-color: transparent;
   color: $text-color-dark;
+  font-size: 1.2rem;
 }
 
 .memo-modal-descriptions-dark {

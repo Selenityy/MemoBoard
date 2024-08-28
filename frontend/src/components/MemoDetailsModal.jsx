@@ -181,7 +181,7 @@ const MemoDetailsModal = ({
               </Col>
             </Row>
             <Row>
-              <Col>
+              <Col style={{ padding: "0px" }}>
                 <textarea
                   aria-label="Memo Body"
                   className={
