@@ -11,7 +11,7 @@ export const fetchAllSections = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/projects/${projectId}/sections`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/projects/${projectId}/sections`,
         {
           method: "GET",
           headers: {
@@ -49,7 +49,7 @@ export const fetchSection = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/projects/${projectId}/sections/${sectionId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/projects/${projectId}/sections/${sectionId}`,
         {
           method: "GET",
           headers: {
@@ -87,7 +87,7 @@ export const createSection = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/projects/${projectId}/sections/create`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/projects/${projectId}/sections/create`,
         {
           method: "POST",
           headers: {
@@ -126,7 +126,7 @@ export const addMemoToSection = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/projects/${projectId}/sections/${sectionId}/memos/${memoId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/projects/${projectId}/sections/${sectionId}/memos/${memoId}`,
         {
           method: "PUT",
           headers: {
@@ -165,7 +165,7 @@ export const addAllMemosToSection = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/projects/${projectId}/sections/${sectionId}/memos`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/projects/${projectId}/sections/${sectionId}/memos`,
         {
           method: "PUT",
           headers: {
@@ -204,7 +204,7 @@ export const removeMemoFromAllSections = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/projects/${projectId}/sections/${sectionId}/memos/${memoId}/remove`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/projects/${projectId}/sections/${sectionId}/memos/${memoId}/remove`,
         {
           method: "PUT",
           headers: {
@@ -243,7 +243,7 @@ export const updateSection = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/projects/${projectId}/sections/${sectionId}/update`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/projects/${projectId}/sections/${sectionId}/update`,
         {
           method: "PUT",
           headers: {
@@ -284,7 +284,7 @@ export const deleteSection = createAsyncThunk(
     console.log(sectionId, projectId);
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/projects/${projectId}/sections/${sectionId}/delete`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/projects/${projectId}/sections/${sectionId}/delete`,
         {
           method: "DELETE",
           headers: {

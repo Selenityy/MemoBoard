@@ -9,13 +9,16 @@ export const fetchProjects = createAsyncThunk(
       return thunkAPI.rejectWithValue("No token found");
     }
     try {
-      const response = await fetch("http://localhost:3000/dashboard/projects", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/projects`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch projects");
@@ -44,7 +47,7 @@ export const fetchProject = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/projects/${projectId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/projects/${projectId}`,
         {
           method: "GET",
           headers: {
@@ -82,7 +85,7 @@ export const createProject = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        "http://localhost:3000/dashboard/projects/create",
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/projects/create`,
         {
           method: "POST",
           headers: {
@@ -121,7 +124,7 @@ export const updateProject = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/projects/${projectId}/update`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/projects/${projectId}/update`,
         {
           method: "PUT",
           headers: {
@@ -161,7 +164,7 @@ export const deleteProject = createAsyncThunk(
     console.log(projectId);
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/projects/${projectId}/delete`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/projects/${projectId}/delete`,
         {
           method: "DELETE",
           headers: {

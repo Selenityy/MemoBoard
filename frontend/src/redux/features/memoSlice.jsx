@@ -22,7 +22,7 @@ export const fetchAllMemos = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        "http://localhost:3000/dashboard/memos/all-memos",
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/memos/all-memos`,
         {
           method: "GET",
           headers: {
@@ -58,13 +58,16 @@ export const fetchMemos = createAsyncThunk(
       return thunkAPI.rejectWithValue("No token found");
     }
     try {
-      const response = await fetch("http://localhost:3000/dashboard/memos", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/memos`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch memos");
@@ -93,7 +96,7 @@ export const fetchMemo = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/memos/${memoId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/memos/${memoId}`,
         {
           method: "GET",
           headers: {
@@ -130,7 +133,7 @@ export const fetchChildrenMemos = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/memos/${memoId}/children`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/memos/${memoId}/children`,
         {
           method: "GET",
           headers: {
@@ -168,7 +171,7 @@ export const createMemo = createAsyncThunk(
     try {
       const completeData = { ...defaultMemo, ...formData };
       const response = await fetch(
-        "http://localhost:3000/dashboard/memos/create",
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/memos/create`,
         {
           method: "POST",
           headers: {
@@ -206,7 +209,7 @@ export const updateMemo = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/memos/${memoId}/update`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/memos/${memoId}/update`,
         {
           method: "PUT",
           headers: {
@@ -245,7 +248,7 @@ export const deleteMemo = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/memos/${memoId}/delete`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/memos/${memoId}/delete`,
         {
           method: "DELETE",
           headers: {
@@ -277,7 +280,7 @@ export const synchronizeMemos = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        "http://localhost:3000/dashboard/memos/all-memos",
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/memos/all-memos`,
         {
           method: "GET",
           headers: {

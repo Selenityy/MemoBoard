@@ -5,13 +5,16 @@ export const loginUser = createAsyncThunk(
   "/user/login",
   async (credentials, thunkAPI) => {
     try {
-      const response = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(credentials),
+        }
+      );
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Failed fetch to login user");
@@ -36,13 +39,16 @@ export const signupUser = createAsyncThunk(
   "/user/signup",
   async (formData, thunkAPI) => {
     try {
-      const response = await fetch("http://localhost:3000/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Failed fetch to signup user");
@@ -70,13 +76,16 @@ export const fetchUserInfo = createAsyncThunk(
       return thunkAPI.rejectWithValue("No token found");
     }
     try {
-      const response = await fetch("http://localhost:3000/dashboard/data", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/data`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch user info");
@@ -102,13 +111,16 @@ export const fetchUserId = createAsyncThunk("/user/id", async (_, thunkAPI) => {
     return thunkAPI.rejectWithValue("No token found");
   }
   try {
-    const response = await fetch("http://localhost:3000/dashboard/data", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/dashboard/data`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || "Failed to fetch userId");
@@ -135,13 +147,16 @@ export const fetchTimeZone = createAsyncThunk(
       return thunkAPI.rejectWithValue("No token found");
     }
     try {
-      const response = await fetch("http://localhost:3000/dashboard/data", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/data`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch timezone");
@@ -170,7 +185,7 @@ export const updateTimezone = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/${userId}/updateTimezone`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/${userId}/updateTimezone`,
         {
           method: "PUT",
           headers: {
@@ -209,7 +224,7 @@ export const updateUserInfo = createAsyncThunk(
     try {
       // Update full name
       const nameRes = await fetch(
-        `http://localhost:3000/dashboard/${userId}/updateName`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/${userId}/updateName`,
         {
           method: "PUT",
           headers: {
@@ -237,7 +252,7 @@ export const updateUserInfo = createAsyncThunk(
 
       // Update email
       const emailRes = await fetch(
-        `http://localhost:3000/dashboard/${userId}/updateEmail`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/${userId}/updateEmail`,
         {
           method: "PUT",
           headers: {
@@ -263,7 +278,7 @@ export const updateUserInfo = createAsyncThunk(
 
       // Update username
       const usernameRes = await fetch(
-        `http://localhost:3000/dashboard/${userId}/updateUsername`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/${userId}/updateUsername`,
         {
           method: "PUT",
           headers: {
@@ -309,7 +324,7 @@ export const deleteAccount = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/${userId}/account`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/${userId}/account`,
         {
           method: "DELETE",
           headers: {
@@ -339,7 +354,7 @@ export const fetchUserNotes = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        "http://localhost:3000/dashboard/user/notes",
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/user/notes`,
         {
           method: "GET",
           headers: {
@@ -376,7 +391,7 @@ export const updateUserNotes = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        "http://localhost:3000/dashboard/user/notes",
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/user/notes`,
         {
           method: "PUT",
           headers: {

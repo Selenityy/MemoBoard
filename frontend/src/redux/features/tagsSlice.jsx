@@ -9,13 +9,16 @@ export const fetchTags = createAsyncThunk(
       return thunkAPI.rejectWithValue("No token found");
     }
     try {
-      const response = await fetch("http://localhost:3000/dashboard/tags", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/tags`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Failed fetch to get all tags");
@@ -37,7 +40,7 @@ export const createTag = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/tags/${tagId}/create`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/tags/${tagId}/create`,
         {
           method: "POST",
           headers: {
@@ -75,7 +78,7 @@ export const updateTag = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/tags/${tagId}/update`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/tags/${tagId}/update`,
         {
           method: "POST",
           headers: {
@@ -114,7 +117,7 @@ export const deleteTag = createAsyncThunk(
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/dashboard/tags/${tagId}/delete`,
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/tags/${tagId}/delete`,
         {
           method: "DELETE",
           headers: {
