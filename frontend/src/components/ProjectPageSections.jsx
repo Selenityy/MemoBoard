@@ -88,7 +88,7 @@ const ProjectPageSections = ({ project }) => {
   );
   // console.log("get sections of project", projectSections);
 
-  // const allMemos = useSelector(memosFromSlice);
+  const allMemos = useSelector(memosFromSlice);
   // console.log("all memos from slice:", allMemos);
 
   const projectId = project._id;
@@ -670,6 +670,7 @@ const ProjectPageSections = ({ project }) => {
   const updateProjectMemos = async (selectedOption) => {
     // set up the updated memo structure to pass to the backend
     const memoId = selectedMemo._id;
+    // console.log("memoId:", memoId);
     const originalProjectId = selectedMemo.project;
     const updatedProject = selectedOption.length
       ? {
@@ -1165,30 +1166,28 @@ const ProjectPageSections = ({ project }) => {
                                     className="section-names"
                                   />
                                 </Col>
-                                {index !== 0 && (
-                                  <Col xs="auto">
-                                    <div
-                                      onClick={() =>
-                                        onEllipsisClick(section._id)
-                                      }
-                                    >
-                                      ...
-                                    </div>
-                                    {ellipsisDropdown === section._id && (
-                                      <Row>
-                                        <Col>
-                                          <div
-                                            onClick={() =>
-                                              onDeleteSectionClick(section._id)
-                                            }
-                                          >
-                                            Delete
-                                          </div>
-                                        </Col>
-                                      </Row>
-                                    )}
-                                  </Col>
-                                )}
+                                {/* {index !== 0 && ( */}
+                                <Col xs="auto">
+                                  <div
+                                    onClick={() => onEllipsisClick(section._id)}
+                                  >
+                                    ...
+                                  </div>
+                                  {ellipsisDropdown === section._id && (
+                                    <Row>
+                                      <Col>
+                                        <div
+                                          onClick={() =>
+                                            onDeleteSectionClick(section._id)
+                                          }
+                                        >
+                                          Delete
+                                        </div>
+                                      </Col>
+                                    </Row>
+                                  )}
+                                </Col>
+                                {/* )} */}
                               </Row>
                               <Row>
                                 <Droppable
@@ -1367,7 +1366,7 @@ const ProjectPageSections = ({ project }) => {
                       </Draggable>
                     </Col>
                   ))}
-                  <Col xs={4}>
+                  <Col>
                     <Button
                       variant={theme === "dark" ? "light" : "primary"}
                       onClick={onAddSectionClick}
