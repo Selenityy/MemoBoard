@@ -178,7 +178,7 @@ const ProjectPageSections = ({ project }) => {
 
   // useEffect to fetch sections
   useEffect(() => {
-    if (projectSections.length >= 2) {
+    if (projectSections.length >= 1) {
       // console.log("project sections is 2 or more");
       const fetchSections = async () => {
         try {
@@ -557,6 +557,9 @@ const ProjectPageSections = ({ project }) => {
           return m;
         });
       });
+
+      dispatch(fetchMemos());
+
       setLastUpdate(Date.now());
     } catch (error) {
       console.error("Error updating memo body:", error);
