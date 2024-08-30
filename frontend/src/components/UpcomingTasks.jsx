@@ -93,7 +93,7 @@ const UpcomingTasks = ({ user }) => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const memos = useSelector(selectedMemos);
-  console.log("memos:", memos);
+  // console.log("memos:", memos);
   // console.log("Current User:", user);
   const [submemos, setSubmemos] = useState([]);
   const [newMemoLine, setNewMemoLine] = useState(false);
