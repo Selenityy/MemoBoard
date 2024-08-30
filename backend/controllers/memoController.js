@@ -14,10 +14,12 @@ exports.getAllMemos = asyncHandler(async (req, res, next) => {
         select: "name description user memos color _id",
       })
       .populate("parentId");
+    console.log("memos:", memos);
     if (!memos) {
       return res.status(404).json({ message: "All memos not found" });
     }
     const memosObject = memos.map((memo) => memo.toObject({ virtuals: true }));
+    console.log("memos obj:", memosObject);
     res.json({
       message: "Successfully retrieved all memos",
       memos: memosObject,
