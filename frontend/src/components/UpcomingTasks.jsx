@@ -30,6 +30,7 @@ import Calendar from "react-calendar";
 import { CiCalendar } from "react-icons/ci";
 import "react-calendar/dist/Calendar.css";
 import MemoDetailsModal from "./MemoDetailsModal";
+import { synchronizeMemos } from "@/redux/features/memoSlice";
 
 const allProjects = createSelector(
   [(state) => state.project.allIds, (state) => state.project.byId],
@@ -131,7 +132,12 @@ const UpcomingTasks = ({ user }) => {
 
   useEffect(() => {
     dispatch(fetchAllMemos());
+    dispatch(synchronizeMemos());
   }, [dispatch, lastUpdate]);
+
+  // const handleSync = () => {
+  //   dispatch(synchronizeMemos());
+  // };
 
   useEffect(() => {
     if (newMemoLine && inputRef.current) {
@@ -581,6 +587,7 @@ const UpcomingTasks = ({ user }) => {
 
   return (
     <>
+      {/* <button onClick={handleSync}>Synchronize Memos</button> */}
       {showMemoModal && selectedMemo && (
         <MemoDetailsModal
           selectedMemo={selectedMemo}
