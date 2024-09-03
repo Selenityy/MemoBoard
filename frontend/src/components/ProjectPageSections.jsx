@@ -178,17 +178,17 @@ const ProjectPageSections = ({ project }) => {
 
   // useEffect to fetch sections
   useEffect(() => {
-    if (projectSections.length >= 1) {
-      // console.log("project sections is 2 or more");
-      const fetchSections = async () => {
-        try {
-          await dispatch(fetchAllSections(projectId)).unwrap();
-        } catch (error) {
-          console.error("Error creating a new project sections:", error);
-        }
-      };
-      fetchSections();
-    }
+    // if (projectSections.length >= 1) {
+    // console.log("project sections is 2 or more");
+    const fetchSections = async () => {
+      try {
+        await dispatch(fetchAllSections(projectId)).unwrap();
+      } catch (error) {
+        console.error("Error creating a new project sections:", error);
+      }
+    };
+    fetchSections();
+    // }
   }, [dispatch, projectSections.length, projectId, lastUpdate]);
 
   // useEffect(() => {

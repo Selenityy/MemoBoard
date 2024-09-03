@@ -293,7 +293,7 @@ export const synchronizeMemos = createAsyncThunk(
       if (!response.ok) {
         throw new Error(data.message || "Failed to synchronize memos");
       }
-      console.log("data:", data);
+      // console.log("data:", data);
       return data.memos; // Assuming the backend returns an array of all current memos
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
