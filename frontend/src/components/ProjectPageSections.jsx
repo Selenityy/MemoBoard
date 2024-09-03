@@ -191,51 +191,51 @@ const ProjectPageSections = ({ project }) => {
     }
   }, [dispatch, projectSections.length, projectId, lastUpdate]);
 
-  useEffect(() => {
-    async function handleSectionInitialization() {
-      if (projectSections.length === 0 && projectMemos.length > 0) {
-        // console.log("Initializing new section...");
-        try {
-          const formData = {
-            user: project.user,
-            name: "To Do",
-            memo: [],
-            index: 0,
-            project: projectId,
-          };
-          const newSection = await dispatch(
-            createSection({ projectId, formData })
-          ).unwrap();
-          // console.log("New section created:", newSection);
+  // useEffect(() => {
+  //   async function handleSectionInitialization() {
+  //     if (projectSections.length === 0 && projectMemos.length > 0) {
+  //       // console.log("Initializing new section...");
+  //       try {
+  //         const formData = {
+  //           user: project.user,
+  //           name: "To Do",
+  //           memo: [],
+  //           index: 0,
+  //           project: projectId,
+  //         };
+  //         const newSection = await dispatch(
+  //           createSection({ projectId, formData })
+  //         ).unwrap();
+  //         // console.log("New section created:", newSection);
 
-          // Add memos to newly created section if applicable
-          const selectedMemos = projectMemos.map((memo) => memo.id);
-          const addedMemos = await dispatch(
-            addAllMemosToSection({
-              sectionId: newSection._id,
-              projectId,
-              selectedMemos,
-            })
-          );
-          // console.log("added memos:", addedMemos);
+  //         // Add memos to newly created section if applicable
+  //         const selectedMemos = projectMemos.map((memo) => memo.id);
+  //         const addedMemos = await dispatch(
+  //           addAllMemosToSection({
+  //             sectionId: newSection._id,
+  //             projectId,
+  //             selectedMemos,
+  //           })
+  //         );
+  //         // console.log("added memos:", addedMemos);
 
-          // Update project redux
-          const projectData = { sections: [newSection._id] };
-          // console.log("projectData:", projectData);
-          await dispatch(
-            updateProject({
-              projectId,
-              projectData,
-            })
-          );
-        } catch (error) {
-          console.error("Error during section initialization:", error);
-        }
-      }
-    }
+  //         // Update project redux
+  //         const projectData = { sections: [newSection._id] };
+  //         // console.log("projectData:", projectData);
+  //         await dispatch(
+  //           updateProject({
+  //             projectId,
+  //             projectData,
+  //           })
+  //         );
+  //       } catch (error) {
+  //         console.error("Error during section initialization:", error);
+  //       }
+  //     }
+  //   }
 
-    handleSectionInitialization();
-  }, [dispatch, projectId, project.user, projectSections, projectMemos]);
+  //   handleSectionInitialization();
+  // }, [dispatch, projectId, project.user, projectSections, projectMemos]);
 
   const sectionRefs = useRef(
     projectSections.reduce((acc, section) => {
